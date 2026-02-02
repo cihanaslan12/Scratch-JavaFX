@@ -1,0 +1,104 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+abstract class Action {
+
+    personnage : Personnage
+   execute()
+
+}
+
+Commande <|.. Action
+class Pen {
+
+    stylo : boolean
+    up()
+    down()
+    execute()
+}
+
+Action --> Personnage
+class Turn {
+
+    angle : int
+    left()
+    right()
+    execute()
+}
+
+class Move {
+
+    distance : int
+    moveForward()
+    execute()
+
+
+}
+Action <|-- Move
+Action <|-- Pen
+Action <|-- Turn
+
+
+class Programme{
+
+ObservableList<Action>
+
+monter()
+descendre()
+dupliquer()
+supprimer()
+vider_tout()
+
+}
+
+ActionList -- Commande
+Programme -- Action
+ActionList *-- Programme
+
+
+interface Commande {
+
+execute : void()
+
+}
+
+class ActionList {
+
+    List<Commande>
+
+}
+
+class Monde {
+
+    List<Segment>
+    personnage : Personnage
+
+}
+Monde *-- Segment
+Monde *-- Personnage
+
+Personnage -- Point
+
+class Personnage {
+    angle : int
+    position : Point
+
+    pen() : boolean
+    turnLeft() : void
+    turnRight() : void
+    moveForward() : void
+}
+
+class Point {
+
+    x, y : int
+
+}
+class Segment {
+
+    action : Action
+    valeur : int
+
+}
+
+@enduml
