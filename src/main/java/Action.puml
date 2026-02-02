@@ -4,7 +4,7 @@
 abstract class Action {
 
     personnage : Personnage
-   execute()
+
 
 }
 
