@@ -24,6 +24,25 @@ public class ActionsViewModel {
         return actionIndex.greaterThanOrEqualTo(0);
     }
 
+    public BooleanBinding canUp() {
+        return programIndex.greaterThan(0);
+    }
+
+    public BooleanBinding caDown() {
+        return programIndex.lessThanOrEqualTo(choosenActions.getProgram().size());
+    }
+
+    public void up() {
+        int idx = programIndex.get();
+        if (idx > 0 && idx < choosenActions.getProgram().size()) {
+            choosenActions.up(idx);
+            programIndex.set(idx - 1);
+        }
+    }
+
+    public void down() {
+        choosenActions.down();
+    }
     public IntegerProperty actionIndexProperty() {
         return actionIndex;
     }

@@ -109,6 +109,7 @@ public class MainView extends VBox {
 
     private void configActions() {
         btnAddToProgram.setOnAction(e -> vm.addAction());
+        btnUp.setOnAction(e -> vm.up());
         this.actions.setOnMouseClicked(event -> {
             if(event.getClickCount() == 2) {
                 vm.addAction();
@@ -118,11 +119,21 @@ public class MainView extends VBox {
 
     private void configButtonsDisabling() {
         btnAddToProgram.disableProperty().bind(vm.canAdd().not());
+        btnUp.disableProperty().bind(vm.canUp().not());
     }
 
     private void configSelectionModels() {
         actions.getSelectionModel().selectedIndexProperty().addListener((observable, oldVal, newVal ) -> {
             vm.actionIndexProperty().setValue(newVal.intValue());
+        });
+
+        program.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
+            this.vm.programIndexProperty().setValue(newVal.intValue());
+            System.out.println(newVal.intValue());
+        });
+
+        this.vm.programIndexProperty().addListener((obs, oldVal, newVal) -> {
+            this.program.getSelectionModel().select(newVal.intValue());
         });
     }
 }

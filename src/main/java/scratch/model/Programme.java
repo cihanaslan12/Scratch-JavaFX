@@ -20,7 +20,12 @@ public class Programme {
 
     }
 
-    public void up() {
+    public void up(int index) {
+        if (index > 0 && index < program.size()) {
+            Commande c = program.set(index, program.get(index - 1));
+            program.set(index - 1, c);
+        }
+
 
     }
 
