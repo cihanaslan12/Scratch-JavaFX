@@ -20,8 +20,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         Programme choosenActions = new Programme();
-        ActionList model = new ActionList();
-        ActionsViewModel actionsViewModel = new ActionsViewModel(model);
+        ActionsViewModel actionsViewModel = new ActionsViewModel(choosenActions);
 
         Scene scene = new Scene(new MainView(actionsViewModel));
         primaryStage.setTitle("Scratch");

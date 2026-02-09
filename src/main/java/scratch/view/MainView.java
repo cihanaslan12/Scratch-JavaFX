@@ -1,6 +1,5 @@
 package scratch.view;
 
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -55,17 +54,14 @@ public class MainView extends VBox {
 
     public MainView(ActionsViewModel actionsViewModel) {
         this.vm = actionsViewModel;
-
-        ObservableList<Commande> testList = vm.getActions();
-
         actions.setItems(vm.getActions());
-        // pour tester
-        //program.setItems(testList);
-        scenTest.setItems(testList);
+        program.setItems(vm.getProgramActions());
         configLayouts();
         style();
 
-        configBindings();
+        configActions();
+        configButtonsDisabling();
+        configSelectionModels();
     }
 
     public void configLayouts() {
@@ -111,7 +107,22 @@ public class MainView extends VBox {
         sceneBox.setPrefWidth(650);
     }
 
-    public void configBindings() {
+    private void configActions() {
+        btnAddToProgram.setOnAction(e -> vm.addAction());
+        this.actions.setOnMouseClicked(event -> {
+            if(event.getClickCount() == 2) {
+                vm.addAction();
+            }
+        });
+    }
 
+    private void configButtonsDisabling() {
+        btnAddToProgram.disableProperty().bind(vm.canAdd().not());
+    }
+
+    private void configSelectionModels() {
+        actions.getSelectionModel().selectedIndexProperty().addListener((observable, oldVal, newVal ) -> {
+            vm.actionIndexProperty().setValue(newVal.intValue());
+        });
     }
 }
