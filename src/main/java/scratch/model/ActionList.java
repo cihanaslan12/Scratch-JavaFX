@@ -5,12 +5,12 @@ import javafx.collections.ObservableList;
 
 public class ActionList {
 
-    private final ObservableList<Commande> commandeList = FXCollections.observableList(
-      new Move();
-      new Turn();
-      new Turn();
-      new Pen(false);
-      new Pen(true);
+    private final ObservableList<Commande> commandeList = FXCollections.observableArrayList(
+      new Move(30),
+      new Turn(180),
+      new Turn(0),
+      new Pen(false),
+      new Pen(true)
     );
 
     public ObservableList<Commande> getCommandeList() {
