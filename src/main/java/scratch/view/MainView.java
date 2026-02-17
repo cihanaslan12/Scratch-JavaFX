@@ -115,11 +115,14 @@ public class MainView extends VBox {
                 vm.addAction();
             }
         });
+
+        btnDown.setOnAction(e -> vm.down());
     }
 
     private void configButtonsDisabling() {
         btnAddToProgram.disableProperty().bind(vm.canAdd().not());
         btnUp.disableProperty().bind(vm.canUp().not());
+        btnDown.disableProperty().bind(vm.canDown().not());
     }
 
     private void configSelectionModels() {
@@ -129,7 +132,7 @@ public class MainView extends VBox {
 
         program.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.vm.programIndexProperty().setValue(newVal.intValue());
-            System.out.println(newVal.intValue());
+            // System.out.println(newVal.intValue());
         });
 
         this.vm.programIndexProperty().addListener((obs, oldVal, newVal) -> {

@@ -24,13 +24,19 @@ public class Programme {
         if (index > 0 && index < program.size()) {
             Commande c = program.set(index, program.get(index - 1));
             program.set(index - 1, c);
+        } else {
+            throw new RuntimeException("Cannot go up !");
         }
-
-
     }
 
-    public void down() {
-
+    public void down(int idx) {
+        if (idx < program.size()) {
+            Commande c = program.get(idx);
+            program.set(idx, program.get(idx + 1));
+            program.set(idx + 1, c);
+        } else {
+            throw new RuntimeException("Cannot go down !");
+        }
 
     }
 

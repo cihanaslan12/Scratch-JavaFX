@@ -1,5 +1,6 @@
 package scratch.viewmodel;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.IntegerProperty;
@@ -28,8 +29,11 @@ public class ActionsViewModel {
         return programIndex.greaterThan(0);
     }
 
-    public BooleanBinding caDown() {
-        return programIndex.lessThanOrEqualTo(choosenActions.getProgram().size());
+    public BooleanBinding canDown() {
+        return Bindings.createBooleanBinding(() -> {
+            int idx = programIndex.get();
+            return idx >= 0 && idx < choosenActions.getProgram().size() - 1;
+        }, programIndex, choosenActions.getProgram());
     }
 
     public void up() {
@@ -41,7 +45,11 @@ public class ActionsViewModel {
     }
 
     public void down() {
-        choosenActions.down();
+        int idx = programIndex.get();
+        if (idx < choosenActions.getProgram().size()) {
+            choosenActions.down(idx);
+            programIndex.set(idx + 1);
+        }
     }
     public IntegerProperty actionIndexProperty() {
         return actionIndex;
