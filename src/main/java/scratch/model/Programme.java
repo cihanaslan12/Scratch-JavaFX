@@ -40,7 +40,12 @@ public class Programme {
 
     }
 
-    public void duplicate() {
+    public void duplicate(int idx) {
+        if(idx >= 0 && idx < program.size() ) {
+            Commande c = program.get(idx);
+            program.add(c);
+        }
+
 
     }
     public void remove() {

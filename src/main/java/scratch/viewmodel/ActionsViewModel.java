@@ -35,6 +35,9 @@ public class ActionsViewModel {
             return idx >= 0 && idx < choosenActions.getProgram().size() - 1;
         }, programIndex, choosenActions.getProgram());
     }
+    public BooleanBinding canDuplicate() {
+        return programIndex.greaterThanOrEqualTo(0);
+    }
 
     public void up() {
         int idx = programIndex.get();
@@ -51,6 +54,12 @@ public class ActionsViewModel {
             programIndex.set(idx + 1);
         }
     }
+
+    public void duplicate() {
+        int idx = programIndex.get();
+        choosenActions.duplicate(idx);
+    }
+
     public IntegerProperty actionIndexProperty() {
         return actionIndex;
     }

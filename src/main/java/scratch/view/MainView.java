@@ -48,7 +48,7 @@ public class MainView extends VBox {
     private final Button btnAddToProgram = new Button("Ajouter au programme");
     private final Button btnUp = new Button("Monter");
     private final Button btnDown = new Button("Descendre");
-    private final Button btnduplicate = new Button("Dupliquer");
+    private final Button btnDuplicate = new Button("Dupliquer");
     private final Button btnDelete = new Button("Supprimer");
     private final Button btnClear = new Button("Vider tout");
 
@@ -69,7 +69,7 @@ public class MainView extends VBox {
         actionsBox.getChildren().addAll(actions, btnAddToProgram);
 
 
-        prgmBtnsHbox.getChildren().addAll(btnUp, btnDown, btnduplicate, btnDelete, btnClear);
+        prgmBtnsHbox.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
         editBox.getChildren().add(new Label("Details de l'action"));
         prgmInnerVbox.getChildren().addAll(prgmBtnsHbox, editBox);
         programBox.getChildren().addAll(program, prgmInnerVbox);
@@ -110,19 +110,20 @@ public class MainView extends VBox {
     private void configActions() {
         btnAddToProgram.setOnAction(e -> vm.addAction());
         btnUp.setOnAction(e -> vm.up());
+        btnDown.setOnAction(e -> vm.down());
+        btnDuplicate.setOnAction(e -> vm.duplicate());
         this.actions.setOnMouseClicked(event -> {
             if(event.getClickCount() == 2) {
                 vm.addAction();
             }
         });
-
-        btnDown.setOnAction(e -> vm.down());
     }
 
     private void configButtonsDisabling() {
         btnAddToProgram.disableProperty().bind(vm.canAdd().not());
         btnUp.disableProperty().bind(vm.canUp().not());
         btnDown.disableProperty().bind(vm.canDown().not());
+        btnDuplicate.disableProperty().bind(vm.canDuplicate().not());
     }
 
     private void configSelectionModels() {
