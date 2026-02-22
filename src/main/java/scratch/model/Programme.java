@@ -48,8 +48,9 @@ public class Programme {
 
 
     }
-    public void remove() {
-
+    public void remove(int idx) {
+        Commande c = program.get(idx);
+        program.remove(c);
     }
 
     public void clear() {

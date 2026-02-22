@@ -60,6 +60,11 @@ public class ActionsViewModel {
         choosenActions.duplicate(idx);
     }
 
+    public void delete() {
+        int idx = programIndex.get();
+        choosenActions.remove(idx);
+    }
+
     public IntegerProperty actionIndexProperty() {
         return actionIndex;
     }
