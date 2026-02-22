@@ -65,6 +65,10 @@ public class ActionsViewModel {
         choosenActions.remove(idx);
     }
 
+    public void clear() {
+        choosenActions.clear();
+    }
+
     public IntegerProperty actionIndexProperty() {
         return actionIndex;
     }

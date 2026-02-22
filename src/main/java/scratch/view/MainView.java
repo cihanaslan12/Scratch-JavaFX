@@ -113,6 +113,7 @@ public class MainView extends VBox {
         btnDown.setOnAction(e -> vm.down());
         btnDuplicate.setOnAction(e -> vm.duplicate());
         btnDelete.setOnAction(e -> vm.delete());
+        btnClear.setOnAction(e -> vm.clear());
         this.actions.setOnMouseClicked(event -> {
             if(event.getClickCount() == 2) {
                 vm.addAction();

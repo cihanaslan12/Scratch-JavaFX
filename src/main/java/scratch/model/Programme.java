@@ -54,6 +54,6 @@ public class Programme {
     }
 
     public void clear() {
-
+        program.clear();
     }
 }
