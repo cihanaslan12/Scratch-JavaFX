@@ -2,11 +2,19 @@ package scratch.model;
 
 public class Point {
 
-    private final int x,y;
+    private final double x,y;
 
 
-    public Point(int x, int y) {
+    public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
 }

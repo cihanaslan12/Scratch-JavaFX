@@ -5,7 +5,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import scratch.model.Commande;
 import scratch.viewmodel.ActionsViewModel;
 
@@ -15,8 +20,10 @@ public class MainView extends VBox {
 
     private final ListView<Commande> actions = new ListView<>();
     private final ListView<Commande> program = new ListView<>();
-    // pour tester
-    private final ListView<Commande> scenTest = new ListView<>();
+    private final Pane scenePane = new Pane();
+    private Polygon turtle;
+    private Circle headTurtle;
+
 
     // Hbox pour que les button soient aligner horizontalement
     private final HBox labelsBox = new HBox(30);
@@ -62,6 +69,8 @@ public class MainView extends VBox {
         configActions();
         configButtonsDisabling();
         configSelectionModels();
+        drawGrid();
+        drawTurtle(250,250,0);
     }
 
     public void configLayouts() {
@@ -75,7 +84,7 @@ public class MainView extends VBox {
         programBox.getChildren().addAll(program, prgmInnerVbox);
 
         // monde
-        sceneBox.getChildren().addAll(scenTest);
+        sceneBox.getChildren().addAll(scenePane);
 
         labelsBox.getChildren().addAll(actionsLabel, programLabel,sceneLabel);
         bodyBox.getChildren().addAll(actionsBox, programBox, sceneBox);
@@ -103,8 +112,10 @@ public class MainView extends VBox {
         // style du box a l'interieur du programme
         prgmInnerVbox.setSpacing(15);
         // style du monde
-        // sceneBox.setPrefSize(600, 600);
-        sceneBox.setPrefWidth(650);
+        sceneBox.setPrefWidth(500);
+        scenePane.setPrefSize(500, 500);
+        scenePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
+
     }
 
     private void configActions() {
@@ -139,5 +150,45 @@ public class MainView extends VBox {
         this.vm.programIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.program.getSelectionModel().select(newVal.intValue());
         });
+    }
+    private void drawGrid() {
+        double step = 50;
+
+        for (double x = 0; x <= 500; x += step) {
+            Line line = new Line(x, 0, x, 500);
+            line.setStroke(Color.LIGHTBLUE);
+            scenePane.getChildren().add(line);
+        }
+
+        for (double y = 0; y <= 500; y += step) {
+            Line line = new Line(0, y, 500, y);
+            line.setStroke(Color.LIGHTBLUE);
+            scenePane.getChildren().add(line);
+        }
+    }
+    private void drawTurtle(double x, double y, double angle) {
+
+        double TURTLE_SIZE = 15;
+        double HEAD_SIZE = 3;
+
+        double xP1 = x + TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.cos(Math.toRadians(angle + 90));
+        double yP1 = y - TURTLE_SIZE * Math.sin(Math.toRadians(60)) * Math.sin(Math.toRadians(angle + 90));
+
+        double xP2 = x - TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.cos(Math.toRadians(angle));
+        double yP2 = y + TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.sin(Math.toRadians(angle));
+
+        double xP3 = x + TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.cos(Math.toRadians(angle));
+        double yP3 = y - TURTLE_SIZE * Math.sin(Math.toRadians(30)) * Math.sin(Math.toRadians(angle));
+
+        turtle = new Polygon(xP1, yP1, xP2, yP2, xP3, yP3);
+        turtle.setFill(Color.DEEPSKYBLUE);
+        turtle.setStroke(Color.BLACK);
+
+        headTurtle = new Circle(HEAD_SIZE);
+        headTurtle.setFill(Color.DARKRED);
+        headTurtle.setTranslateX(xP1);
+        headTurtle.setTranslateY(yP1);
+
+        scenePane.getChildren().addAll(turtle, headTurtle);
     }
 }
