@@ -123,6 +123,8 @@ public class MainView extends VBox {
         btnUp.setOnAction(e -> vm.up());
         btnDown.setOnAction(e -> vm.down());
         btnDuplicate.setOnAction(e -> vm.duplicate());
+        btnDelete.setOnAction(e -> vm.delete());
+        btnClear.setOnAction(e -> vm.clear());
         this.actions.setOnMouseClicked(event -> {
             if(event.getClickCount() == 2) {
                 vm.addAction();
@@ -135,6 +137,8 @@ public class MainView extends VBox {
         btnUp.disableProperty().bind(vm.canUp().not());
         btnDown.disableProperty().bind(vm.canDown().not());
         btnDuplicate.disableProperty().bind(vm.canDuplicate().not());
+        btnDelete.disableProperty().bind(vm.canDelete().not());
+        btnClear.disableProperty().bind(vm.canClear().not());
     }
 
     private void configSelectionModels() {

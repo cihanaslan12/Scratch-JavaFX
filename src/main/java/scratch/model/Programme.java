@@ -48,11 +48,13 @@ public class Programme {
 
 
     }
-    public void remove() {
-
+    public void remove(int idx) {
+        if(idx >= 0 && idx < program.size()) {
+            program.remove(idx);
+        }
     }
 
     public void clear() {
-
+        program.clear();
     }
 }
