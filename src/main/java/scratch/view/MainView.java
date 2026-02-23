@@ -126,6 +126,8 @@ public class MainView extends VBox {
         btnUp.disableProperty().bind(vm.canUp().not());
         btnDown.disableProperty().bind(vm.canDown().not());
         btnDuplicate.disableProperty().bind(vm.canDuplicate().not());
+        btnDelete.disableProperty().bind(vm.canDelete().not());
+        btnClear.disableProperty().bind(vm.canClear().not());
     }
 
     private void configSelectionModels() {

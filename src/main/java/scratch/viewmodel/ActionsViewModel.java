@@ -38,6 +38,12 @@ public class ActionsViewModel {
     public BooleanBinding canDuplicate() {
         return programIndex.greaterThanOrEqualTo(0);
     }
+    public BooleanBinding canDelete() {
+        return programIndex.greaterThanOrEqualTo(0);
+    }
+    public BooleanBinding canClear() {
+        return Bindings.size(choosenActions.getProgram()).greaterThan(0);
+    }
 
     public void up() {
         int idx = programIndex.get();
@@ -62,7 +68,9 @@ public class ActionsViewModel {
 
     public void delete() {
         int idx = programIndex.get();
-        choosenActions.remove(idx);
+        if(idx >= 0 && idx < choosenActions.getProgram().size()) {
+            choosenActions.remove(idx);
+        }
     }
 
     public void clear() {
