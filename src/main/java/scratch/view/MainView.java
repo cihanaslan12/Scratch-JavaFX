@@ -58,6 +58,8 @@ public class MainView extends VBox {
     private final Button btnDuplicate = new Button("Dupliquer");
     private final Button btnDelete = new Button("Supprimer");
     private final Button btnClear = new Button("Vider tout");
+    private final Button loadBtn = new Button("Charger");
+    private final Button executeBtn = new Button("Executer");
 
     public MainView(ActionsViewModel actionsViewModel) {
         this.vm = actionsViewModel;
@@ -85,6 +87,7 @@ public class MainView extends VBox {
 
         // monde
         sceneBox.getChildren().addAll(scenePane);
+        sceneBox.getChildren().addAll(loadBtn,executeBtn);
 
         labelsBox.getChildren().addAll(actionsLabel, programLabel,sceneLabel);
         bodyBox.getChildren().addAll(actionsBox, programBox, sceneBox);
@@ -125,6 +128,18 @@ public class MainView extends VBox {
         btnDuplicate.setOnAction(e -> vm.duplicate());
         btnDelete.setOnAction(e -> vm.delete());
         btnClear.setOnAction(e -> vm.clear());
+        loadBtn.setOnAction(e-> {
+            vm.load();
+            refreshScene();
+        });
+       /* executeBtn.setOnAction( e -> {
+            vm.execute();
+            refreshScene();
+        });*/
+        executeBtn.setOnAction(e -> {
+            vm.next();
+            refreshScene();
+        });
         this.actions.setOnMouseClicked(event -> {
             if(event.getClickCount() == 2) {
                 vm.addAction();
@@ -194,5 +209,26 @@ public class MainView extends VBox {
         headTurtle.setTranslateY(yP1);
 
         scenePane.getChildren().addAll(turtle, headTurtle);
+    }
+    private void refreshScene() {
+        // tout supprimer puis redessiner la grille
+        scenePane.getChildren().clear();
+        drawGrid();
+        // dessiner les segments
+        for (var s : vm.getMonde().getSegments()) {
+            Line line = new Line(
+                    s.getStart().getX(), s.getStart().getY(),
+                    s.getEnd().getX(), s.getEnd().getY()
+            );
+            line.setStroke(Color.RED);
+            line.setStrokeWidth(2);
+            scenePane.getChildren().add(line);
+        }
+        // dessiner la tortue à sa position actuelle
+        double x = vm.getMonde().getPersonnage().getPosition().getX();
+        double y = vm.getMonde().getPersonnage().getPosition().getY();
+        double angle = vm.getMonde().getPersonnage().getAngle();
+
+        drawTurtle(x, y, angle);
     }
 }

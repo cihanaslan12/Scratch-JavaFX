@@ -7,9 +7,13 @@ public class Monde {
 
     private final ObservableList<Segment> segments = FXCollections.observableArrayList();
     private final Personnage personnage;
+    private final Point startPos;
+    private final int startAngle;
 
-    public Monde(Personnage personnage){
+    public Monde(Personnage personnage, Point startPos, int startAngle){
         this.personnage = personnage;
+        this.startPos = startPos;
+        this.startAngle = startAngle;
     }
 
     public Personnage getPersonnage() {
@@ -21,7 +25,13 @@ public class Monde {
     }
 
     public ObservableList<Segment> getSegments() {
-        return FXCollections.observableArrayList(segments);
+        return FXCollections.unmodifiableObservableList(segments);
+    }
+    public void reset() {
+        segments.clear();
+        personnage.setPosition(new Point(startPos.getX(), startPos.getY()));
+        personnage.setAngle(startAngle);
+        personnage.penDown();
     }
 
 }

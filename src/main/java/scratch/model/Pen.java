@@ -9,7 +9,7 @@ public class Pen extends Action {
     }
 
     @Override
-    public void execute() {
+    public void execute(Monde monde) {
 
     }
 

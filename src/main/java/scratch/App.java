@@ -8,8 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import scratch.model.ActionList;
-import scratch.model.Programme;
+import scratch.model.*;
 import scratch.view.ActionsView;
 import scratch.view.MainView;
 import scratch.viewmodel.ActionsViewModel;
@@ -20,7 +19,10 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         Programme choosenActions = new Programme();
-        ActionsViewModel actionsViewModel = new ActionsViewModel(choosenActions);
+
+        Personnage p = new Personnage(0,new Point(250,250));
+        Monde monde = new Monde(p,new Point(250,250),0);
+        ActionsViewModel actionsViewModel = new ActionsViewModel(choosenActions, monde);
 
         Scene scene = new Scene(new MainView(actionsViewModel));
         primaryStage.setTitle("Scratch");

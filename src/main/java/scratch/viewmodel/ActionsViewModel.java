@@ -2,23 +2,26 @@ package scratch.viewmodel;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
-import javafx.beans.binding.IntegerBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.ObservableList;
 import scratch.model.ActionList;
 import scratch.model.Commande;
+import scratch.model.Monde;
 import scratch.model.Programme;
 
 public class ActionsViewModel {
 
     private final Programme choosenActions;
+    private final   Monde monde;
 
     private final IntegerProperty actionIndex = new SimpleIntegerProperty(-1),
             programIndex = new SimpleIntegerProperty(-1);
+    private final IntegerProperty execIdx = new SimpleIntegerProperty(0);
 
-    public ActionsViewModel(Programme choosenActions) {
+    public ActionsViewModel(Programme choosenActions, Monde monde) {
         this.choosenActions = choosenActions;
+        this.monde = monde;
     }
 
     public BooleanBinding canAdd() {
@@ -94,6 +97,27 @@ public class ActionsViewModel {
 
     public ObservableList<Commande> getProgramActions() {
         return choosenActions.getProgram();
+    }
+    public void load() {
+        monde.reset();
+        execIdx.set(0);
+    }
+    public void execute() {
+        monde.reset();
+        for(Commande c : getProgramActions()) {
+            c.execute(monde);
+        }
+    }
+    public void next() {
+        int i = execIdx.get();
+        if( i  >= 0 && i < choosenActions.getProgram().size()) {
+            Commande c = choosenActions.getProgram().get(i);
+            c.execute(monde);
+            execIdx.set(i + 1);
+        }
+    }
+    public Monde getMonde() {
+        return monde;
     }
 
 }

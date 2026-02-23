@@ -21,6 +21,13 @@ public class Personnage {
     public boolean isPenDown() {
         return penDown;
     }
+    public void setPosition(Point position) {
+        this.position = position;
+    }
+
+    public void setAngle(int angle) {
+        this.angle = angle;
+    }
 
     public void penUp() {
         penDown = false;
@@ -46,13 +53,16 @@ public class Personnage {
         double diffX = distance * Math.cos(radians);
         double diffY = distance * Math.sin(radians);
 
-        Point start = position;
-        Point end = new Point(start.getX() + diffX, start.getY() + diffY);
+        double newX = position.getX() + diffX;
+        double newY = position.getY() - diffY;
 
-        position = end;
+        Point start = position;
+        Point newPos = new Point(newX,newY);
+
+        position = newPos;
 
         if(penDown) {
-            return new Segment(start,end);
+            return new Segment(start, newPos);
         }
 
         return null; // pas de segment si stylo levé

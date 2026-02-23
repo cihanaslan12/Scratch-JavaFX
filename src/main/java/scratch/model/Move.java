@@ -9,7 +9,9 @@ public class Move extends Action {
         this.distance = distance;
     }
     @Override
-    public void execute() {
+    public void execute(Monde monde) {
+        Segment s = monde.getPersonnage().moveForward(distance);
+        monde.addSegment(s);
 
     }
 

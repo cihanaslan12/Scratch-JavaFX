@@ -2,5 +2,5 @@ package scratch.model;
 
 public interface Commande {
 
-    void execute();
+    void execute(Monde monde);
 }
