@@ -67,6 +67,8 @@ public class MainView extends VBox {
         program.setItems(vm.getProgramActions());
         configLayouts();
         style();
+        loadBtn.textProperty().bind(vm.loadButtonTextProperty());
+        executeBtn.textProperty().bind(vm.runButtonTextProperty());
 
         configActions();
         configButtonsDisabling();
@@ -129,7 +131,7 @@ public class MainView extends VBox {
         btnDelete.setOnAction(e -> vm.delete());
         btnClear.setOnAction(e -> vm.clear());
         loadBtn.setOnAction(e-> {
-            vm.load();
+            vm.loadOrReset();
             refreshScene();
         });
        /* executeBtn.setOnAction( e -> {
@@ -137,7 +139,7 @@ public class MainView extends VBox {
             refreshScene();
         });*/
         executeBtn.setOnAction(e -> {
-            vm.next();
+            vm.runButton();
             refreshScene();
         });
         this.actions.setOnMouseClicked(event -> {
@@ -154,6 +156,8 @@ public class MainView extends VBox {
         btnDuplicate.disableProperty().bind(vm.canDuplicate().not());
         btnDelete.disableProperty().bind(vm.canDelete().not());
         btnClear.disableProperty().bind(vm.canClear().not());
+        loadBtn.disableProperty().bind(vm.canLoad().not());
+        executeBtn.disableProperty().bind(vm.canRun().not());
     }
 
     private void configSelectionModels() {
@@ -168,6 +172,14 @@ public class MainView extends VBox {
 
         this.vm.programIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.program.getSelectionModel().select(newVal.intValue());
+        });
+
+        this.vm.highlightIdxProperty().addListener((obs,on,newVal) -> {
+            int idx = newVal.intValue();
+            if(idx >= 0 && idx < program.getItems().size()) {
+                program.getSelectionModel().select(idx);
+                program.scrollTo(idx);
+            }
         });
     }
     private void drawGrid() {
