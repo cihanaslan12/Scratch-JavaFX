@@ -2,19 +2,24 @@ package scratch.model;
 
 public class Pen extends Action {
 
-    private final boolean stylo;
+    private final boolean styloDown; // true = abaisser, false = lever
 
-    public Pen(boolean stylo) {
-        this.stylo = stylo;
+    public Pen(boolean styloDown) {
+        this.styloDown = styloDown;
     }
 
     @Override
     public void execute(Monde monde) {
+        if(styloDown) {
+            monde.getPersonnage().penDown();
+        } else {
+            monde.getPersonnage().penUp();
+        }
 
     }
 
     @Override
     public String toString() {
-        return stylo ? "Abaisser le stylo" : "Lever le stylo";
+        return styloDown ? "Abaisser le stylo" : "Lever le stylo";
     }
 }
