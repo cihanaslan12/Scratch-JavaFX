@@ -7,6 +7,9 @@ public class Pen extends Action {
     public Pen(boolean styloDown) {
         this.styloDown = styloDown;
     }
+    public boolean isStyloDown() {
+        return styloDown;
+    }
 
     @Override
     public void execute(Monde monde) {

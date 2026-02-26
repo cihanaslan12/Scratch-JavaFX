@@ -5,10 +5,7 @@ import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import scratch.model.ActionList;
-import scratch.model.Commande;
-import scratch.model.Monde;
-import scratch.model.Programme;
+import scratch.model.*;
 
 public class ActionsViewModel {
 
@@ -68,7 +65,10 @@ public class ActionsViewModel {
         }, loaded,execIdx,choosenActions.getProgram());
     }
     public BooleanBinding canLoad() {
-        return Bindings.size(choosenActions.getProgram()).greaterThan(0);
+        return Bindings.createBooleanBinding(() ->
+                        !choosenActions.getProgram().isEmpty() && isPenInstructionValid(),
+                choosenActions.getProgram()
+        );
     }
 
     public void addAction() {
@@ -117,7 +117,7 @@ public class ActionsViewModel {
 
 
     public void loadOrReset() {
-        if (choosenActions.getProgram().size() > 0) {
+        if (!choosenActions.getProgram().isEmpty()) {
             monde.reset();
             execIdx.set(0);
             highlightIdx.set(-1);
@@ -195,6 +195,22 @@ public class ActionsViewModel {
         highlightIdx.set(-1);
         loadButtonText.set("Charger");
         runButtonText.set("Executer");
+    }
+    private boolean isPenInstructionValid() {
+        boolean penDownState = true; // abaisser de base
+
+        for(Commande c : choosenActions.getProgram()) {
+            if(c instanceof Pen pen) {
+                boolean wantDown = pen.isStyloDown();
+
+                if(wantDown == penDownState) {
+                    return false; // règle métier FAQ
+                }
+                penDownState = wantDown;
+            }
+
+        }
+        return true;
     }
 
 }
