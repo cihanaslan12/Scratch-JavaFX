@@ -37,12 +37,12 @@ public class Personnage {
     }
 
     public void turnLeft(int degrees) {
-        angle -= degrees;
+        angle += degrees;
 
     }
 
     public void turnRight(int degrees) {
-        angle += degrees;
+        angle -= degrees;
 
     }
 
