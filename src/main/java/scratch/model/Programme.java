@@ -15,7 +15,8 @@ public class Programme {
 
         Commande c = ActionList.getCommande(idx);
         if(c != null) {
-            program.add(c);
+            Commande copy = c.copyCommande();
+            program.add(c.copyCommande());
         }
 
     }

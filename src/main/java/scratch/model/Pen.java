@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.beans.property.IntegerProperty;
+
 public class Pen extends Action {
 
     private final boolean stylo;
@@ -11,6 +13,26 @@ public class Pen extends Action {
     @Override
     public void execute() {
 
+    }
+
+    @Override
+    public boolean isEditable() {
+        return false;
+    }
+
+    @Override
+    public IntegerProperty parametreProperty() {
+        return null;
+    }
+
+    @Override
+    public String unite() {
+        return "";
+    }
+
+    @Override
+    public Commande copyCommande() {
+        return new Pen(stylo);
     }
 
     @Override

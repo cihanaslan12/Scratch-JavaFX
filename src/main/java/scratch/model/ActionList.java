@@ -18,7 +18,7 @@ public class ActionList {
     }
 
     public static Commande getCommande(int idx) {
-        // si l'index est dans les bornes, on récupère la commande
+        // si l'index est dans les bornes, on récupère la copyCommande
         return (idx >= 0 && idx <= commandeList.size()) ? commandeList.get(idx) : null;
     }
 }

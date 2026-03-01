@@ -1,11 +1,11 @@
 package scratch.view;
 
+import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.converter.NumberStringConverter;
 import scratch.model.Commande;
 import scratch.viewmodel.ActionsViewModel;
 
@@ -38,7 +38,14 @@ public class MainView extends VBox {
     // Pour aligner les boutons horizontalement
     private final HBox prgmBtnsHbox = new HBox();
     // Pour les détails de l'action
-    private final HBox editBox = new HBox();
+    // private final HBox editBox = new HBox();
+
+    private final HBox innerEditBox = new HBox();
+    private final TextField input = new TextField();
+    private final TitledPane actionDetails = new TitledPane("Détails de l'action",input);
+    private final Label startLbl = new Label();
+    private final Label endLbl = new Label();
+    private final Label errLbl = new Label();
 
     private final Label actionsLabel = new Label("Palette d'actions");
     private final Label programLabel = new Label("Progrmme");
@@ -70,8 +77,10 @@ public class MainView extends VBox {
 
 
         prgmBtnsHbox.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
-        editBox.getChildren().add(new Label("Details de l'action"));
-        prgmInnerVbox.getChildren().addAll(prgmBtnsHbox, editBox);
+        startLbl.setText("(aucune action sélectionnée)");
+        innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
+        actionDetails.setContent(innerEditBox);
+        prgmInnerVbox.getChildren().addAll(prgmBtnsHbox, actionDetails);
         programBox.getChildren().addAll(program, prgmInnerVbox);
 
         // monde
@@ -96,7 +105,8 @@ public class MainView extends VBox {
         actionsBox.setPrefSize(250, 550);
         actionsBox.setSpacing(15);
 
-
+        input.setPrefWidth(35);
+        innerEditBox.setSpacing(10);
         // style du programme
         programBox.setSpacing(15);
 
@@ -124,6 +134,7 @@ public class MainView extends VBox {
         btnUp.disableProperty().bind(vm.canUp().not());
         btnDown.disableProperty().bind(vm.canDown().not());
         btnDuplicate.disableProperty().bind(vm.canDuplicate().not());
+        input.disableProperty().bind(vm.canEdit().not());
     }
 
     private void configSelectionModels() {
@@ -133,9 +144,15 @@ public class MainView extends VBox {
 
         program.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.vm.programIndexProperty().setValue(newVal.intValue());
-            // System.out.println(newVal.intValue());
+            // System.out.println(vm.commandeProperty());
         });
-
+        startLbl.textProperty().bind(
+                Bindings.when(vm.commandeProperty().isNull())
+                        .then("(aucune action sélectionnée)")
+                        .otherwise(vm.startLblProperty())
+        );
+        endLbl.textProperty().bind(vm.endLblProperty());
+        input.textProperty().bindBidirectional(vm.inputProperty(),new NumberStringConverter());
         this.vm.programIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.program.getSelectionModel().select(newVal.intValue());
         });
