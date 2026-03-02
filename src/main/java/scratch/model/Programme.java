@@ -5,25 +5,26 @@ import javafx.collections.ObservableList;
 
 public class Programme {
 
-    private final ObservableList<Commande> program = FXCollections.observableArrayList();
+    private final ObservableList<Action> program = FXCollections.observableArrayList();
 
-    public ObservableList<Commande> getProgram() {
+    public ObservableList<Action> getProgram() {
         return FXCollections.unmodifiableObservableList(program);
     }
 
     public void addAction(int idx) {
+        if(idx >= 0) {
+            Action originalAction = ActionList.getAction(idx);
+            Action copyForProgram = originalAction.copyActionForProgram();
+            copyForProgram.setInProgram(true);
+            program.add(copyForProgram);
 
-        Commande c = ActionList.getCommande(idx);
-        if(c != null) {
-            program.add(c);
         }
-
     }
 
     public void up(int index) {
         if (index > 0 && index < program.size()) {
-            Commande c = program.set(index, program.get(index - 1));
-            program.set(index - 1, c);
+            Action action = program.set(index, program.get(index - 1));
+            program.set(index - 1, action);
         } else {
             throw new RuntimeException("Cannot go up !");
         }
@@ -31,9 +32,9 @@ public class Programme {
 
     public void down(int idx) {
         if (idx < program.size()) {
-            Commande c = program.get(idx);
+            Action action = program.get(idx);
             program.set(idx, program.get(idx + 1));
-            program.set(idx + 1, c);
+            program.set(idx + 1, action);
         } else {
             throw new RuntimeException("Cannot go down !");
         }
@@ -42,8 +43,8 @@ public class Programme {
 
     public void duplicate(int idx) {
         if(idx >= 0 && idx < program.size() ) {
-            Commande c = program.get(idx);
-            program.add(c);
+            Action action = program.get(idx);
+            program.add(action);
         }
 
 
