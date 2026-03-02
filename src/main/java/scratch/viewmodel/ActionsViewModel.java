@@ -171,8 +171,8 @@ public class ActionsViewModel {
                     // mode Suivant
                     int i = execIdx.get();
                     if (i >= 0 && i < size) {
-                        Commande c = choosenActions.getProgram().get(i);
-                        c.execute(monde);
+                       Action action  = choosenActions.getProgram().get(i);
+                        action.execute(monde);
 
                         execIdx.set(i + 1);
 

@@ -11,8 +11,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.util.converter.NumberStringConverter;
-import scratch.model.Action;
-import scratch.model.Commande;
+import scratch.model.*;
 import scratch.viewmodel.ActionsViewModel;
 
 public class MainView extends VBox {
@@ -75,6 +74,7 @@ public class MainView extends VBox {
         program.setItems(vm.getProgramActions());
         configLayouts();
         style();
+        setupColoredCells();
         loadBtn.textProperty().bind(vm.loadButtonTextProperty());
         executeBtn.textProperty().bind(vm.runButtonTextProperty());
 
@@ -252,5 +252,57 @@ public class MainView extends VBox {
         double angle = vm.getMonde().getPersonnage().getAngle();
 
         drawTurtle(x, y, angle);
+    }
+    private Color actionColor(Action action) {
+        if(action instanceof Move) return Color.DARKBLUE;
+        if(action instanceof Turn) return Color.RED;
+        if(action instanceof Pen)  return Color.GREEN;
+
+        return Color.BLACK;
+    }
+    private void setupColoredCells() {
+
+        actions.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            public void updateItem(Action item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    Color c = actionColor(item);
+
+                    setText(item.toString());
+                    setTextFill(c);
+
+
+                    Circle dot = new Circle(5, c);
+                    setGraphic(dot);
+                    setGraphicTextGap(8);
+                }
+            }
+        });
+
+        program.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            public void updateItem(Action item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    Color c = actionColor(item);
+
+                    setText(item.toString());
+                    setTextFill(c);
+
+                    Circle dot = new Circle(5, c);
+                    setGraphic(dot);
+                    setGraphicTextGap(8);
+                }
+            }
+        });
     }
 }
