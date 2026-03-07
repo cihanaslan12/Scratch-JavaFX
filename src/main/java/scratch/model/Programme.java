@@ -58,4 +58,11 @@ public class Programme {
     public void clear() {
         program.clear();
     }
+    public int executeNext(int execIdx, Monde monde) {
+        if(execIdx >= 0 && execIdx < program.size()) {
+            program.get(execIdx).execute(monde);
+            return execIdx + 1;
+        }
+        return execIdx;
+    }
 }

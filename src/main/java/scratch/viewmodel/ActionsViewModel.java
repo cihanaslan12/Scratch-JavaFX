@@ -8,7 +8,6 @@ import javafx.beans.binding.StringBinding;
 import javafx.collections.ObservableList;
 import scratch.model.*;
 import scratch.model.ActionList;
-import scratch.model.Commande;
 import scratch.model.Programme;
 
 public class ActionsViewModel {
@@ -33,7 +32,7 @@ public class ActionsViewModel {
             this.choosenActions = choosenActions;
             this.monde = monde;
 
-            this.choosenActions.getProgram().addListener((ListChangeListener<Commande>) c -> {
+            this.choosenActions.getProgram().addListener((ListChangeListener<Action>) c -> {
                 loaded.set(false);
                 stepping.set(false);
                 execIdx.set(0);
@@ -159,7 +158,7 @@ public class ActionsViewModel {
                 runButtonText.set("Executer");
             }
         }
-        public void runButton () {
+       /* public void runButton () {
             int size = choosenActions.getProgram().size();
             if (loaded.get() && size > 0 && execIdx.get() < size) {
                 // premier clic sur Executer -> sélectionne la première ligne du prog
@@ -187,7 +186,29 @@ public class ActionsViewModel {
                     }
                 }
             }
+        }*/
+
+    public void execOrNext() {
+        int size = choosenActions.getProgram().size();
+        if (loaded.get() && size > 0) {
+            // premier clic sur Executer -> sélectionne la première ligne du prog
+            if (!stepping.get()) {
+                stepping.set(true);
+                runButtonText.set("Suivant");
+                highlightIdx.set(0);
+            } else {
+                // mode Suivant
+                execIdx.set(choosenActions.executeNext(execIdx.get(), monde));
+                if (execIdx.get() < size) {
+                    highlightIdx.set(execIdx.get());
+                } else {
+                    stepping.set(false);
+                    runButtonText.set("Executer");
+                    highlightIdx.set(size - 1);
+                }
+            }
         }
+    }
 
         public IntegerProperty actionIndexProperty () {
             return actionIndex;
@@ -256,8 +277,8 @@ public class ActionsViewModel {
         private boolean isPenInstructionValid () {
             boolean penDownState = true; // abaisser de base
 
-            for (Commande c : choosenActions.getProgram()) {
-                if (c instanceof Pen pen) {
+            for (Action action : choosenActions.getProgram()) {
+                if (action instanceof Pen pen) {
                     boolean wantDown = pen.isStyloDown();
 
                     if (wantDown == penDownState) {

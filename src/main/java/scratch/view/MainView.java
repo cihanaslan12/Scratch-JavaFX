@@ -150,7 +150,7 @@ public class MainView extends VBox {
             refreshScene();
         });*/
         executeBtn.setOnAction(e -> {
-            vm.runButton();
+            vm.execOrNext();
             refreshScene();
         });
         this.actions.setOnMouseClicked(event -> {
@@ -190,6 +190,14 @@ public class MainView extends VBox {
         input.textProperty().bindBidirectional(vm.inputProperty(),new NumberStringConverter());
         this.vm.programIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.program.getSelectionModel().select(newVal.intValue());
+        });
+
+        this.vm.highlightIdxProperty().addListener((obs, oldV, newV) -> {
+            int idx = newV.intValue();
+            if (idx >= 0 && idx < program.getItems().size()) {
+                program.getSelectionModel().select(idx);
+                program.scrollTo(idx);
+            }
         });
     }
     private void drawGrid() {
