@@ -65,4 +65,8 @@ public class Programme {
         }
         return execIdx;
     }
+
+    public void addActionForFile(Action action) {
+        program.add(action);
+    }
 }

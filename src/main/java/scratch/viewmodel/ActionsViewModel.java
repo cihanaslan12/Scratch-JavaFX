@@ -323,11 +323,11 @@ public class ActionsViewModel {
                     case "PEN_DOWN" -> newAction = (new Pen(true));
                 }
                 newAction.setInProgram(true);
-                getProgramActions().add(newAction);
+                choosenActions.addActionForFile(newAction);
             }
             invalidateProgram();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
     }
@@ -338,7 +338,7 @@ public class ActionsViewModel {
                 writer.println(action.stringForSave());
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
 
     }

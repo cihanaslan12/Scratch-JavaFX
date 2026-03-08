@@ -37,7 +37,8 @@ public class MainView extends VBox {
         // L'espace pour le monde
     private final HBox bodyBox = new HBox();
 
-    // trois vBox que je met dans le bodyBox
+    // quatre vBox que je met dans le bodyBox
+    private final VBox menuBarBox = new VBox();
     private final VBox actionsBox = new VBox();
     private final VBox programBox = new VBox();
     private final VBox sceneBox = new VBox();
@@ -58,7 +59,7 @@ public class MainView extends VBox {
     private final Label errLbl = new Label("Erreur valeur");
 
     private final Label actionsLabel = new Label("Palette d'actions");
-    private final Label programLabel = new Label("Progrmme");
+    private final Label programLabel = new Label("Programme");
     private final Label sceneLabel = new Label("Scène");
 
     private final Button btnFile = new Button("File");
@@ -99,8 +100,6 @@ public class MainView extends VBox {
     public void configLayouts() {
 
         actionsBox.getChildren().addAll(actions, btnAddToProgram);
-
-
         prgmBtnsHbox.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
         startLbl.setText("(aucune action sélectionnée)");
         innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
@@ -118,7 +117,7 @@ public class MainView extends VBox {
 
         labelsBox.getChildren().addAll(actionsLabel, programLabel,sceneLabel);
         bodyBox.getChildren().addAll(actionsBox, programBox, sceneBox);
-        this.getChildren().addAll(btnFile,labelsBox, bodyBox);
+        this.getChildren().addAll(menuBarBox,labelsBox, bodyBox);
     }
 
     public void menuEvent() {
@@ -140,13 +139,17 @@ public class MainView extends VBox {
 
     public void openFile() {
         File selectedFile = myFileChooser("Ouvrir").showOpenDialog(this.getScene().getWindow());
-        vm.openFile(selectedFile);
-        refreshScene();
+        if (selectedFile != null) {
+            vm.openFile(selectedFile);
+            refreshScene();
+        }
     }
 
     public void saveAs() {
         File selectedFile = myFileChooser("Enregistrer sous").showSaveDialog(this.getScene().getWindow());
-        vm.saveFileAs(selectedFile);
+        if (selectedFile != null) {
+            vm.saveFileAs(selectedFile);
+        }
     }
 
     public void style() {
