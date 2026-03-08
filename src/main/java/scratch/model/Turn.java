@@ -75,4 +75,8 @@ public class Turn extends Action{
             return left ? "Tourner à gauche de " + getAngle() : "Tourner à droite de " + getAngle();
         }
     }
+    @Override
+    public String stringForSave() {
+        return "TURN_" + (left ? "LEFT" : "RIGHT") + ";" + getAngle();
+    }
 }

@@ -61,4 +61,8 @@ public class Pen extends Action {
     public String toString() {
         return styloDown ? "Abaisser le stylo" : "Lever le stylo";
     }
+    @Override
+    public String stringForSave() {
+        return "PEN_" + (styloDown ? "DOWN" : "UP") + ";0";
+    }
 }

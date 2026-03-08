@@ -64,5 +64,9 @@ public class Move extends Action {
         }
         return "Avancer de " + getDistance();
     }
+    @Override
+    public String stringForSave() {
+        return "MOVE_FORWARD;" + getDistance();
+    }
 
 }

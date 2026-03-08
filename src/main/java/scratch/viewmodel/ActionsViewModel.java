@@ -1,5 +1,6 @@
 package scratch.viewmodel;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
@@ -9,6 +10,10 @@ import javafx.collections.ObservableList;
 import scratch.model.*;
 import scratch.model.ActionList;
 import scratch.model.Programme;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.Scanner;
 
 public class ActionsViewModel {
 
@@ -294,5 +299,53 @@ public class ActionsViewModel {
             return true;
         }
 
+    public void newProgram() {
+        choosenActions.clear();
+        monde.reset();
     }
+
+    public void openFile(File file) {
+        this.newProgram();
+        try {
+            Scanner scan = new Scanner(file);
+            while(scan.hasNextLine()) {
+                String command = scan.nextLine();
+                String[] parts = command.split(";");
+                String action = parts[0];
+                int val = Integer.parseInt(parts[1]);
+
+                Action newAction = null;
+                switch (action) {
+                    case "MOVE_FORWARD" -> newAction = (new Move(val));
+                    case "TURN_RIGHT" -> newAction = (new Turn(val, false));
+                    case "TURN_LEFT" -> newAction = (new Turn(val, true));
+                    case "PEN_UP" -> newAction = (new Pen(false));
+                    case "PEN_DOWN" -> newAction = (new Pen(true));
+                }
+                newAction.setInProgram(true);
+                getProgramActions().add(newAction);
+            }
+            invalidateProgram();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public void saveFileAs(File file) {
+        try (PrintWriter writer = new PrintWriter(file)) {
+            for (Action action : getProgramActions()) {
+                writer.println(action.stringForSave());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    public void exitProgram() {
+        Platform.exit();
+    }
+}
+
 

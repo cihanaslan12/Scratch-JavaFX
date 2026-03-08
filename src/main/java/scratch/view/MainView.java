@@ -10,9 +10,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.stage.FileChooser;
 import javafx.util.converter.NumberStringConverter;
 import scratch.model.*;
 import scratch.viewmodel.ActionsViewModel;
+
+import java.io.File;
 
 public class MainView extends VBox {
 
@@ -68,6 +71,13 @@ public class MainView extends VBox {
     private final Button loadBtn = new Button("Charger");
     private final Button executeBtn = new Button("Executer");
 
+    private final MenuBar menuBar = new MenuBar();
+    private final Menu menu = new Menu("File");
+    private final MenuItem menuNew = new MenuItem("New...");
+    private final MenuItem menuOpen = new MenuItem("Open...");
+    private final MenuItem menuSaveAs = new MenuItem("Save As...");
+    private final MenuItem menuExit = new MenuItem("Exit");
+
     public MainView(ActionsViewModel actionsViewModel) {
         this.vm = actionsViewModel;
         actions.setItems(vm.getActions());
@@ -83,6 +93,7 @@ public class MainView extends VBox {
         configSelectionModels();
         drawGrid();
         drawTurtle(250,250,0);
+        menuEvent();
     }
 
     public void configLayouts() {
@@ -101,9 +112,41 @@ public class MainView extends VBox {
         sceneBox.getChildren().addAll(scenePane);
         sceneBox.getChildren().addAll(loadBtn,executeBtn);
 
+        menu.getItems().addAll(menuNew, menuOpen, menuSaveAs, menuExit);
+        menuBar.getMenus().add(menu);
+        menuBarBox.getChildren().add(menuBar);
+
         labelsBox.getChildren().addAll(actionsLabel, programLabel,sceneLabel);
         bodyBox.getChildren().addAll(actionsBox, programBox, sceneBox);
         this.getChildren().addAll(btnFile,labelsBox, bodyBox);
+    }
+
+    public void menuEvent() {
+        menuNew.setOnAction(e -> {
+            vm.newProgram();
+            refreshScene();
+        });
+        menuOpen.setOnAction(e -> openFile());
+        menuSaveAs.setOnAction(e -> saveAs());
+        menuExit.setOnAction(e -> vm.exitProgram());
+    }
+    private FileChooser myFileChooser(String title) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(title);
+        fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Scratch files", "*.src"));
+        return fileChooser;
+    }
+
+    public void openFile() {
+        File selectedFile = myFileChooser("Ouvrir").showOpenDialog(this.getScene().getWindow());
+        vm.openFile(selectedFile);
+        refreshScene();
+    }
+
+    public void saveAs() {
+        File selectedFile = myFileChooser("Enregistrer sous").showSaveDialog(this.getScene().getWindow());
+        vm.saveFileAs(selectedFile);
     }
 
     public void style() {

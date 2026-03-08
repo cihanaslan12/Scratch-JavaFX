@@ -20,4 +20,5 @@ public abstract class Action implements Commande {
     public abstract boolean isEditable();
     public abstract String unite();
     public abstract String detailActionLabel();
+    public abstract String stringForSave();
 }
