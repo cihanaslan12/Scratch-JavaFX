@@ -49,7 +49,6 @@ public class MainView extends VBox {
     // Pour aligner les boutons horizontalement
     private final HBox prgmBtnsHbox = new HBox();
     // Pour les détails de l'action
-    // private final HBox editBox = new HBox();
 
     private final HBox innerEditBox = new HBox();
     private final TextField input = new TextField();
@@ -107,6 +106,7 @@ public class MainView extends VBox {
         prgmInnerVbox.getChildren().addAll(prgmBtnsHbox, actionDetails);
         programBox.getChildren().addAll(program, prgmInnerVbox);
         errLbl.setVisible(false);
+
         // monde
         sceneBox.getChildren().addAll(scenePane);
         sceneBox.getChildren().addAll(loadBtn,executeBtn);
@@ -159,7 +159,6 @@ public class MainView extends VBox {
         programLabel.setPadding(new Insets(5,340,5,0));
         prgmBtnsHbox.setSpacing(15);
 
-//        bodyBox.setAlignment(Pos.CENTER);
         bodyBox.setSpacing(30);
         bodyBox.setPadding(new Insets(5,10,20,10));
         // style des actions de base
@@ -192,10 +191,6 @@ public class MainView extends VBox {
             vm.loadOrReset();
             refreshScene();
         });
-       /* executeBtn.setOnAction( e -> {
-            vm.execute();
-            refreshScene();
-        });*/
         executeBtn.setOnAction(e -> {
             vm.execOrNext();
             refreshScene();
@@ -227,7 +222,6 @@ public class MainView extends VBox {
 
         program.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.vm.programIndexProperty().setValue(newVal.intValue());
-            // System.out.println(vm.ActionProperty());
         });
         startLbl.textProperty().bind(
                 Bindings.when(vm.ActionProperty().isNull())

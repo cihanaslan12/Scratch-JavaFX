@@ -5,7 +5,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 public class Move extends Action {
 
-    // private int distance;
     private final IntegerProperty distance = new SimpleIntegerProperty();
     private final  String detailActionLabel = "Avancer de";
     private static int DEFAULT_DISTANCE = 30;
@@ -22,8 +21,6 @@ public class Move extends Action {
         monde.addSegment(s);
 
     }
-
-
 
     @Override
     public boolean isEditable() {

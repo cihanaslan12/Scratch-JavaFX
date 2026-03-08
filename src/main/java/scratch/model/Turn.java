@@ -4,12 +4,11 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
 public class Turn extends Action{
-    // private final int angle;
+
     private final IntegerProperty angle = new SimpleIntegerProperty();
     private static final int DEFAULT_ANGLE = 90;
     private final boolean left;
     private  String detailActionLabel = "";
-
 
     public Turn( boolean left) {
             this.left = left;
@@ -59,7 +58,6 @@ public class Turn extends Action{
         detailActionLabel = left ? "Angle vers la gauche " : "Angle vers la droite";
         return detailActionLabel;
     }
-
 
     @Override
     public Action copyActionForProgram() {

@@ -58,7 +58,6 @@ public class ActionsViewModel {
         );
 
         actionProperty.addListener((obs, oldVal, newVal) -> {
-
             boundParam = null;
 
             if (newVal == null) {
@@ -72,13 +71,11 @@ public class ActionsViewModel {
                 isValidInput.set(true);
                 return;
             }
-
             boundParam = newVal.parameterProperty();
             parameterProperty.set(boundParam.get());
 
             isValidInput.set(newVal.isValidparametre(parameterProperty.get()));
         });
-
         parameterProperty.addListener((obs, oldVal, newVal) -> {
 
             Action action = actionProperty.get();
@@ -86,7 +83,6 @@ public class ActionsViewModel {
             if (action == null || !action.isEditable() || boundParam == null) {
                 return;
             }
-
             boolean valid = action.isValidparametre(newVal.intValue());
             isValidInput.set(valid);
 
@@ -96,87 +92,87 @@ public class ActionsViewModel {
         });
     }
 
-        public BooleanBinding canAdd () {
+    public BooleanBinding canAdd () {
             return actionIndex.greaterThanOrEqualTo(0);
-        }
+    }
 
-        public BooleanBinding canUp () {
+    public BooleanBinding canUp () {
             return programIndex.greaterThan(0);
-        }
+    }
 
-        public BooleanBinding canDown () {
+    public BooleanBinding canDown () {
             return Bindings.createBooleanBinding(() -> {
                 int idx = programIndex.get();
                 return idx >= 0 && idx < choosenActions.getProgram().size() - 1;
             }, programIndex, choosenActions.getProgram());
-        }
-        public BooleanBinding canDuplicate () {
+    }
+    public BooleanBinding canDuplicate () {
             return programIndex.greaterThanOrEqualTo(0);
-        }
-        public BooleanBinding canDelete () {
+    }
+    public BooleanBinding canDelete () {
             return programIndex.greaterThanOrEqualTo(0);
-        }
-        public BooleanBinding canClear () {
+    }
+    public BooleanBinding canClear () {
             return Bindings.size(choosenActions.getProgram()).greaterThan(0);
-        }
-        public BooleanBinding canRun () {
+    }
+    public BooleanBinding canRun () {
             return Bindings.createBooleanBinding(() -> {
                 int size = choosenActions.getProgram().size();
                 return loaded.get() && size > 0 && execIdx.get() < size;
             }, loaded, execIdx, choosenActions.getProgram());
-        }
-        public BooleanBinding canLoad () {
+    }
+    public BooleanBinding canLoad () {
             return Bindings.createBooleanBinding(() ->
                             !choosenActions.getProgram().isEmpty() && isPenInstructionValid(),
                     choosenActions.getProgram()
             );
-        }
+    }
 
-        public void addAction() {
+    public void addAction() {
             int idx = actionIndex.get();
             choosenActions.addAction(idx);
             invalidateProgram();
-        }
+    }
 
-        public void up () {
+    public void up () {
             int idx = programIndex.get();
             if (idx > 0 && idx < choosenActions.getProgram().size()) {
                 choosenActions.up(idx);
                 programIndex.set(idx - 1);
                 invalidateProgram();
             }
-        }
+    }
 
-        public void down () {
+    public void down () {
             int idx = programIndex.get();
             if (idx < choosenActions.getProgram().size()) {
                 choosenActions.down(idx);
                 programIndex.set(idx + 1);
                 invalidateProgram();
             }
-        }
+    }
 
-        public void duplicate () {
+    public void duplicate () {
             int idx = programIndex.get();
             choosenActions.duplicate(idx);
             invalidateProgram();
-        }
+    }
 
-        public void delete () {
+    public void delete () {
             int idx = programIndex.get();
             if (idx >= 0 && idx < choosenActions.getProgram().size()) {
                 choosenActions.remove(idx);
                 invalidateProgram();
             }
-        }
+    }
 
-        public void clear () {
+    public void clear () {
             choosenActions.clear();
             invalidateProgram();
-        }
+    }
 
 
-        public void loadOrReset () {
+    public void loadOrReset () {
             if (!choosenActions.getProgram().isEmpty()) {
                 monde.reset();
                 execIdx.set(0);
@@ -188,7 +184,7 @@ public class ActionsViewModel {
                 loadButtonText.set("Ré-initialiser");
                 runButtonText.set("Executer");
             }
-        }
+    }
 
     public void execOrNext() {
         int size = choosenActions.getProgram().size();
@@ -212,93 +208,44 @@ public class ActionsViewModel {
         }
     }
 
-        public IntegerProperty actionIndexProperty () {
+    public IntegerProperty actionIndexProperty () {
             return actionIndex;
-        }
-        public IntegerProperty programIndexProperty () {
+    }
+    public IntegerProperty programIndexProperty () {
             return programIndex;
-        }
+    }
 
-        public ObjectProperty<Action> ActionProperty() {
+    public ObjectProperty<Action> ActionProperty() {
             return actionProperty;
-        }
-        public StringBinding startLblProperty () {
+    }
+    public StringBinding startLblProperty () {
             return Bindings.createStringBinding(
-                    () -> {
+                   () -> {
                         Action action = actionProperty.get();
                         return action == null ? "" : action.detailActionLabel();
-                    }, actionProperty);
-        }
+                   }, actionProperty);
+    }
         public StringBinding endLblProperty () {
             return Bindings.createStringBinding(() -> {
                 Action action = actionProperty.get();
                 return action == null ? "" : actionProperty.get().unite();
             }, actionProperty);
         }
-        public IntegerProperty inputProperty () {
+    public IntegerProperty inputProperty () {
             return parameterProperty;
-        }
-        public IntegerProperty parameterProperty() {
+    }
+    public IntegerProperty parameterProperty() {
             return parameterProperty;
-        }
-        public ReadOnlyBooleanProperty isValidInputProperty() {
+    }
+    public ReadOnlyBooleanProperty isValidInputProperty() {
             return isValidInput;
-        }
-        public BooleanBinding canEdit () {
-            return Bindings.createBooleanBinding(() -> {
-                Action action = actionProperty.get();
-                return action != null && action.isEditable();
-            }, actionProperty);
-        }
-
-
-        public ObservableList<Action> getActions () {
-            return ActionList.getActionList();
-        }
-
-        public ObservableList<Action> getProgramActions () {
-            return choosenActions.getProgram();
-        }
-        public Monde getMonde () {
-            return monde;
-        }
-        public BooleanProperty loadedProperty () {
-            return loaded;
-        }
-        public IntegerProperty highlightIdxProperty () {
-            return highlightIdx;
-        }
-        public StringProperty runButtonTextProperty () {
-            return runButtonText;
-        }
-        public StringProperty loadButtonTextProperty () {
-            return loadButtonText;
-        }
-        private void invalidateProgram () {
-            loaded.set(false);
-            stepping.set(false);
-            execIdx.set(0);
-            highlightIdx.set(-1);
-            loadButtonText.set("Charger");
-            runButtonText.set("Executer");
-        }
-        private boolean isPenInstructionValid () {
-            boolean penDownState = true; // abaisser de base
-
-            for (Action action : choosenActions.getProgram()) {
-                if (action instanceof Pen pen) {
-                    boolean wantDown = pen.isStyloDown();
-
-                    if (wantDown == penDownState) {
-                        return false; // règle métier FAQ
-                    }
-                    penDownState = wantDown;
-                }
-
-            }
-            return true;
-        }
-
+    }
+    public BooleanBinding canEdit () {
+        return Bindings.createBooleanBinding(() -> {
+            Action action = actionProperty.get();
+            return action != null && action.isEditable();
+        }, actionProperty);
+    }
     public void newProgram() {
         choosenActions.clear();
         monde.reset();
@@ -342,10 +289,57 @@ public class ActionsViewModel {
         }
 
     }
-
     public void exitProgram() {
         Platform.exit();
     }
+
+    public ObservableList<Action> getActions () {
+            return ActionList.getActionList();
+    }
+    public ObservableList<Action> getProgramActions () {
+            return choosenActions.getProgram();
+    }
+    public Monde getMonde () {
+            return monde;
+    }
+    public BooleanProperty loadedProperty () {
+            return loaded;
+    }
+    public IntegerProperty highlightIdxProperty () {
+            return highlightIdx;
+    }
+    public StringProperty runButtonTextProperty () {
+            return runButtonText;
+    }
+    public StringProperty loadButtonTextProperty () {
+        return loadButtonText;
+    }
+
+   private void invalidateProgram () {
+        loaded.set(false);
+        stepping.set(false);
+        execIdx.set(0);
+        highlightIdx.set(-1);
+        loadButtonText.set("Charger");
+        runButtonText.set("Executer");
+   }
+
+   private boolean isPenInstructionValid () {
+        boolean penDownState = true; // abaisser de base
+
+       for (Action action : choosenActions.getProgram()) {
+           if (action instanceof Pen pen) {
+               boolean wantDown = pen.isStyloDown();
+
+               if (wantDown == penDownState) {
+                   return false; // règle métier FAQ
+               }
+                   penDownState = wantDown;
+                }
+
+            }
+       return true;
+        }
 }
 
 

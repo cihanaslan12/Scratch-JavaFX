@@ -1,15 +1,9 @@
 package scratch;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import scratch.model.*;
-import scratch.view.ActionsView;
 import scratch.view.MainView;
 import scratch.viewmodel.ActionsViewModel;
 

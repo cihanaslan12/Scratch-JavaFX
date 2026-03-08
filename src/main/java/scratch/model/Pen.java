@@ -7,7 +7,6 @@ public class Pen extends Action {
     private final boolean styloDown; // true = abaisser, false = lever
     private String detailActionLabel = "";
 
-
     public Pen(boolean styloDown) {
         this.styloDown = styloDown;
     }

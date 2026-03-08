@@ -4,8 +4,6 @@ import javafx.beans.property.IntegerProperty;
 
 public abstract class Action implements Commande {
 
-    private Personnage personnage;
-
     private boolean inProgram = false;
 
     public boolean actionForProgram() {
