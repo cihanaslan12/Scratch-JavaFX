@@ -23,47 +23,73 @@ public class ActionsViewModel {
     private final IntegerProperty highlightIdx = new SimpleIntegerProperty(-1); // ligne surligné du prog
     private final StringProperty loadButtonText = new SimpleStringProperty("Charger");
     private final StringProperty runButtonText = new SimpleStringProperty("Executer");
-    private final ObjectProperty<Action> commandeProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Action> ActionProperty = new SimpleObjectProperty<>();
     private final IntegerProperty parameterProperty = new SimpleIntegerProperty();
     private IntegerProperty boundParam = null;
+    private BooleanProperty isValidInput = new SimpleBooleanProperty(true);
 
     public ActionsViewModel(Programme choosenActions, Monde monde) {
 
-            this.choosenActions = choosenActions;
-            this.monde = monde;
+        this.choosenActions = choosenActions;
+        this.monde = monde;
 
-            this.choosenActions.getProgram().addListener((ListChangeListener<Action>) c -> {
-                loaded.set(false);
-                stepping.set(false);
-                execIdx.set(0);
-                highlightIdx.set(-1);
-                loadButtonText.set("Charger");
-                runButtonText.set("Executer");
-            });
+        this.choosenActions.getProgram().addListener((ListChangeListener<Action>) c -> {
+            loaded.set(false);
+            stepping.set(false);
+            execIdx.set(0);
+            highlightIdx.set(-1);
+            loadButtonText.set("Charger");
+            runButtonText.set("Executer");
+        });
 
-            commandeProperty.bind(
-                    Bindings.createObjectBinding(() -> {
-                        int idx = programIndex.get();
-                        if (idx >= 0 && idx < choosenActions.getProgram().size()) {
-                            return choosenActions.getProgram().get(idx);
-                        } else {
-                            return null;
-                        }
-                    }, programIndex, choosenActions.getProgram())
-            );
-            commandeProperty.addListener((obs, oldVal, newVal) -> {
-                if (boundParam != null) {
-                    parameterProperty.unbindBidirectional(boundParam);
-                    boundParam = null;
-                }
-                if (newVal != null && newVal.parametreProperty() != null) {
-                    boundParam = newVal.parametreProperty();
-                    parameterProperty.bindBidirectional(boundParam);
-                } else {
-                    parameterProperty.set(0);
-                }
-            });
-        }
+        ActionProperty.bind(
+                Bindings.createObjectBinding(() -> {
+                    int idx = programIndex.get();
+                    if (idx >= 0 && idx < choosenActions.getProgram().size()) {
+                        return choosenActions.getProgram().get(idx);
+                    }
+                    return null;
+                }, programIndex, choosenActions.getProgram())
+        );
+
+        ActionProperty.addListener((obs, oldVal, newVal) -> {
+
+            boundParam = null;
+
+            if (newVal == null) {
+                parameterProperty.set(0);
+                isValidInput.set(false);
+                return;
+            }
+
+            if (!newVal.isEditable()) {
+                parameterProperty.set(0);
+                isValidInput.set(true);
+                return;
+            }
+
+            boundParam = newVal.parameterProperty();
+            parameterProperty.set(boundParam.get());
+
+            isValidInput.set(newVal.isValidparametre(parameterProperty.get()));
+        });
+
+        parameterProperty.addListener((obs, oldVal, newVal) -> {
+
+            Action action = ActionProperty.get();
+
+            if (action == null || !action.isEditable() || boundParam == null) {
+                return;
+            }
+
+            boolean valid = action.isValidparametre(newVal.intValue());
+            isValidInput.set(valid);
+
+            if (valid) {
+                boundParam.set(newVal.intValue());
+            }
+        });
+    }
 
         public BooleanBinding canAdd () {
             return actionIndex.greaterThanOrEqualTo(0);
@@ -217,30 +243,36 @@ public class ActionsViewModel {
             return programIndex;
         }
 
-        public ObjectProperty<Action> commandeProperty () {
-            return commandeProperty;
+        public ObjectProperty<Action> ActionProperty() {
+            return ActionProperty;
         }
         public StringBinding startLblProperty () {
             return Bindings.createStringBinding(
                     () -> {
-                        Action action = commandeProperty.get();
+                        Action action = ActionProperty.get();
                         return action == null ? "" : action.detailActionLabel();
-                    }, commandeProperty);
+                    }, ActionProperty);
         }
         public StringBinding endLblProperty () {
             return Bindings.createStringBinding(() -> {
-                Action action = commandeProperty.get();
-                return action == null ? "" : commandeProperty.get().unite();
-            }, commandeProperty);
+                Action action = ActionProperty.get();
+                return action == null ? "" : ActionProperty.get().unite();
+            }, ActionProperty);
         }
         public IntegerProperty inputProperty () {
             return parameterProperty;
         }
+        public IntegerProperty parameterProperty() {
+            return parameterProperty;
+        }
+        public ReadOnlyBooleanProperty isValidInputProperty() {
+            return isValidInput;
+        }
         public BooleanBinding canEdit () {
             return Bindings.createBooleanBinding(() -> {
-                Action action = commandeProperty.get();
+                Action action = ActionProperty.get();
                 return action != null && action.isEditable();
-            }, commandeProperty);
+            }, ActionProperty);
         }
 
 

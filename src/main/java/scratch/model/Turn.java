@@ -40,9 +40,15 @@ public class Turn extends Action{
         return angle.get();
     }
     @Override
-    public IntegerProperty parametreProperty() {
+    public IntegerProperty parameterProperty() {
         return angle;
     }
+
+    @Override
+    public Boolean isValidparametre(int param) {
+        return param >= 1 && param <= 180;
+    }
+
     @Override
     public String unite() {
         return "degrés";

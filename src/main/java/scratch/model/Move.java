@@ -2,8 +2,6 @@ package scratch.model;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 public class Move extends Action {
 
@@ -31,19 +29,18 @@ public class Move extends Action {
     public boolean isEditable() {
         return true;
     }
-    public void setDistance(int distance) {
-        if (distance >= 1 && distance <= 100) {
-            this.distance.set(distance);
-        } else {
-            throw new IllegalArgumentException("Distance is not valid !");
-        }
-    }
+
     public int getDistance() {
         return distance.get();
     }
     @Override
-    public IntegerProperty parametreProperty() {
+    public IntegerProperty parameterProperty() {
         return this.distance;
+    }
+
+    @Override
+    public Boolean isValidparametre(int param) {
+        return param >= 1 && param <= 100;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.beans.property.IntegerProperty;
+
 public abstract class Action implements Commande {
 
     private Personnage personnage;
@@ -13,5 +15,9 @@ public abstract class Action implements Commande {
         this.inProgram = inProgram;
     }
     public abstract  Action copyActionForProgram();
-
+    public abstract IntegerProperty parameterProperty();
+    public abstract Boolean isValidparametre(int param);
+    public abstract boolean isEditable();
+    public abstract String unite();
+    public abstract String detailActionLabel();
 }

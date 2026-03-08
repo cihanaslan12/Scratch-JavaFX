@@ -52,7 +52,7 @@ public class MainView extends VBox {
     private final TitledPane actionDetails = new TitledPane("Détails de l'action",input);
     private final Label startLbl = new Label();
     private final Label endLbl = new Label();
-    private final Label errLbl = new Label();
+    private final Label errLbl = new Label("Erreur valeur");
 
     private final Label actionsLabel = new Label("Palette d'actions");
     private final Label programLabel = new Label("Progrmme");
@@ -96,7 +96,7 @@ public class MainView extends VBox {
         actionDetails.setContent(innerEditBox);
         prgmInnerVbox.getChildren().addAll(prgmBtnsHbox, actionDetails);
         programBox.getChildren().addAll(program, prgmInnerVbox);
-
+        errLbl.setVisible(false);
         // monde
         sceneBox.getChildren().addAll(scenePane);
         sceneBox.getChildren().addAll(loadBtn,executeBtn);
@@ -127,6 +127,7 @@ public class MainView extends VBox {
 
         // style du box a l'interieur du programme
         prgmInnerVbox.setSpacing(15);
+        errLbl.setTextFill(Color.RED);
         // style du monde
         sceneBox.setPrefWidth(500);
         scenePane.setPrefSize(500, 500);
@@ -170,6 +171,7 @@ public class MainView extends VBox {
         btnClear.disableProperty().bind(vm.canClear().not());
         loadBtn.disableProperty().bind(vm.canLoad().not());
         executeBtn.disableProperty().bind(vm.canRun().not());
+        errLbl.visibleProperty().bind(vm.isValidInputProperty().not());
     }
 
     private void configSelectionModels() {
@@ -179,15 +181,20 @@ public class MainView extends VBox {
 
         program.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.vm.programIndexProperty().setValue(newVal.intValue());
-            // System.out.println(vm.commandeProperty());
+            // System.out.println(vm.ActionProperty());
         });
         startLbl.textProperty().bind(
-                Bindings.when(vm.commandeProperty().isNull())
+                Bindings.when(vm.ActionProperty().isNull())
                         .then("(aucune action sélectionnée)")
                         .otherwise(vm.startLblProperty())
         );
         endLbl.textProperty().bind(vm.endLblProperty());
         input.textProperty().bindBidirectional(vm.inputProperty(),new NumberStringConverter());
+        input.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal && !vm.isValidInputProperty().get()) {
+                vm.parameterProperty().set(vm.ActionProperty().get().parameterProperty().get());
+            }
+        });
         this.vm.programIndexProperty().addListener((obs, oldVal, newVal) -> {
             this.program.getSelectionModel().select(newVal.intValue());
         });

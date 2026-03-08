@@ -32,9 +32,15 @@ public class Pen extends Action {
     }
 
     @Override
-    public IntegerProperty parametreProperty() {
+    public IntegerProperty parameterProperty() {
         return null;
     }
+
+    @Override
+    public Boolean isValidparametre(int param) {
+        return null;
+    }
+
 
     @Override
     public String unite() {
