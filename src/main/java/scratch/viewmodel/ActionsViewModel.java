@@ -23,7 +23,7 @@ public class ActionsViewModel {
     private final IntegerProperty highlightIdx = new SimpleIntegerProperty(-1); // ligne surligné du prog
     private final StringProperty loadButtonText = new SimpleStringProperty("Charger");
     private final StringProperty runButtonText = new SimpleStringProperty("Executer");
-    private final ObjectProperty<Action> ActionProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Action> actionProperty = new SimpleObjectProperty<>();
     private final IntegerProperty parameterProperty = new SimpleIntegerProperty();
     private IntegerProperty boundParam = null;
     private BooleanProperty isValidInput = new SimpleBooleanProperty(true);
@@ -42,7 +42,7 @@ public class ActionsViewModel {
             runButtonText.set("Executer");
         });
 
-        ActionProperty.bind(
+        actionProperty.bind(
                 Bindings.createObjectBinding(() -> {
                     int idx = programIndex.get();
                     if (idx >= 0 && idx < choosenActions.getProgram().size()) {
@@ -52,13 +52,13 @@ public class ActionsViewModel {
                 }, programIndex, choosenActions.getProgram())
         );
 
-        ActionProperty.addListener((obs, oldVal, newVal) -> {
+        actionProperty.addListener((obs, oldVal, newVal) -> {
 
             boundParam = null;
 
             if (newVal == null) {
                 parameterProperty.set(0);
-                isValidInput.set(false);
+                isValidInput.set(true);
                 return;
             }
 
@@ -76,7 +76,7 @@ public class ActionsViewModel {
 
         parameterProperty.addListener((obs, oldVal, newVal) -> {
 
-            Action action = ActionProperty.get();
+            Action action = actionProperty.get();
 
             if (action == null || !action.isEditable() || boundParam == null) {
                 return;
@@ -184,35 +184,6 @@ public class ActionsViewModel {
                 runButtonText.set("Executer");
             }
         }
-       /* public void runButton () {
-            int size = choosenActions.getProgram().size();
-            if (loaded.get() && size > 0 && execIdx.get() < size) {
-                // premier clic sur Executer -> sélectionne la première ligne du prog
-                if (!stepping.get()) {
-                    stepping.set(true);
-                    runButtonText.set("Suivant");
-                    highlightIdx.set(0);
-                } else {
-                    // mode Suivant
-                    int i = execIdx.get();
-                    if (i >= 0 && i < size) {
-                       Action action  = choosenActions.getProgram().get(i);
-                        action.execute(monde);
-
-                        execIdx.set(i + 1);
-
-                        if (execIdx.get() < size) {
-                            highlightIdx.set(execIdx.get());
-                        } else {
-                            stepping.set(false);
-                            runButtonText.set("Executer");
-                            highlightIdx.set(size - 1);
-                        }
-
-                    }
-                }
-            }
-        }*/
 
     public void execOrNext() {
         int size = choosenActions.getProgram().size();
@@ -244,20 +215,20 @@ public class ActionsViewModel {
         }
 
         public ObjectProperty<Action> ActionProperty() {
-            return ActionProperty;
+            return actionProperty;
         }
         public StringBinding startLblProperty () {
             return Bindings.createStringBinding(
                     () -> {
-                        Action action = ActionProperty.get();
+                        Action action = actionProperty.get();
                         return action == null ? "" : action.detailActionLabel();
-                    }, ActionProperty);
+                    }, actionProperty);
         }
         public StringBinding endLblProperty () {
             return Bindings.createStringBinding(() -> {
-                Action action = ActionProperty.get();
-                return action == null ? "" : ActionProperty.get().unite();
-            }, ActionProperty);
+                Action action = actionProperty.get();
+                return action == null ? "" : actionProperty.get().unite();
+            }, actionProperty);
         }
         public IntegerProperty inputProperty () {
             return parameterProperty;
@@ -270,9 +241,9 @@ public class ActionsViewModel {
         }
         public BooleanBinding canEdit () {
             return Bindings.createBooleanBinding(() -> {
-                Action action = ActionProperty.get();
+                Action action = actionProperty.get();
                 return action != null && action.isEditable();
-            }, ActionProperty);
+            }, actionProperty);
         }
 
 

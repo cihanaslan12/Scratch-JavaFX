@@ -171,7 +171,7 @@ public class MainView extends VBox {
         btnClear.disableProperty().bind(vm.canClear().not());
         loadBtn.disableProperty().bind(vm.canLoad().not());
         executeBtn.disableProperty().bind(vm.canRun().not());
-        errLbl.visibleProperty().bind(vm.isValidInputProperty().not());
+        errLbl.visibleProperty().bind(vm.canEdit().and(vm.isValidInputProperty().not()));
     }
 
     private void configSelectionModels() {
@@ -190,6 +190,9 @@ public class MainView extends VBox {
         );
         endLbl.textProperty().bind(vm.endLblProperty());
         input.textProperty().bindBidirectional(vm.inputProperty(),new NumberStringConverter());
+        vm.inputProperty().addListener((obs, oldVal, newVal) -> {
+            program.refresh();
+        });
         input.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal && !vm.isValidInputProperty().get()) {
                 vm.parameterProperty().set(vm.ActionProperty().get().parameterProperty().get());
