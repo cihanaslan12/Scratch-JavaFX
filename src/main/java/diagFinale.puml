@@ -1,0 +1,128 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+left to right direction
+
+package "view" {
+  class MainView {
+  actions : ListView<Action>
+  program : ListView<Action>
+  scenePane : Pane
+  }
+
+}
+
+package "viewmodel" {
+  class ActionsViewModel {
+    - choosenActions : Programme
+    - monde : Monde
+    - execIdx : IntegerProperty
+    - loaded : BooleanProperty
+    - stepping : BooleanProperty
+    - highlightIdx : IntegerProperty
+    + addAction()
+    + up()
+    + down()
+    + duplicate()
+    + delete()
+    + clear()
+    + loadOrReset()
+    + execOrNext()
+  }
+}
+
+package "model" {
+  interface Commande {
+    + execute(monde : Monde)
+  }
+
+  abstract class Action {
+    - inProgram : boolean
+
+    + isEditable() : boolean
+    + parametreProperty() : IntegerProperty
+    + unite() : String
+    + detailActionLabel() : String
+  }
+
+  class Move {
+    - distance : IntegerProperty
+    + execute(monde : Monde)
+  }
+
+  class Turn {
+    - angle : IntegerProperty
+    - left : boolean
+    + execute(monde : Monde)
+  }
+
+  class Pen {
+    - styloDown : boolean
+    + execute(monde : Monde)
+  }
+
+  class ActionList {
+  - actionList :ObservableList<Action>
+
+  +getActionList() : ObservableList<Action>
+  }
+
+  class Programme {
+    - program : ObservableList<Action>
+    + addAction(idx : int)
+    + up(index : int)
+    + down(idx : int)
+    + duplicate(idx : int)
+    + remove(idx : int)
+    + clear()
+    + executeNext(execIdx : int, monde : Monde) : int
+  }
+
+  class Monde {
+    - segments : ObservableList<Segment>
+    - personnage : Personnage
+    - startPos : Point
+    - startAngle : int
+    + addSegment(s : Segment)
+    + reset()
+  }
+
+  class Personnage {
+    - angle : int
+    - position : Point
+    - penDown : boolean
+    + penUp()
+    + penDown()
+    + turnLeft(degrees : int)
+    + turnRight(degrees : int)
+    + moveForward(distance : int) : Segment
+  }
+
+  class Segment {
+    - start : Point
+    - end : Point
+  }
+
+  class Point {
+    - x : double
+    - y : double
+  }
+}
+
+MainView --> ActionsViewModel
+ActionsViewModel --> Programme
+ActionsViewModel --> Monde
+
+Commande <|.. Action
+Action <|-- Move
+Action <|-- Turn
+Action <|-- Pen
+
+ActionList ..> Action
+Programme *-- "0..*" Action
+Monde *-- "0..*" Segment
+Monde *-- Personnage
+Personnage *-- Point
+Segment *-- Point
+
+@enduml
