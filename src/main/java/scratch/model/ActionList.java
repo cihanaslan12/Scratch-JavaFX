@@ -6,9 +6,14 @@ import javafx.collections.ObservableList;
 public class ActionList {
 
     private static final ObservableList<Action> actionList = FXCollections.observableArrayList(
+      new Variable(""),
+      new Assignation(),
+      new ChangeValueVariable(),
       new Move(30),
       new Turn(true),          // Tourner gauche
       new Turn(false),        // Tourner droite
+      new Repeat(true),
+      new Repeat(false),
       new Pen(false),   // Lever stylo
       new Pen(true)     // Abaisser le stylo
     );
