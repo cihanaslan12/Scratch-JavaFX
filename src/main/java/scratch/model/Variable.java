@@ -22,7 +22,7 @@ public class Variable extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return null;
+        return new Variable(this.name.get());
     }
 
     @Override

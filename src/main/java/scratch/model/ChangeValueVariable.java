@@ -27,7 +27,7 @@ public class ChangeValueVariable extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return null;
+        return new ChangeValueVariable();
     }
 
     @Override
@@ -69,8 +69,9 @@ public class ChangeValueVariable extends Action {
         if(!this.actionForProgram()) {
             return "Inc/Dec variable";
         }
-        String s = value.get() != 0 ? value.toString() : name.get();
-        return "Inc/Dec varaible : " + name.get() + " de " + s;
+        String valString = value.get() != 0 ? value.toString() + "de" : "";
+        String nameString = name.get() != null ? name.get() : "";
+        return "Inc/Dec varaible : " + nameString + valString;
 
     }
 }

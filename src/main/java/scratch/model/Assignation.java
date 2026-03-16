@@ -26,7 +26,7 @@ public class Assignation extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return null;
+        return new Assignation(this.nameVariable.get(),this.value.get());
     }
 
     @Override
@@ -69,6 +69,7 @@ public class Assignation extends Action {
             return "Assignation";
         }
         String s = value.get() != 0 ? value.toString() : nameVariable.get();
-        return "Assignation : " + nameVariable + " = " + s;
+        String symbol = nameVariable.toString().isEmpty() ? "" : " = ";
+        return "Assignation : " + nameVariable.get() + symbol + s;
     }
 }

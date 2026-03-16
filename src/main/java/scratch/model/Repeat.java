@@ -18,7 +18,7 @@ public class Repeat extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return null;
+        return new Repeat(loop);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class Repeat extends Action {
         if(!actionForProgram()) {
             return loop ? "Répéter" : "Fin répéter";
         }
-        String s = value.get() != 0 ? value.toString() : name.get();
+        String s = value.get() != 0 ? value.toString() : String.valueOf(4); // Par défaut c'est 4
         return loop ? "Répéter " + s + " fois" : "Fin répéter";
     }
 }
