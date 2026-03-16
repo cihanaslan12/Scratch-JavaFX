@@ -27,6 +27,16 @@ public class Monde {
     public ObservableList<Segment> getSegments() {
         return FXCollections.unmodifiableObservableList(segments);
     }
+    public double getPosPersonnageX() {
+        return personnage.getX();
+    }
+    public double getPosPersonnageY() {
+        return personnage.getY();
+    }
+    public double getPersonnageAngle() {
+        return personnage.getAngle();
+    }
+
     public void reset() {
         segments.clear();
         personnage.setPosition(new Point(startPos.getX(), startPos.getY()));

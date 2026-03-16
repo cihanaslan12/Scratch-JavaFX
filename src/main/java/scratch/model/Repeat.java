@@ -17,6 +17,11 @@ public class Repeat extends Action {
     }
 
     @Override
+    public Type getType() {
+        return Type.REPEAT;
+    }
+
+    @Override
     public Action copyActionForProgram() {
         return new Repeat(loop);
     }

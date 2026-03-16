@@ -19,6 +19,8 @@ public class ActionsViewModel {
 
     private final Programme choosenActions;
     private final Monde monde;
+    private  Type type;
+    private Pen pen;
 
     private final IntegerProperty actionIndex = new SimpleIntegerProperty(-1),
             programIndex = new SimpleIntegerProperty(-1);
@@ -123,7 +125,7 @@ public class ActionsViewModel {
     }
     public BooleanBinding canLoad () {
             return Bindings.createBooleanBinding(() ->
-                            !choosenActions.getProgram().isEmpty() && isPenInstructionValid(),
+                            !choosenActions.getProgram().isEmpty() && choosenActions.isPenInstructionValid(),
                     choosenActions.getProgram()
             );
     }
@@ -301,6 +303,18 @@ public class ActionsViewModel {
     }
     public Monde getMonde () {
             return monde;
+    }
+    public ObservableList<Segment> getSegments() {
+        return monde.getSegments();
+    }
+    public double getPosX(){
+        return monde.getPosPersonnageX();
+    }
+    public double getPosY() {
+        return monde.getPosPersonnageY();
+    }
+    public double getAngle() {
+        return monde.getPersonnageAngle();
     }
     public BooleanProperty loadedProperty () {
             return loaded;

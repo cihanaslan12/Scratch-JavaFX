@@ -25,6 +25,11 @@ public class VarAssignment extends Action {
     }
 
     @Override
+    public Type getType() {
+        return Type.VAR_ASSIGNMENT;
+    }
+
+    @Override
     public Action copyActionForProgram() {
         return new VarAssignment(this.nameVariable.get(),this.value.get());
     }

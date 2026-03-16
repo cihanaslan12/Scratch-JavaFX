@@ -60,6 +60,11 @@ public class Turn extends Action{
     }
 
     @Override
+    public Type getType() {
+        return Type.TURN;
+    }
+
+    @Override
     public Action copyActionForProgram() {
         return new Turn(this.getAngle(), this.left);
     }

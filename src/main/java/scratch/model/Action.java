@@ -12,6 +12,14 @@ public abstract class Action implements Commande {
     public void setInProgram(boolean inProgram) {
         this.inProgram = inProgram;
     }
+    public boolean isPenAction() {
+        return false;
+    }
+
+    public boolean getPenState() {
+        return false;
+    }
+    public abstract Type getType();
     public abstract  Action copyActionForProgram();
     public abstract IntegerProperty parameterProperty();
     public abstract Boolean isValidparametre(int param);

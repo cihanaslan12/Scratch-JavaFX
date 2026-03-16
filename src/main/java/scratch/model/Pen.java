@@ -26,6 +26,20 @@ public class Pen extends Action {
     }
 
     @Override
+    public boolean getPenState() {
+        return isStyloDown();
+    }
+
+    @Override
+    public boolean isPenAction() {
+        return true;
+    }
+    @Override
+    public Type getType() {
+        return Type.PEN;
+    }
+
+    @Override
     public boolean isEditable() {
         return false;
     }

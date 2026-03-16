@@ -26,6 +26,11 @@ public class IncrementVariable extends Action {
 
 
     @Override
+    public Type getType() {
+        return Type.VAR_INCREMENT;
+    }
+
+    @Override
     public Action copyActionForProgram() {
         return new IncrementVariable();
     }

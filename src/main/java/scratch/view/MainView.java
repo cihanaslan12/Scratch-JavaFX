@@ -295,7 +295,7 @@ public class MainView extends VBox {
         scenePane.getChildren().clear();
         drawGrid();
         // dessiner les segments
-        for (var s : vm.getMonde().getSegments()) {
+        for (var s : vm.getSegments()) {
             Line line = new Line(
                     s.getStart().getX(), s.getStart().getY(),
                     s.getEnd().getX(), s.getEnd().getY()
@@ -305,18 +305,19 @@ public class MainView extends VBox {
             scenePane.getChildren().add(line);
         }
         // dessiner la tortue à sa position actuelle
-        double x = vm.getMonde().getPersonnage().getPosition().getX();
-        double y = vm.getMonde().getPersonnage().getPosition().getY();
-        double angle = vm.getMonde().getPersonnage().getAngle();
+        double x = vm.getPosX();
+        double y = vm.getPosY();
+        double angle = vm.getAngle();
 
         drawTurtle(x, y, angle);
     }
     private Color actionColor(Action action) {
-        if(action instanceof Move) return Color.DARKBLUE;
-        if(action instanceof Turn) return Color.RED;
-        if(action instanceof Pen)  return Color.GREEN;
-
-        return Color.BLACK;
+        switch (action.getType()) {
+            case MOVE: return Color.DARKBLUE;
+            case TURN: return Color.RED;
+            case PEN:  return Color.GREEN;
+            default:   return Color.BLACK;
+        }
     }
     private void setupColoredCells() {
 

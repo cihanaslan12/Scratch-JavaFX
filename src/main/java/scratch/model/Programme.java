@@ -65,6 +65,25 @@ public class Programme {
         }
         return execIdx;
     }
+    public boolean isPenInstructionValid() {
+        boolean penDownState = true;
+
+        for (Action action : getProgram()) {
+
+            if (action.isPenAction()) {
+
+                boolean wantDown = action.getPenState();
+
+                if (wantDown == penDownState) {
+                    return false;
+                }
+
+                penDownState = wantDown;
+            }
+        }
+
+        return true;
+    }
 
     public void addActionForFile(Action action) {
         program.add(action);

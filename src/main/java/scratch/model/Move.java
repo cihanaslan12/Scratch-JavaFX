@@ -51,6 +51,11 @@ public class Move extends Action {
     }
 
     @Override
+    public Type getType() {
+        return Type.MOVE;
+    }
+
+    @Override
     public Action copyActionForProgram() {
         return new Move(this.getDistance());
     }

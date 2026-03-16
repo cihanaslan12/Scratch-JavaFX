@@ -21,6 +21,11 @@ public class VarDeclaration extends Action {
 
 
     @Override
+    public Type getType() {
+        return Type.VAR_DECLARATION;
+    }
+
+    @Override
     public Action copyActionForProgram() {
         return new VarDeclaration(this.name.get());
     }
