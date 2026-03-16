@@ -6,9 +6,9 @@ import javafx.collections.ObservableList;
 public class ActionList {
 
     private static final ObservableList<Action> actionList = FXCollections.observableArrayList(
-      new Variable(""),
-      new Assignation(),
-      new ChangeValueVariable(),
+      new VarDeclaration(""),
+      new VarAssignment(),
+      new IncrementVariable(),
       new Move(30),
       new Turn(true),          // Tourner gauche
       new Turn(false),        // Tourner droite

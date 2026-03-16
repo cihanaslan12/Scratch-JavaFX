@@ -5,29 +5,24 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class ChangeValueVariable extends Action {
-
+public class VarDeclaration extends Action {
     private StringProperty name = new SimpleStringProperty();
     private IntegerProperty value = new SimpleIntegerProperty();
+    private static final int DEFAULT_VALUE = 0;
 
-    private  Action action;
-
-    public ChangeValueVariable() {
-
-    }
-
-   /* public ChangeValueVariable(Action action1, Action action2) {
+    public VarDeclaration(String name) {
+        this.name.set(name);
 
     }
-    public ChangeValueVariable(Action action, int value) {
-        this.name.set(action);
+    public VarDeclaration(String name, int value) {
         this.value.set(value);
-    }*/
+        this.name.set(name);
+    }
 
 
     @Override
     public Action copyActionForProgram() {
-        return new ChangeValueVariable();
+        return new VarDeclaration(this.name.get());
     }
 
     @Override
@@ -66,12 +61,6 @@ public class ChangeValueVariable extends Action {
     }
     @Override
     public String toString() {
-        if(!this.actionForProgram()) {
-            return "Inc/Dec variable";
-        }
-        String valString = value.get() != 0 ? value.toString() + "de" : "";
-        String nameString = name.get() != null ? name.get() : "";
-        return "Inc/Dec varaible : " + nameString + valString;
-
+        return "Déclaration variable" + name.get();
     }
 }

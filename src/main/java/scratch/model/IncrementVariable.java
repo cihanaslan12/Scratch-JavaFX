@@ -5,28 +5,29 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class Assignation extends Action {
+public class IncrementVariable extends Action {
 
-    private StringProperty nameVariable = new SimpleStringProperty();
+    private StringProperty name = new SimpleStringProperty();
     private IntegerProperty value = new SimpleIntegerProperty();
 
-    public Assignation() {
-        this.nameVariable.set("");
-        this.value.set(0);
-    }
-    public Assignation(String name,int value) {
-        this.nameVariable.set(name);
-        this.value.set(value);
+    private  Action action;
+
+    public IncrementVariable() {
 
     }
-    public Assignation(String name, Action action) {
-        this.nameVariable.set(name);
-        this.value.set(action.parameterProperty().get());
+
+   /* public ChangeValueVariable(Action action1, Action action2) {
+
     }
+    public ChangeValueVariable(Action action, int value) {
+        this.name.set(action);
+        this.value.set(value);
+    }*/
+
 
     @Override
     public Action copyActionForProgram() {
-        return new Assignation(this.nameVariable.get(),this.value.get());
+        return new IncrementVariable();
     }
 
     @Override
@@ -66,10 +67,11 @@ public class Assignation extends Action {
     @Override
     public String toString() {
         if(!this.actionForProgram()) {
-            return "Assignation";
+            return "Inc/Dec variable";
         }
-        String s = value.get() != 0 ? value.toString() : nameVariable.get();
-        String symbol = nameVariable.toString().isEmpty() ? "" : " = ";
-        return "Assignation : " + nameVariable.get() + symbol + s;
+        String valString = value.get() != 0 ? value.toString() + "de" : "";
+        String nameString = name.get() != null ? name.get() : "";
+        return "Inc/Dec varaible : " + nameString + valString;
+
     }
 }

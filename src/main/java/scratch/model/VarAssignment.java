@@ -5,24 +5,28 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class Variable extends Action {
-    private StringProperty name = new SimpleStringProperty();
+public class VarAssignment extends Action {
+
+    private StringProperty nameVariable = new SimpleStringProperty();
     private IntegerProperty value = new SimpleIntegerProperty();
-    private static final int DEFAULT_VALUE = 0;
 
-    public Variable(String name) {
-        this.name.set(name);
-
+    public VarAssignment() {
+        this.nameVariable.set("");
+        this.value.set(0);
     }
-    public Variable(String name,int value) {
+    public VarAssignment(String name, int value) {
+        this.nameVariable.set(name);
         this.value.set(value);
-        this.name.set(name);
-    }
 
+    }
+    public VarAssignment(String name, Action action) {
+        this.nameVariable.set(name);
+        this.value.set(action.parameterProperty().get());
+    }
 
     @Override
     public Action copyActionForProgram() {
-        return new Variable(this.name.get());
+        return new VarAssignment(this.nameVariable.get(),this.value.get());
     }
 
     @Override
@@ -61,6 +65,11 @@ public class Variable extends Action {
     }
     @Override
     public String toString() {
-        return "Déclaration variable" + name.get();
+        if(!this.actionForProgram()) {
+            return "Assignation";
+        }
+        String s = value.get() != 0 ? value.toString() : nameVariable.get();
+        String symbol = nameVariable.toString().isEmpty() ? "" : " = ";
+        return "Assignation : " + nameVariable.get() + symbol + s;
     }
 }
