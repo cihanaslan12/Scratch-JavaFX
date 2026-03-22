@@ -45,17 +45,6 @@ public class Pen extends Action {
     }
 
     @Override
-    public IntegerProperty parameterProperty() {
-        return null;
-    }
-
-    @Override
-    public Boolean isValidparametre(int param) {
-        return null;
-    }
-
-
-    @Override
     public String unite() {
         return "";
     }
@@ -70,6 +59,22 @@ public class Pen extends Action {
     public Action copyActionForProgram() {
         return new Pen(this.styloDown);
     }
+
+    @Override
+    public String getRawParameter() {
+        return "";
+    }
+
+    @Override
+    public void setRawParameter(String text) {
+
+    }
+
+    @Override
+    public boolean isValidParameter(String text) {
+        return false;
+    }
+
     @Override
     public String toString() {
         return styloDown ? "Abaisser le stylo" : "Lever le stylo";

@@ -24,16 +24,22 @@ public class ActionsViewModel {
 
     private final IntegerProperty actionIndex = new SimpleIntegerProperty(-1),
             programIndex = new SimpleIntegerProperty(-1);
+
     private final IntegerProperty execIdx = new SimpleIntegerProperty(0);
     private final BooleanProperty loaded = new SimpleBooleanProperty(false); // cliquer sur Charger
     private final BooleanProperty stepping = new SimpleBooleanProperty(false); // bouton executer en mode suivant
     private final IntegerProperty highlightIdx = new SimpleIntegerProperty(-1); // ligne surligné du prog
+
     private final StringProperty loadButtonText = new SimpleStringProperty("Charger");
     private final StringProperty runButtonText = new SimpleStringProperty("Executer");
+
     private final ObjectProperty<Action> actionProperty = new SimpleObjectProperty<>();
-    private final IntegerProperty parameterProperty = new SimpleIntegerProperty();
-    private IntegerProperty boundParam = null;
+
+    private final StringProperty parameterProperty = new SimpleStringProperty("");
+    private final StringProperty secondParameterProperty = new SimpleStringProperty("");
     private BooleanProperty isValidInput = new SimpleBooleanProperty(true);
+    private BooleanProperty isValidSecondInput = new SimpleBooleanProperty(true);
+
 
     public ActionsViewModel(Programme choosenActions, Monde monde) {
 
@@ -60,36 +66,58 @@ public class ActionsViewModel {
         );
 
         actionProperty.addListener((obs, oldVal, newVal) -> {
-            boundParam = null;
-
             if (newVal == null) {
-                parameterProperty.set(0);
+                parameterProperty.set("");
+                secondParameterProperty.set("");
                 isValidInput.set(true);
+                isValidSecondInput.set(true);
                 return;
             }
 
             if (!newVal.isEditable()) {
-                parameterProperty.set(0);
+                parameterProperty.set("");
+                secondParameterProperty.set("");
                 isValidInput.set(true);
+                isValidSecondInput.set(true);
                 return;
             }
-            boundParam = newVal.parameterProperty();
-            parameterProperty.set(boundParam.get());
 
-            isValidInput.set(newVal.isValidparametre(parameterProperty.get()));
+            parameterProperty.set(newVal.getRawParameter());
+            secondParameterProperty.set(newVal.getSecondParameter());
+            isValidInput.set(newVal.isValidParameter(parameterProperty.get()));
+            isValidSecondInput.set(newVal.isValidSecondParameter(secondParameterProperty.get()));
+            if (newVal.hasTwoParameters()) {
+                isValidSecondInput.set(newVal.isValidSecondParameter(secondParameterProperty.get()));
+            } else {
+                isValidSecondInput.set(true);
+            }
         });
         parameterProperty.addListener((obs, oldVal, newVal) -> {
-
             Action action = actionProperty.get();
 
-            if (action == null || !action.isEditable() || boundParam == null) {
+            if (action == null || !action.isEditable()) {
                 return;
             }
-            boolean valid = action.isValidparametre(newVal.intValue());
+
+            boolean valid = action.isValidParameter(newVal);
             isValidInput.set(valid);
 
             if (valid) {
-                boundParam.set(newVal.intValue());
+                action.setRawParameter(newVal);
+            }
+        });
+        secondParameterProperty.addListener((obs, oldVal, newVal) -> {
+            Action action = actionProperty.get();
+
+            if (action == null || !action.hasTwoParameters()) {
+                return;
+            }
+
+            boolean valid = action.isValidSecondParameter(newVal);
+            isValidSecondInput.set(valid);
+
+            if (valid) {
+                action.setSecondParameter(newVal);
             }
         });
     }
@@ -233,11 +261,12 @@ public class ActionsViewModel {
                 return action == null ? "" : actionProperty.get().unite();
             }, actionProperty);
         }
-    public IntegerProperty inputProperty () {
-            return parameterProperty;
+    public StringProperty inputProperty() {
+        return parameterProperty;
     }
-    public IntegerProperty parameterProperty() {
-            return parameterProperty;
+
+    public StringProperty parameterProperty() {
+        return parameterProperty;
     }
     public ReadOnlyBooleanProperty isValidInputProperty() {
             return isValidInput;
@@ -261,15 +290,16 @@ public class ActionsViewModel {
                 String command = scan.nextLine();
                 String[] parts = command.split(";");
                 String action = parts[0];
-                int val = Integer.parseInt(parts[1]);
 
                 Action newAction = null;
+
                 switch (action) {
-                    case "MOVE_FORWARD" -> newAction = (new Move(val));
-                    case "TURN_RIGHT" -> newAction = (new Turn(val, false));
-                    case "TURN_LEFT" -> newAction = (new Turn(val, true));
-                    case "PEN_UP" -> newAction = (new Pen(false));
-                    case "PEN_DOWN" -> newAction = (new Pen(true));
+                    case "MOVE_FORWARD" -> newAction = new Move(Integer.parseInt(parts[1]));
+                    case "TURN_RIGHT" -> newAction = new Turn(Integer.parseInt(parts[1]), false);
+                    case "TURN_LEFT" -> newAction = new Turn(Integer.parseInt(parts[1]), true);
+                    case "PEN_UP" -> newAction = new Pen(false);
+                    case "PEN_DOWN" -> newAction = new Pen(true);
+                    case "VAR_DECLARATION" -> newAction = new VarDeclaration(parts[1]);
                 }
                 newAction.setInProgram(true);
                 choosenActions.addActionForFile(newAction);
@@ -327,6 +357,14 @@ public class ActionsViewModel {
     }
     public StringProperty loadButtonTextProperty () {
         return loadButtonText;
+    }
+
+    public StringProperty secondInputProperty() {
+        return secondParameterProperty;
+    }
+
+    public ReadOnlyBooleanProperty isValidSecondInputProperty() {
+        return isValidSecondInput;
     }
 
    private void invalidateProgram () {

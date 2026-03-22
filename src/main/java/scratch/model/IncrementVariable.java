@@ -36,13 +36,18 @@ public class IncrementVariable extends Action {
     }
 
     @Override
-    public IntegerProperty parameterProperty() {
-        return null;
+    public String getRawParameter() {
+        return "";
     }
 
     @Override
-    public Boolean isValidparametre(int param) {
-        return null;
+    public void setRawParameter(String text) {
+
+    }
+
+    @Override
+    public boolean isValidParameter(String text) {
+        return false;
     }
 
     @Override

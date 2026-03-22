@@ -5,19 +5,27 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 public class Move extends Action {
 
-    private final IntegerProperty distance = new SimpleIntegerProperty();
+    private String value;
+   // private final IntegerProperty distance = new SimpleIntegerProperty();
     private final  String detailActionLabel = "Avancer de";
-    private static int DEFAULT_DISTANCE = 30;
+    private static String DEFAULT_DISTANCE = "30";
 
-    public Move(int distance) {
-        this.distance.set(distance);
+    public Move(String value) {
+        this.value = value;
+    }
+    public Move(int value) {
+        this.value = String.valueOf(value);
     }
     public Move() {
-        this.distance.set(DEFAULT_DISTANCE);
+        this.value = DEFAULT_DISTANCE;
+    }
+    public String getValue() {
+        return value;
     }
     @Override
     public void execute(Monde monde) {
-        Segment s = monde.getPersonnage().moveForward(distance.get());
+        int distance = monde.resolveValue(value);
+        Segment s = monde.getPersonnage().moveForward(distance);
         monde.addSegment(s);
 
     }
@@ -27,17 +35,28 @@ public class Move extends Action {
         return true;
     }
 
-    public int getDistance() {
-        return distance.get();
-    }
     @Override
-    public IntegerProperty parameterProperty() {
-        return this.distance;
+    public String getRawParameter() {
+        return value;
     }
 
     @Override
-    public Boolean isValidparametre(int param) {
-        return param >= 1 && param <= 100;
+    public void setRawParameter(String text) {
+        this.value = text;
+    }
+
+    @Override
+    public boolean isValidParameter(String text) {
+        if (text == null || text.isBlank()) {
+            return false;
+        }
+
+        if (text.matches("-?\\d+")) {
+            int val = Integer.parseInt(text);
+            return val >= 1 && val <= 100;
+        }
+
+        return VarDeclaration.isValidName(text);
     }
 
     @Override
@@ -57,18 +76,18 @@ public class Move extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return new Move(this.getDistance());
+        return new Move(this.value);
     }
     @Override
     public String toString() {
         if(!this.actionForProgram()) {
             return "Avancer de ";
         }
-        return "Avancer de " + getDistance();
+        return "Avancer de " + value;
     }
     @Override
     public String stringForSave() {
-        return "MOVE_FORWARD;" + getDistance();
+        return "MOVE_FORWARD;" + value;
     }
 
 }

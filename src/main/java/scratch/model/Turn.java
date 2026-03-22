@@ -5,47 +5,39 @@ import javafx.beans.property.SimpleIntegerProperty;
 
 public class Turn extends Action{
 
-    private final IntegerProperty angle = new SimpleIntegerProperty();
-    private static final int DEFAULT_ANGLE = 90;
+   // private final IntegerProperty angle = new SimpleIntegerProperty();
+    private String value;
+    private static final String DEFAULT_ANGLE = "90";
     private final boolean left;
     private  String detailActionLabel = "";
 
     public Turn( boolean left) {
             this.left = left;
-            this.angle.set(DEFAULT_ANGLE);
+            this.value = DEFAULT_ANGLE;
     }
     public Turn(int angle, boolean left) {
-        this.angle.set(angle);
+        this.value = String.valueOf(angle);
+        this.left = left;
+    }
+
+    public Turn(String value, boolean left) {
+        this.value = value;
         this.left = left;
     }
 
     @Override
     public void execute(Monde monde) {
+        int angle = monde.resolveValue(value);
         if(left) {
-            monde.getPersonnage().turnLeft(angle.get());
+            monde.getPersonnage().turnLeft(angle);
         } else {
-            monde.getPersonnage().turnRight(angle.get());
+            monde.getPersonnage().turnRight(angle);
         }
 
     }
     @Override
     public boolean isEditable() {
         return true;
-    }
-    public void setAngle(int angle) {
-        this.angle.set(angle);
-    }
-    public int getAngle() {
-        return angle.get();
-    }
-    @Override
-    public IntegerProperty parameterProperty() {
-        return angle;
-    }
-
-    @Override
-    public Boolean isValidparametre(int param) {
-        return param >= 1 && param <= 180;
     }
 
     @Override
@@ -66,8 +58,34 @@ public class Turn extends Action{
 
     @Override
     public Action copyActionForProgram() {
-        return new Turn(this.getAngle(), this.left);
+        return new Turn(value, this.left);
     }
+
+    @Override
+    public String getRawParameter() {
+        return value;
+    }
+
+    @Override
+    public void setRawParameter(String text) {
+        this.value = text;
+    }
+
+    @Override
+    public boolean isValidParameter(String text) {
+        if (text == null || text.isBlank()) {
+            return false;
+        }
+
+        if (text.matches("-?\\d+")) {
+            int val = Integer.parseInt(text);
+            return val >= 1 && val <= 180;
+        }
+
+        return VarDeclaration.isValidName(text);
+    }
+
+
     @Override
     public String toString() {
         if(!actionForProgram()) {
@@ -75,11 +93,11 @@ public class Turn extends Action{
         }
         else {
 
-            return left ? "Tourner à gauche de " + getAngle() : "Tourner à droite de " + getAngle();
+            return left ? "Tourner à gauche de " + value : "Tourner à droite de " + value;
         }
     }
     @Override
     public String stringForSave() {
-        return "TURN_" + (left ? "LEFT" : "RIGHT") + ";" + getAngle();
+        return "TURN_" + (left ? "LEFT" : "RIGHT") + ";" + value;
     }
 }

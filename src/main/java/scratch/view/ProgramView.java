@@ -27,11 +27,17 @@ public class ProgramView extends VBox {
     private final HBox prgmBtnsHbox = new HBox();
     private final HBox innerEditBox = new HBox();
 
+
     private final TextField input = new TextField();
-    private final TitledPane actionDetails = new TitledPane("Détails de l'action", input);
+    private final TextField input2 = new TextField();
+
+    private final TitledPane actionDetails = new TitledPane("Détails de l'action", innerEditBox);
+
     private final Label startLbl = new Label();
+    private final Label middleLbl = new Label();
     private final Label endLbl = new Label();
     private final Label errLbl = new Label("Erreur valeur");
+
 
     public ProgramView(ActionsViewModel vm) {
         this.vm = vm;
@@ -52,6 +58,11 @@ public class ProgramView extends VBox {
         input.setPrefWidth(35);
         errLbl.setTextFill(Color.RED);
         errLbl.setVisible(false);
+        startLbl.setPrefWidth(160);
+        middleLbl.setPrefWidth(60);
+        endLbl.setPrefWidth(60);
+        input.setPrefWidth(70);
+        input2.setPrefWidth(70);
 
         setupColoredCells();
         configActions();
@@ -74,7 +85,24 @@ public class ProgramView extends VBox {
         btnDelete.disableProperty().bind(vm.canDelete().not());
         btnClear.disableProperty().bind(vm.canClear().not());
         input.disableProperty().bind(vm.canEdit().not());
-        errLbl.visibleProperty().bind(vm.canEdit().and(vm.isValidInputProperty().not()));
+        input2.disableProperty().bind(vm.canEdit().not());
+        errLbl.visibleProperty().bind( vm.canEdit().and(
+                        vm.isValidInputProperty().not()
+                                .or(
+                                        Bindings.createBooleanBinding(
+                                                () -> {
+                                                    Action action = vm.ActionProperty().get();
+                                                    return action != null
+                                                            && action.hasTwoParameters()
+                                                            && vm.isValidSecondInputProperty().not().get();
+                                                },
+                                                vm.ActionProperty(),
+                                                vm.isValidSecondInputProperty()
+                                        )
+                                )
+                )
+        );
+
     }
 
     private void configSelection() {
@@ -89,13 +117,72 @@ public class ProgramView extends VBox {
         );
 
         endLbl.textProperty().bind(vm.endLblProperty());
-        input.textProperty().bindBidirectional(vm.inputProperty(), new NumberStringConverter());
+        input.textProperty().bindBidirectional(vm.inputProperty());
+        input2.textProperty().bindBidirectional(vm.secondInputProperty());
 
         vm.inputProperty().addListener((obs, oldVal, newVal) -> program.refresh());
+        vm.secondInputProperty().addListener((obs, oldVal, newVal) -> program.refresh());
+
+        input.textProperty().addListener((obs, oldVal, newVal) -> {
+            Action action = vm.ActionProperty().get();
+
+            if (action == null || !action.isEditable()) {
+                return;
+            }
+            if (action.hasTwoParameters()) {
+                boolean valid = action.isValidParameter(newVal);
+                vm.isValidInputProperty();
+                if (valid) {
+                    action.setRawParameter(newVal);
+                    program.refresh();
+                }
+            }
+        });
+
+        input2.textProperty().addListener((obs, oldVal, newVal) -> {
+            Action action = vm.ActionProperty().get();
+
+            if (action == null || !action.isEditable() || !action.hasTwoParameters()) {
+                return;
+            }
+
+            boolean valid = action.isValidSecondParameter(newVal);
+            if (valid) {
+                action.setSecondParameter(newVal);
+                program.refresh();
+            }
+        });
+
 
         input.focusedProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal && !vm.isValidInputProperty().get()) {
-                vm.parameterProperty().set(vm.ActionProperty().get().parameterProperty().get());
+            if (!newVal) {
+                Action action = vm.ActionProperty().get();
+
+                if (action == null) {
+                    return;
+                }
+
+                String text = input.getText();
+
+                if (!action.isValidParameter(text)) {
+                    input.setText(action.getRawParameter());
+                }
+            }
+        });
+
+        input2.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                Action action = vm.ActionProperty().get();
+
+                if (action == null || !action.hasTwoParameters()) {
+                    return;
+                }
+
+                String text = input2.getText();
+
+                if (!action.isValidSecondParameter(text)) {
+                    input2.setText(action.getSecondParameter());
+                }
             }
         });
 
@@ -110,6 +197,12 @@ public class ProgramView extends VBox {
                 program.scrollTo(idx);
             }
         });
+
+        vm.ActionProperty().addListener((obs, oldAction, newAction) -> {
+            updateDetailArea(newAction);
+        });
+
+        updateDetailArea(vm.ActionProperty().get());
     }
 
     private Color actionColor(Action action) {
@@ -141,6 +234,54 @@ public class ProgramView extends VBox {
         });
     }
 
+    private void updateDetailArea(Action action) {
+        innerEditBox.getChildren().clear();
+
+        startLbl.textProperty().unbind();
+        endLbl.textProperty().unbind();
+        middleLbl.textProperty().unbind();
+
+        input.textProperty().unbind();
+        input.textProperty().unbindBidirectional(vm.inputProperty());
+
+        input2.textProperty().unbind();
+        input2.textProperty().unbindBidirectional(vm.secondInputProperty());
+
+        if (action == null) {
+            startLbl.setText("(aucune action sélectionnée)");
+            input.setText("");
+            input2.setText("");
+            endLbl.setText("");
+            middleLbl.setText("");
+            innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
+            return;
+        }
+
+        if (action.hasTwoParameters()) {
+            startLbl.setText(action.detailActionLabel());
+            input.setText(action.getRawParameter());
+
+            middleLbl.setText(action.detailSecondActionLabel());
+            input2.setText(action.getSecondParameter());
+
+            input.textProperty().bindBidirectional(vm.inputProperty());
+            input2.textProperty().bindBidirectional(vm.secondInputProperty());
+
+            innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
+        } else {
+            startLbl.textProperty().bind(
+                    Bindings.when(vm.ActionProperty().isNull())
+                            .then("(aucune action sélectionnée)")
+                            .otherwise(vm.startLblProperty())
+            );
+
+            endLbl.textProperty().bind(vm.endLblProperty());
+
+            input.textProperty().bindBidirectional(vm.inputProperty());
+
+            innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
+        }
+    }
     public Label getProgramLabel() {
         return programLabel;
     }

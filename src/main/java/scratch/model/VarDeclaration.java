@@ -6,19 +6,43 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class VarDeclaration extends Action {
+
+
     private StringProperty name = new SimpleStringProperty();
     private IntegerProperty value = new SimpleIntegerProperty();
     private static final int DEFAULT_VALUE = 0;
 
     public VarDeclaration(String name) {
         this.name.set(name);
+        this.value.set(DEFAULT_VALUE);
 
     }
     public VarDeclaration(String name, int value) {
+        this.name.set(name);
         this.value.set(value);
+    }
+
+    public StringProperty nameProperty() {
+        return name;
+    }
+    public void setName(String name) {
         this.name.set(name);
     }
 
+    public IntegerProperty valueProperty() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value.set(value);
+    }
+
+    public static boolean isValidName(String name) {
+        if (name == null || name.isBlank()) {
+            return false;
+        }
+        return name.matches("[A-Za-z_][A-Za-z0-9_]*");
+    }
 
     @Override
     public Type getType() {
@@ -27,22 +51,27 @@ public class VarDeclaration extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return new VarDeclaration(this.name.get());
+        return new VarDeclaration(this.name.get(), DEFAULT_VALUE);
     }
 
     @Override
-    public IntegerProperty parameterProperty() {
-        return null;
+    public String getRawParameter() {
+        return name.get();
     }
 
     @Override
-    public Boolean isValidparametre(int param) {
-        return null;
+    public void setRawParameter(String text) {
+        this.name.set(text);
+    }
+
+    @Override
+    public boolean isValidParameter(String text) {
+        return isValidName(text);
     }
 
     @Override
     public boolean isEditable() {
-        return false;
+        return true;
     }
 
     @Override
@@ -52,20 +81,23 @@ public class VarDeclaration extends Action {
 
     @Override
     public String detailActionLabel() {
-        return "";
+        return "Déclaration de la variable : ";
     }
 
     @Override
     public String stringForSave() {
-        return "";
+        return "VAR_DECLARATION;" + name.get();
     }
 
     @Override
     public void execute(Monde monde) {
-
+        monde.declareVariable(name.get());
     }
     @Override
     public String toString() {
-        return "Déclaration variable" + name.get();
+        if (!this.actionForProgram()) {
+            return "Déclaration variable";
+        }
+        return "Déclaration variable " + name.get();
     }
 }
