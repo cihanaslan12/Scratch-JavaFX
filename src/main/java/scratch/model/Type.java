@@ -9,5 +9,6 @@ public enum Type {
     VAR_DECLARATION,
     VAR_ASSIGNMENT,
     VAR_INCREMENT,
-    REPEAT
+    REPEAT,
+    END_REPEAT
 }

@@ -7,58 +7,69 @@ import javafx.beans.property.StringProperty;
 
 public class Repeat extends Action {
 
+    private String value = "" ;
     private boolean loop;
-    private StringProperty name = new SimpleStringProperty();
-    private IntegerProperty value = new SimpleIntegerProperty();
-
 
     public Repeat(boolean loop) {
         this.loop = loop;
     }
 
+    public boolean isLoopStart() {
+        return loop;
+    }
     @Override
     public Type getType() {
-        return Type.REPEAT;
+        return loop ? Type.REPEAT : Type.END_REPEAT;
     }
 
     @Override
     public Action copyActionForProgram() {
-        return new Repeat(loop);
+        Repeat copy = new Repeat(loop);
+        copy.setRawParameter(value);
+        return copy;
     }
 
     @Override
     public String getRawParameter() {
-        return "";
+        return value;
     }
 
     @Override
     public void setRawParameter(String text) {
-
+        this.value = text;
     }
 
     @Override
     public boolean isValidParameter(String text) {
-        return false;
-    }
+        if (text == null ) {
+            return false;
+        }
 
+        if (text.matches("-?\\d+")) {
+            int val = Integer.parseInt(text);
+            return val > 0;
+        }
+
+        return VarDeclaration.isValidName(text);
+    }
     @Override
     public boolean isEditable() {
-        return false;
+        return loop;
     }
 
     @Override
     public String unite() {
-        return "";
+        return loop ? "fois" : "";
     }
 
     @Override
     public String detailActionLabel() {
-        return "";
+        return loop ? "Répeter" : "Fin répéter";
     }
 
     @Override
     public String stringForSave() {
-        return "";
+        return loop ? "REPEAT;" + value : "END_REPEAT";
     }
 
     @Override
@@ -70,7 +81,7 @@ public class Repeat extends Action {
         if(!actionForProgram()) {
             return loop ? "Répéter" : "Fin répéter";
         }
-        String s = value.get() != 0 ? value.toString() : String.valueOf(4); // Par défaut c'est 4
+        String s = value.isEmpty()  ? String.valueOf(4) : value.toString(); // Par défaut c'est 4
         return loop ? "Répéter " + s + " fois" : "Fin répéter";
     }
 }

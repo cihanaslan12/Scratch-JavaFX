@@ -65,6 +65,7 @@ public class ActionsView extends VBox {
             case VAR_ASSIGNMENT: return Color.DARKORCHID;
             case VAR_INCREMENT: return Color.DARKORCHID;
             case REPEAT: return Color.DARKORCHID;
+            case END_REPEAT: return Color.DARKORCHID;
             default:   return Color.BLACK;
         }
     }

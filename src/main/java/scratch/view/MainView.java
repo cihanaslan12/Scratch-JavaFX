@@ -13,9 +13,8 @@ public class MainView extends VBox {
 
     private final ActionsViewModel vm;
 
-    private final HBox labelsBox = new HBox(30);
-    private final HBox bodyBox = new HBox();
     private final VBox menuBarBox = new VBox();
+    private final HBox mainBox = new HBox(30);
 
     private final ActionsView actionsView;
     private final ProgramView programView;
@@ -45,21 +44,31 @@ public class MainView extends VBox {
         menuBar.getMenus().add(menu);
         menuBarBox.getChildren().add(menuBar);
 
-        labelsBox.getChildren().addAll(
+        VBox actionsBox = new VBox(5);
+        actionsBox.getChildren().addAll(
                 actionsView.getActionsLabel(),
-                programView.getProgramLabel(),
-                worldView.getSceneLabel()
+                actionsView
         );
 
-        bodyBox.getChildren().addAll(actionsView, programView, worldView);
+        VBox programBox = new VBox(5);
+        programBox.getChildren().addAll(
+                programView.getProgramLabel(),
+                programView
+        );
 
-        getChildren().addAll(menuBarBox, labelsBox, bodyBox);
+        VBox worldBox = new VBox(5);
+        worldBox.getChildren().addAll(
+                worldView.getSceneLabel(),
+                worldView
+        );
+
+        mainBox.getChildren().addAll(actionsBox, programBox, worldBox);
+
+        getChildren().addAll(menuBarBox, mainBox);
     }
 
     private void style() {
-        labelsBox.setPadding(new Insets(5, 10, 5, 10));
-        bodyBox.setSpacing(30);
-        bodyBox.setPadding(new Insets(5, 10, 20, 10));
+        mainBox.setPadding(new Insets(5, 10, 20, 10));
     }
 
     private void menuEvent() {
