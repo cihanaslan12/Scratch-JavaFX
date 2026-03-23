@@ -2,8 +2,10 @@ package scratch.model;
 
 public enum Type {
     MOVE,
-    TURN,
-    PEN,
+    TURN_LEFT,
+    TURN_RIGHT,
+    PEN_DOWN,
+    PEN_UP,
     VAR_DECLARATION,
     VAR_ASSIGNMENT,
     VAR_INCREMENT,

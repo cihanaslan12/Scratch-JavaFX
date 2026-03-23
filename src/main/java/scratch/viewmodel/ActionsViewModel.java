@@ -376,22 +376,6 @@ public class ActionsViewModel {
         runButtonText.set("Executer");
    }
 
-   private boolean isPenInstructionValid () {
-        boolean penDownState = true; // abaisser de base
-
-       for (Action action : choosenActions.getProgram()) {
-           if (action instanceof Pen pen) {
-               boolean wantDown = pen.isStyloDown();
-
-               if (wantDown == penDownState) {
-                   return false; // règle métier FAQ
-               }
-                   penDownState = wantDown;
-                }
-
-            }
-       return true;
-        }
 }
 
 

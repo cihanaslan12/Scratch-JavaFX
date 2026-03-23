@@ -208,8 +208,14 @@ public class ProgramView extends VBox {
     private Color actionColor(Action action) {
         switch (action.getType()) {
             case MOVE: return Color.DARKBLUE;
-            case TURN: return Color.RED;
-            case PEN:  return Color.GREEN;
+            case TURN_LEFT: return Color.RED;
+            case TURN_RIGHT: return Color.RED;
+            case PEN_DOWN:  return Color.GREEN;
+            case PEN_UP:  return Color.GREEN;
+            case VAR_DECLARATION: return Color.DARKORCHID;
+            case VAR_ASSIGNMENT: return Color.DARKORCHID;
+            case VAR_INCREMENT: return Color.DARKORCHID;
+            case REPEAT: return Color.DARKORCHID;
             default:   return Color.BLACK;
         }
     }

@@ -36,7 +36,7 @@ public class Pen extends Action {
     }
     @Override
     public Type getType() {
-        return Type.PEN;
+        return styloDown ? Type.PEN_DOWN : Type.PEN_UP;
     }
 
     @Override

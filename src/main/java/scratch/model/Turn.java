@@ -53,7 +53,7 @@ public class Turn extends Action{
 
     @Override
     public Type getType() {
-        return Type.TURN;
+        return left ? Type.TURN_LEFT : Type.TURN_RIGHT;
     }
 
     @Override
