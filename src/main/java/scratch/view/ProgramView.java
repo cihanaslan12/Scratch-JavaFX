@@ -1,12 +1,14 @@
 package scratch.view;
 
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import scratch.model.Action;
+import scratch.model.Type;
 import scratch.viewmodel.ActionsViewModel;
 import javafx.util.converter.NumberStringConverter;
 
@@ -22,6 +24,8 @@ public class ProgramView extends VBox {
     private final Button btnDuplicate = new Button("Dupliquer");
     private final Button btnDelete = new Button("Supprimer");
     private final Button btnClear = new Button("Vider tout");
+    private final Button btnPlus = new Button("+");
+    private final Button btnMinus = new Button("-");
 
     private final VBox prgmInnerVbox = new VBox();
     private final HBox prgmBtnsHbox = new HBox();
@@ -55,19 +59,33 @@ public class ProgramView extends VBox {
         prgmInnerVbox.setSpacing(15);
         prgmBtnsHbox.setSpacing(15);
         innerEditBox.setSpacing(10);
-        input.setPrefWidth(35);
+
         errLbl.setTextFill(Color.RED);
         errLbl.setVisible(false);
-        startLbl.setPrefWidth(160);
-        middleLbl.setPrefWidth(60);
-        endLbl.setPrefWidth(60);
-        input.setPrefWidth(70);
-        input2.setPrefWidth(70);
 
+        style();
         setupColoredCells();
         configActions();
         configBindings();
         configSelection();
+    }
+    private void style() {
+        // largeur fixe colonne gauche
+        this.setPrefWidth(400);
+        this.setMinWidth(400);
+        this.setMaxWidth(400);
+
+        // largeur zone détail
+        actionDetails.setPrefWidth(360);
+        innerEditBox.setPrefWidth(340);
+      //  innerEditBox.setAlignment(Pos.CENTER_LEFT);
+
+        // largeur colonnes
+        middleLbl.setPrefWidth(50);
+        input.setPrefWidth(50);
+        input2.setPrefWidth(50);
+        btnPlus.setPrefWidth(45);
+        btnMinus.setPrefWidth(45);
     }
 
     private void configActions() {
@@ -76,6 +94,8 @@ public class ProgramView extends VBox {
         btnDuplicate.setOnAction(e -> vm.duplicate());
         btnDelete.setOnAction(e -> vm.delete());
         btnClear.setOnAction(e -> vm.clear());
+        btnPlus.setOnAction(e-> vm.changeSecondParameter(1) );
+        btnMinus.setOnAction(e-> vm.changeSecondParameter(-1));
     }
 
     private void configBindings() {
@@ -102,6 +122,12 @@ public class ProgramView extends VBox {
                                 )
                 )
         );
+
+        btnPlus.visibleProperty().bind(vm.showIncrementButtonsProperty());
+        btnPlus.managedProperty().bind(btnPlus.visibleProperty());
+
+        btnMinus.visibleProperty().bind(vm.showIncrementButtonsProperty());
+        btnPlus.managedProperty().bind(btnMinus.visibleProperty());
 
     }
 
@@ -274,7 +300,12 @@ public class ProgramView extends VBox {
             input.textProperty().bindBidirectional(vm.inputProperty());
             input2.textProperty().bindBidirectional(vm.secondInputProperty());
 
-            innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
+            if (action.getType() == Type.VAR_INCREMENT) { // rajouter les 2 boutons
+                innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, btnPlus, btnMinus, errLbl);
+            } else {
+                innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
+            }
+
         } else {
             startLbl.textProperty().bind(
                     Bindings.when(vm.ActionProperty().isNull())

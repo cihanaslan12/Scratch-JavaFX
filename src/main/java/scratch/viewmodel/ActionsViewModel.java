@@ -157,6 +157,36 @@ public class ActionsViewModel {
                     choosenActions.getProgram()
             );
     }
+    public BooleanBinding canIncrementButtons() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    Action action = actionProperty.get();
+                    String text = secondParameterProperty.get();
+
+                    return action != null
+                            && action.getType() == Type.VAR_INCREMENT
+                            && text != null
+                            && text.matches("-?\\d+");
+                },
+                actionProperty,
+                secondParameterProperty
+        );
+    }
+    public BooleanBinding showIncrementButtonsProperty() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    Action action = actionProperty.get();
+                    String text = secondParameterProperty.get();
+
+                    return action != null
+                            && action.getType() == Type.VAR_INCREMENT
+                            && text != null
+                            && text.matches("-?\\d+");
+                },
+                actionProperty,
+                secondParameterProperty
+        );
+    }
 
     public void addAction() {
             int idx = actionIndex.get();
@@ -323,6 +353,20 @@ public class ActionsViewModel {
     }
     public void exitProgram() {
         Platform.exit();
+    }
+    public void changeSecondParameter(int increment) {
+        Action action = actionProperty.get();
+
+        if (action == null || !action.hasTwoParameters()) {
+            return;
+        }
+
+        String text = secondParameterProperty.get();
+
+        if (text != null && text.matches("-?\\d+")) {
+            int value = Integer.parseInt(text);
+            secondParameterProperty.set(String.valueOf(value + increment));
+        }
     }
 
     public ObservableList<Action> getActions () {

@@ -60,7 +60,7 @@ public class Monde {
         variables.put(name, 0);
     }
 
-    public boolean isVaraibleDeclared(String name) {
+    public boolean isVariableDeclared(String name) {
         return variables.containsKey(name);
     }
 
@@ -85,7 +85,7 @@ public class Monde {
         if (text.matches("-?\\d+")) {
             return Integer.parseInt(text);
         }
-        if(isVaraibleDeclared(text)) {
+        if(isVariableDeclared(text)) {
             return getVariableValue(text);
         }
         throw new IllegalArgumentException("Valeur invalide ou variable non déclarée : " + text);

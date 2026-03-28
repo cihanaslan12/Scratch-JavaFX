@@ -44,7 +44,9 @@ public class Programme {
     public void duplicate(int idx) {
         if(idx >= 0 && idx < program.size() ) {
             Action action = program.get(idx);
-            program.add(action);
+            Action copy = action.copyActionForProgram();
+            copy.setInProgram(true);
+            program.add( copy);
         }
 
 
