@@ -1,7 +1,6 @@
 package scratch.view;
 
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -10,7 +9,7 @@ import javafx.scene.shape.Circle;
 import scratch.model.Action;
 import scratch.model.Type;
 import scratch.viewmodel.ActionsViewModel;
-import javafx.util.converter.NumberStringConverter;
+
 
 public class ProgramView extends VBox {
 
@@ -106,28 +105,14 @@ public class ProgramView extends VBox {
         btnClear.disableProperty().bind(vm.canClear().not());
         input.disableProperty().bind(vm.canEdit().not());
         input2.disableProperty().bind(vm.canEdit().not());
-        errLbl.visibleProperty().bind( vm.canEdit().and(
-                        vm.isValidInputProperty().not()
-                                .or(
-                                        Bindings.createBooleanBinding(
-                                                () -> {
-                                                    Action action = vm.ActionProperty().get();
-                                                    return action != null
-                                                            && action.hasTwoParameters()
-                                                            && vm.isValidSecondInputProperty().not().get();
-                                                },
-                                                vm.ActionProperty(),
-                                                vm.isValidSecondInputProperty()
-                                        )
-                                )
-                )
-        );
+
+        errLbl.visibleProperty().bind(vm.showError());
 
         btnPlus.visibleProperty().bind(vm.showIncrementButtonsProperty());
         btnPlus.managedProperty().bind(btnPlus.visibleProperty());
 
         btnMinus.visibleProperty().bind(vm.showIncrementButtonsProperty());
-        btnPlus.managedProperty().bind(btnMinus.visibleProperty());
+        btnMinus.managedProperty().bind(btnMinus.visibleProperty());
 
     }
 
@@ -136,49 +121,18 @@ public class ProgramView extends VBox {
             vm.programIndexProperty().setValue(newVal.intValue());
         });
 
-        startLbl.textProperty().bind(
+       /* startLbl.textProperty().bind(
                 Bindings.when(vm.ActionProperty().isNull())
                         .then("(aucune action sélectionnée)")
                         .otherwise(vm.startLblProperty())
-        );
+        );*/
 
-        endLbl.textProperty().bind(vm.endLblProperty());
+       /* endLbl.textProperty().bind(vm.endLblProperty());
         input.textProperty().bindBidirectional(vm.inputProperty());
-        input2.textProperty().bindBidirectional(vm.secondInputProperty());
+        input2.textProperty().bindBidirectional(vm.secondInputProperty());*/
 
         vm.inputProperty().addListener((obs, oldVal, newVal) -> program.refresh());
         vm.secondInputProperty().addListener((obs, oldVal, newVal) -> program.refresh());
-
-        input.textProperty().addListener((obs, oldVal, newVal) -> {
-            Action action = vm.ActionProperty().get();
-
-            if (action == null || !action.isEditable()) {
-                return;
-            }
-            if (action.hasTwoParameters()) {
-                boolean valid = action.isValidParameter(newVal);
-                vm.isValidInputProperty();
-                if (valid) {
-                    action.setRawParameter(newVal);
-                    program.refresh();
-                }
-            }
-        });
-
-        input2.textProperty().addListener((obs, oldVal, newVal) -> {
-            Action action = vm.ActionProperty().get();
-
-            if (action == null || !action.isEditable() || !action.hasTwoParameters()) {
-                return;
-            }
-
-            boolean valid = action.isValidSecondParameter(newVal);
-            if (valid) {
-                action.setSecondParameter(newVal);
-                program.refresh();
-            }
-        });
-
 
         input.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
@@ -268,6 +222,17 @@ public class ProgramView extends VBox {
     }
 
     private void updateDetailArea(Action action) {
+        clearDetailArea();
+
+        if (action == null) {
+            showEmptyDetailArea();
+        } else if (action.hasTwoParameters()) {
+            showTwoParameterDetail(action);
+        } else {
+            showSingleParameterDetail(action);
+        }
+    }
+    private void clearDetailArea() {
         innerEditBox.getChildren().clear();
 
         startLbl.textProperty().unbind();
@@ -279,46 +244,46 @@ public class ProgramView extends VBox {
 
         input2.textProperty().unbind();
         input2.textProperty().unbindBidirectional(vm.secondInputProperty());
+    }
 
-        if (action == null) {
-            startLbl.setText("(aucune action sélectionnée)");
-            input.setText("");
-            input2.setText("");
-            endLbl.setText("");
-            middleLbl.setText("");
-            innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
-            return;
-        }
+    private void showEmptyDetailArea() {
+        startLbl.setText("(aucune action sélectionnée)");
+        input.setText("");
+        input2.setText("");
+        endLbl.setText("");
+        middleLbl.setText("");
 
-        if (action.hasTwoParameters()) {
-            startLbl.setText(action.detailActionLabel());
-            input.setText(action.getRawParameter());
+        innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
+    }
 
-            middleLbl.setText(action.detailSecondActionLabel());
-            input2.setText(action.getSecondParameter());
+    private void showTwoParameterDetail(Action action) {
+        startLbl.setText(action.detailActionLabel());
+        input.setText(action.getRawParameter());
 
-            input.textProperty().bindBidirectional(vm.inputProperty());
-            input2.textProperty().bindBidirectional(vm.secondInputProperty());
+        middleLbl.setText(action.detailSecondActionLabel());
+        input2.setText(action.getSecondParameter());
 
-            if (action.getType() == Type.VAR_INCREMENT) { // rajouter les 2 boutons
-                innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, btnPlus, btnMinus, errLbl);
-            } else {
-                innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
-            }
+        input.textProperty().bindBidirectional(vm.inputProperty());
+        input2.textProperty().bindBidirectional(vm.secondInputProperty());
 
+        if (action.getType() == Type.VAR_INCREMENT) {
+            innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, btnPlus, btnMinus, errLbl);
         } else {
-            startLbl.textProperty().bind(
-                    Bindings.when(vm.ActionProperty().isNull())
-                            .then("(aucune action sélectionnée)")
-                            .otherwise(vm.startLblProperty())
-            );
-
-            endLbl.textProperty().bind(vm.endLblProperty());
-
-            input.textProperty().bindBidirectional(vm.inputProperty());
-
-            innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
+            innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
         }
+    }
+
+    private void showSingleParameterDetail(Action action) {
+        startLbl.textProperty().bind(
+                Bindings.when(vm.ActionProperty().isNull())
+                        .then("(aucune action sélectionnée)")
+                        .otherwise(vm.startLblProperty())
+        );
+
+        endLbl.textProperty().bind(vm.endLblProperty());
+        input.textProperty().bindBidirectional(vm.inputProperty());
+
+        innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
     }
     public Label getProgramLabel() {
         return programLabel;

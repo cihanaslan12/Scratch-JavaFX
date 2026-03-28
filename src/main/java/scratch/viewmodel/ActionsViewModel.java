@@ -19,8 +19,6 @@ public class ActionsViewModel {
 
     private final Programme choosenActions;
     private final Monde monde;
-    private  Type type;
-    private Pen pen;
 
     private final IntegerProperty actionIndex = new SimpleIntegerProperty(-1),
             programIndex = new SimpleIntegerProperty(-1);
@@ -157,21 +155,46 @@ public class ActionsViewModel {
                     choosenActions.getProgram()
             );
     }
-    public BooleanBinding canIncrementButtons() {
+
+    public BooleanBinding showError() {
         return Bindings.createBooleanBinding(
                 () -> {
                     Action action = actionProperty.get();
-                    String text = secondParameterProperty.get();
 
-                    return action != null
-                            && action.getType() == Type.VAR_INCREMENT
-                            && text != null
-                            && text.matches("-?\\d+");
+                    if (action == null || !action.isEditable()) {
+                        return false;
+                    }
+
+                    String first = parameterProperty.get();
+                    String second = secondParameterProperty.get();
+
+                    boolean firstEmpty = first == null || first.isBlank();
+                    boolean secondEmpty = second == null || second.isBlank();
+
+                    if (action.hasTwoParameters()) {
+                        if (firstEmpty) {
+                            return false;
+                        }
+                        if (secondEmpty) {
+                            return false;
+                        }
+                        return !isValidInput.get() || !isValidSecondInput.get();
+                    }
+
+                    if (firstEmpty) {
+                        return false;
+                    }
+
+                    return !isValidInput.get();
                 },
                 actionProperty,
-                secondParameterProperty
+                parameterProperty,
+                secondParameterProperty,
+                isValidInput,
+                isValidSecondInput
         );
     }
+
     public BooleanBinding showIncrementButtonsProperty() {
         return Bindings.createBooleanBinding(
                 () -> {
