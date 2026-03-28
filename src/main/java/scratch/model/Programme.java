@@ -11,9 +11,7 @@ public class Programme {
         return FXCollections.unmodifiableObservableList(program);
     }
 
-    public void addAction(int actionListIndex, int insertIndex) {
-        Action action = ActionList.getActionList().get(actionListIndex).copyActionForProgram();
-
+    public void addAction(Action action, int insertIndex) {
         if (insertIndex >= 0 && insertIndex < program.size()) {
             program.add(insertIndex + 1, action);
         } else {

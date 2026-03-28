@@ -206,10 +206,11 @@ public class ActionsViewModel {
         int idxAction = actionIndex.get();
         int idxProgram = programIndex.get();
 
-        if (idxAction < 0) {
+        if (idxAction < 0 || idxAction >= getActions().size()) {
             return;
         }
-        choosenActions.addAction(idxAction, idxProgram);
+        Action newAction = getActions().get(idxAction).copyActionForProgram();
+        choosenActions.addAction(newAction, idxProgram);
 
         if (idxProgram >= 0 && idxProgram < choosenActions.getProgram().size() - 1) {
             programIndex.set(idxProgram + 1);
