@@ -58,7 +58,9 @@ public class Turn extends Action{
 
     @Override
     public Action copyActionForProgram() {
-        return new Turn(value, this.left);
+        Turn copy = new Turn(this.value, this.left);
+        copy.setInProgram(true);
+        return copy;
     }
 
     @Override

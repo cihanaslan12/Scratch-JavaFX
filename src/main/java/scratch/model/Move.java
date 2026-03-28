@@ -76,7 +76,9 @@ public class Move extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return new Move(this.value);
+        Move copy = new Move(this.getValue());
+        copy.setInProgram(true);
+        return copy;
     }
     @Override
     public String toString() {

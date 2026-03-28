@@ -96,7 +96,11 @@ public class VarAssignment extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return new VarAssignment(this.nameVariable.get(),this.value.get());
+        VarAssignment copy = new VarAssignment(this.nameVariable.get(),this.value.get());
+        copy.setRawParameter(getRawParameter());
+        copy.setSecondParameter(getSecondParameter());
+        copy.setInProgram(true);
+        return copy;
     }
 
     @Override

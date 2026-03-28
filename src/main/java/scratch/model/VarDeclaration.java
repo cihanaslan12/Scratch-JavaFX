@@ -51,7 +51,10 @@ public class VarDeclaration extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        return new VarDeclaration(this.name.get(), DEFAULT_VALUE);
+        VarDeclaration copy = new VarDeclaration(this.name.get(), DEFAULT_VALUE);
+        copy.setInProgram(true);
+        return copy;
+
     }
 
     @Override

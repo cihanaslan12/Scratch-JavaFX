@@ -22,6 +22,7 @@ public class IncrementVariable extends Action {
         IncrementVariable copy = new IncrementVariable();
         copy.setRawParameter(getRawParameter());
         copy.setSecondParameter(getSecondParameter());
+        copy.setInProgram(true);
         return copy;
     }
 

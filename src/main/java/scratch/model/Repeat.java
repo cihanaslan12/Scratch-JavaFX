@@ -26,6 +26,7 @@ public class Repeat extends Action {
     public Action copyActionForProgram() {
         Repeat copy = new Repeat(loop);
         copy.setRawParameter(value);
+        copy.setInProgram(true);
         return copy;
     }
 

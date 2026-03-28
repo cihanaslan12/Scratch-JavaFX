@@ -44,15 +44,6 @@ public class ActionsViewModel {
         this.choosenActions = choosenActions;
         this.monde = monde;
 
-        this.choosenActions.getProgram().addListener((ListChangeListener<Action>) c -> {
-            loaded.set(false);
-            stepping.set(false);
-            execIdx.set(0);
-            highlightIdx.set(-1);
-            loadButtonText.set("Charger");
-            runButtonText.set("Executer");
-        });
-
         actionProperty.bind(
                 Bindings.createObjectBinding(() -> {
                     int idx = programIndex.get();
@@ -212,9 +203,21 @@ public class ActionsViewModel {
     }
 
     public void addAction() {
-            int idx = actionIndex.get();
-            choosenActions.addAction(idx);
-            invalidateProgram();
+        int idxAction = actionIndex.get();
+        int idxProgram = programIndex.get();
+
+        if (idxAction < 0) {
+            return;
+        }
+        choosenActions.addAction(idxAction, idxProgram);
+
+        if (idxProgram >= 0 && idxProgram < choosenActions.getProgram().size() - 1) {
+            programIndex.set(idxProgram + 1);
+        } else {
+            programIndex.set(choosenActions.getProgram().size() - 1);
+        }
+
+        invalidateProgram();
     }
 
     public void up () {
