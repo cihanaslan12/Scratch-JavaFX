@@ -12,6 +12,16 @@ public class Programme {
     }
 
     public void addAction(Action action, int insertIndex) {
+        if(action.getType() == Type.VAR_DECLARATION) {
+            for (Action value : program) {
+                if (value.getType() != Type.VAR_DECLARATION) {
+                    if (insertIndex >= 1) {
+                        return;
+                    }
+                }
+            }
+        }
+
         if (insertIndex >= 0 && insertIndex < program.size()) {
             program.add(insertIndex + 1, action);
         } else {
