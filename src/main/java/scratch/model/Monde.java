@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -14,9 +16,9 @@ public class Monde {
     private final int startAngle;
     private final Map<String, Integer> variables = new HashMap<>();
 
-    public Monde(Personnage personnage, Point startPos, int startAngle) {
+    public Monde(Personnage personnage, int startAngle) {
         this.personnage = personnage;
-        this.startPos = startPos;
+        this.startPos = new Point();
         this.startAngle = startAngle;
     }
 
@@ -33,11 +35,11 @@ public class Monde {
         return FXCollections.unmodifiableObservableList(segments);
     }
 
-    public double getPosPersonnageX() {
+    public DoubleProperty getPosPersonnageX() {
         return personnage.getX();
     }
 
-    public double getPosPersonnageY() {
+    public DoubleProperty getPosPersonnageY() {
         return personnage.getY();
     }
 
@@ -48,7 +50,8 @@ public class Monde {
     public void reset() {
         segments.clear();
         variables.clear();
-        personnage.setPosition(new Point(startPos.getX(), startPos.getY()));
+        personnage.getPosition().getX().set(250.0);
+        personnage.getPosition().getY().set(250.0);
         personnage.setAngle(startAngle);
         personnage.penDown();
     }

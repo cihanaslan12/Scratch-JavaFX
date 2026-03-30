@@ -238,6 +238,15 @@ public class ActionsViewModel {
         }
     }
 
+    public StringBinding turtlePosition() {
+        return Bindings.createStringBinding(() -> {
+            double x = monde.getPosPersonnageX().get() - 250;
+            double y = 250 - monde.getPosPersonnageY().get();
+            return "Tortue: x = " + x + ", y = " + y;
+           }, monde.getPosPersonnageX(), monde.getPosPersonnageY()
+        );
+    }
+
     public IntegerProperty actionIndexProperty () {
             return actionIndex;
     }
@@ -337,10 +346,10 @@ public class ActionsViewModel {
     public ObservableList<Segment> getSegments() {
         return monde.getSegments();
     }
-    public double getPosX(){
+    public DoubleProperty getPosX(){
         return monde.getPosPersonnageX();
     }
-    public double getPosY() {
+    public DoubleProperty getPosY() {
         return monde.getPosPersonnageY();
     }
     public double getAngle() {

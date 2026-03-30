@@ -1,13 +1,21 @@
 package scratch.view;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
+import scratch.model.VarDeclaration;
 import scratch.viewmodel.ActionsViewModel;
 
 public class WorldView extends VBox {
@@ -16,6 +24,17 @@ public class WorldView extends VBox {
 
     private final Label sceneLabel = new Label("Scène");
     private final Pane scenePane = new Pane();
+
+    private final VBox stateVBox = new VBox();
+
+    private Text turtlePos = new Text();
+
+    private final HBox radioHBox = new HBox();
+    private final RadioButton radioAuto = new RadioButton("Execution automatique");
+    private final RadioButton radioManu = new RadioButton("Execution manuelle");
+    private final ToggleGroup executeToggle = new ToggleGroup();
+
+    private final HBox btnHBox = new HBox();
     private final Button loadBtn = new Button("Charger");
     private final Button executeBtn = new Button("Executer");
 
@@ -29,16 +48,62 @@ public class WorldView extends VBox {
         scenePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
         setPrefWidth(500);
 
-        getChildren().addAll(scenePane, loadBtn, executeBtn);
-
-        loadBtn.textProperty().bind(vm.loadButtonTextProperty());
-        executeBtn.textProperty().bind(vm.runButtonTextProperty());
-
+        configStateZone();
         configActions();
         configBindings();
 
         drawGrid();
         drawTurtle(250, 250, 0);
+    }
+
+    private void configStateZone() {
+        setSpacing(10);
+
+        turtlePos.textProperty().bind(vm.turtlePosition());
+        TableView<VarDeclaration> varTable= varTable();
+        HBox radioHBox = radioContainer();
+        HBox btnHBox = btnContainer();
+
+        stateVBox.getChildren().addAll(turtlePos, varTable, radioHBox, btnHBox);
+        stateVBox.setPrefSize(150, 200);
+        stateVBox.setStyle("-fx-border-color: black; -fx-border-width: 0.5;");
+        stateVBox.setPadding(new Insets(10));
+        stateVBox.setSpacing(10);
+
+        getChildren().addAll(scenePane, stateVBox);
+
+        loadBtn.textProperty().bind(vm.loadButtonTextProperty());
+        executeBtn.textProperty().bind(vm.runButtonTextProperty());
+
+    }
+
+    private TableView<VarDeclaration> varTable() {
+        Label tableLabel = new Label("Variables");
+        TableView<VarDeclaration> varTable = new TableView<>();
+        TableColumn<VarDeclaration, String> nom = new TableColumn<>("Nom");
+        nom.setPrefWidth(75);
+        TableColumn<VarDeclaration, Integer> valeur = new TableColumn<>("Valeur");
+        valeur.setPrefWidth(75);
+        varTable.getColumns().addAll(nom, valeur);
+        return varTable;
+    }
+
+    private HBox radioContainer() {
+        radioAuto.setToggleGroup(executeToggle);
+        radioManu.setToggleGroup(executeToggle);
+        radioManu.setSelected(true);
+        radioHBox.getChildren().addAll(radioAuto, radioManu);
+        radioHBox.setAlignment(Pos.CENTER);
+        radioHBox.setSpacing(10);
+
+        return radioHBox;
+    }
+
+    private HBox btnContainer() {
+        btnHBox.getChildren().addAll(loadBtn, executeBtn);
+        btnHBox.setAlignment(Pos.CENTER);
+
+        return btnHBox;
     }
 
     private void configActions() {
@@ -105,15 +170,15 @@ public class WorldView extends VBox {
 
         for (var s : vm.getSegments()) {
             Line line = new Line(
-                    s.getStart().getX(), s.getStart().getY(),
-                    s.getEnd().getX(), s.getEnd().getY()
+                    s.getStart().getX().get(), s.getStart().getY().get(),
+                    s.getEnd().getX().get(), s.getEnd().getY().get()
             );
             line.setStroke(Color.RED);
             line.setStrokeWidth(2);
             scenePane.getChildren().add(line);
         }
 
-        drawTurtle(vm.getPosX(), vm.getPosY(), vm.getAngle());
+        drawTurtle(vm.getPosX().get(), vm.getPosY().get(), vm.getAngle());
     }
 
     public Label getSceneLabel() {

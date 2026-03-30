@@ -1,14 +1,16 @@
 package scratch.model;
 
+import javafx.beans.property.DoubleProperty;
+
 public class Personnage {
 
     private int angle;
     private Point position;
     private boolean penDown;
 
-    public Personnage(int angle, Point position) {
+    public Personnage(int angle) {
         this.angle = angle;
-        this.position = position;
+        this.position = new Point();
         this.penDown = true; // stylo abaissé par défaut
     }
     public int getAngle() {
@@ -17,10 +19,10 @@ public class Personnage {
     public Point getPosition() {
         return position;
     }
-    public double getX() {
+    public DoubleProperty getX() {
         return position.getX();
     }
-    public double getY() {
+    public DoubleProperty getY() {
         return position.getY();
     }
 
@@ -59,16 +61,16 @@ public class Personnage {
         double diffX = distance * Math.cos(radians);
         double diffY = distance * Math.sin(radians);
 
-        double newX = position.getX() + diffX;
-        double newY = position.getY() - diffY;
+        double newX = position.getX().get() + diffX;
+        double newY = position.getY().get() - diffY;
 
-        Point start = position;
-        Point newPos = new Point(newX,newY);
-
-        position = newPos;
+        Point start = new Point(position.getX().get(), position.getY().get());
+        position.getX().set(newX);
+        position.getY().set(newY);
+        Point end = new Point(newX,newY);
 
         if(penDown) {
-            return new Segment(start, newPos);
+            return new Segment(start, end);
         }
 
         return null; // pas de segment si stylo levé

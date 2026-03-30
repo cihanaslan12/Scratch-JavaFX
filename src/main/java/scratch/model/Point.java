@@ -1,19 +1,31 @@
 package scratch.model;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+
 public class Point {
 
-    private final double x,y;
+    private final DoubleProperty xProperty = new SimpleDoubleProperty();
+    private final DoubleProperty yProperty = new SimpleDoubleProperty();
 
+    // constructeur par défault -> position centrale
+    public Point() {
+        this.xProperty.set(250);
+        this.yProperty.set(250);
+    }
+
+    // constructeur pour le moveForward pour pouvoir ajouter une distance en double
     public Point(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-    public double getX() {
-        return x;
+        this.xProperty.set(x);
+        this.yProperty.set(y);
     }
 
-    public double getY() {
-        return y;
+    public DoubleProperty getX() {
+        return xProperty;
+    }
+
+    public DoubleProperty getY() {
+        return yProperty;
     }
 
 }
