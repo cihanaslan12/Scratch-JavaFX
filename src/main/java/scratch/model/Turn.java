@@ -2,32 +2,33 @@ package scratch.model;
 
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class Turn extends Action{
 
-   // private final IntegerProperty angle = new SimpleIntegerProperty();
-    private String value;
+    private StringProperty value = new SimpleStringProperty("");
     private static final String DEFAULT_ANGLE = "90";
     private final boolean left;
     private  String detailActionLabel = "";
 
     public Turn( boolean left) {
             this.left = left;
-            this.value = DEFAULT_ANGLE;
+            this.value.set(DEFAULT_ANGLE);
     }
     public Turn(int angle, boolean left) {
-        this.value = String.valueOf(angle);
+        this.value.set(String.valueOf(angle));
         this.left = left;
     }
 
     public Turn(String value, boolean left) {
-        this.value = value;
+        this.value.set(value);
         this.left = left;
     }
 
     @Override
     public void execute(Monde monde) {
-        int angle = monde.resolveValue(value);
+        int angle = monde.resolveValue(value.get());
         if(left) {
             monde.getPersonnage().turnLeft(angle);
         } else {
@@ -58,19 +59,19 @@ public class Turn extends Action{
 
     @Override
     public Action copyActionForProgram() {
-        Turn copy = new Turn(this.value, this.left);
+        Turn copy = new Turn(this.value.get(), this.left);
         copy.setInProgram(true);
         return copy;
     }
 
     @Override
     public String getRawParameter() {
-        return value;
+        return value.get();
     }
 
     @Override
     public void setRawParameter(String text) {
-        this.value = text;
+        this.value.set(text);
     }
 
     @Override
@@ -95,11 +96,11 @@ public class Turn extends Action{
         }
         else {
 
-            return left ? "Tourner à gauche de " + value : "Tourner à droite de " + value;
+            return left ? "Tourner à gauche de " + value.get() : "Tourner à droite de " + value.get();
         }
     }
     @Override
     public String stringForSave() {
-        return "TURN_" + (left ? "LEFT" : "RIGHT") + ";" + value;
+        return "TURN_" + (left ? "LEFT" : "RIGHT") + ";" + value.get();
     }
 }

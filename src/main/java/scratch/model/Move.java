@@ -1,30 +1,26 @@
 package scratch.model;
-
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class Move extends Action {
 
-    private String value;
-   // private final IntegerProperty distance = new SimpleIntegerProperty();
-    private final  String detailActionLabel = "Avancer de";
-    private static String DEFAULT_DISTANCE = "30";
+    private final StringProperty value = new SimpleStringProperty("");
+
+    private static final String DEFAULT_DISTANCE = "30";
 
     public Move(String value) {
-        this.value = value;
+        this.value.set(value);
     }
     public Move(int value) {
-        this.value = String.valueOf(value);
+        this.value.set(String.valueOf(value));
     }
     public Move() {
-        this.value = DEFAULT_DISTANCE;
+        this.value.set(DEFAULT_DISTANCE);
     }
-    public String getValue() {
-        return value;
-    }
+
     @Override
     public void execute(Monde monde) {
-        int distance = monde.resolveValue(value);
+        int distance = monde.resolveValue(value.get());
         Segment s = monde.getPersonnage().moveForward(distance);
         monde.addSegment(s);
 
@@ -37,12 +33,12 @@ public class Move extends Action {
 
     @Override
     public String getRawParameter() {
-        return value;
+        return value.get();
     }
 
     @Override
     public void setRawParameter(String text) {
-        this.value = text;
+        this.value.set(text);
     }
 
     @Override
@@ -66,7 +62,7 @@ public class Move extends Action {
 
     @Override
     public String detailActionLabel() {
-        return detailActionLabel;
+        return "Avancer de";
     }
 
     @Override
@@ -76,7 +72,7 @@ public class Move extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        Move copy = new Move(this.getValue());
+        Move copy = new Move(this.value.get());
         copy.setInProgram(true);
         return copy;
     }
@@ -85,11 +81,11 @@ public class Move extends Action {
         if(!this.actionForProgram()) {
             return "Avancer de ";
         }
-        return "Avancer de " + value;
+        return "Avancer de " + value.get();
     }
     @Override
     public String stringForSave() {
-        return "MOVE_FORWARD;" + value;
+        return "MOVE_FORWARD;" + value.get();
     }
 
 }
