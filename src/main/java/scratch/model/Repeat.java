@@ -7,13 +7,30 @@ import javafx.beans.property.StringProperty;
 
 public class Repeat extends Action {
 
-    private String value = "" ;
+    private static final int DEFAULT_VALUE = 4;
+    private StringProperty value = new SimpleStringProperty(String.valueOf(DEFAULT_VALUE)) ;
     private boolean loop;
+    private final IntegerProperty start = new SimpleIntegerProperty();
+    private final IntegerProperty remain = new SimpleIntegerProperty();
 
     public Repeat(boolean loop) {
         this.loop = loop;
     }
+    public Repeat(int start, int remain) {
+        this.loop = false;
+        this.start.set(start);
+        this.remain.set(remain);
+    }
 
+    public int getRepeatIndex() {
+        return start.get();
+    }
+    public int getRemain() {
+        return remain.get();
+    }
+    public void decrementRemain() {
+        remain.set(remain.get() - 1);
+    }
     public boolean isLoopStart() {
         return loop;
     }
@@ -25,19 +42,19 @@ public class Repeat extends Action {
     @Override
     public Action copyActionForProgram() {
         Repeat copy = new Repeat(loop);
-        copy.setRawParameter(value);
+        copy.setRawParameter(value.get());
         copy.setInProgram(true);
         return copy;
     }
 
     @Override
     public String getRawParameter() {
-        return value;
+        return value.get();
     }
 
     @Override
     public void setRawParameter(String text) {
-        this.value = text;
+        this.value.set(text);
     }
 
     @Override
@@ -70,19 +87,36 @@ public class Repeat extends Action {
 
     @Override
     public String stringForSave() {
-        return loop ? "REPEAT;" + value : "END_REPEAT";
+        return loop ? "REPEAT;" + value.get() : "END_REPEAT";
     }
 
     @Override
     public void execute(Monde monde) {
-
+        if (loop) {
+            int count = monde.resolveValue(value.get());
+            if (count <= 0) {
+                throw new IllegalStateException("Counter must be grater than 0");
+            }
+            monde.pushLoop(new Repeat(monde.getExecIdx(), count));
+        } else {
+            if (monde.repeatStackEmpty()) {
+                throw new IllegalStateException("End of repeat, without repeat");
+            }
+            Repeat currentLoop = monde.peekLoop();
+            currentLoop.decrementRemain();
+            if (currentLoop.getRemain() > 0) {
+                monde.setExecIdx(currentLoop.getRepeatIndex()); // revient au corps
+            } else {
+                monde.popLoop();
+            }
+        }
     }
     @Override
     public String toString() {
         if(!actionForProgram()) {
             return loop ? "Répéter" : "Fin répéter";
         }
-        String s = value.isEmpty()  ? String.valueOf(4) : value.toString(); // Par défaut c'est 4
+        String s = value.get().isEmpty()  ? String.valueOf(4) : value.get(); // Par défaut c'est 4
         return loop ? "Répéter " + s + " fois" : "Fin répéter";
     }
 }

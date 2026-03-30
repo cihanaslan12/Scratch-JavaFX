@@ -142,7 +142,7 @@ public class ActionsViewModel {
     }
     public BooleanBinding canLoad () {
             return Bindings.createBooleanBinding(() ->
-                            !choosenActions.getProgram().isEmpty() && choosenActions.isPenInstructionValid(),
+                            !choosenActions.getProgram().isEmpty() && choosenActions.isPenInstructionValid() ,
                     choosenActions.getProgram()
             );
     }

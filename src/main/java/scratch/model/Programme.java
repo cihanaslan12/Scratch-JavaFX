@@ -60,7 +60,11 @@ public class Programme {
     }
     public int executeNext(int execIdx, Monde monde) {
         if(execIdx >= 0 && execIdx < program.size()) {
+            monde.setExecIdx(execIdx);
             program.get(execIdx).execute(monde);
+            if (monde.getExecIdx() != execIdx) {
+                return monde.getExecIdx() + 1;
+            }
             return execIdx + 1;
         }
         return execIdx;

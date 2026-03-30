@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class Monde {
 
@@ -14,12 +15,47 @@ public class Monde {
     private final int startAngle;
     private final Map<String, Integer> variables = new HashMap<>();
 
+    private final Stack<Repeat> repeatStack = new Stack<>();
+    private int execIdx;
+
     public Monde(Personnage personnage, Point startPos, int startAngle) {
         this.personnage = personnage;
         this.startPos = startPos;
         this.startAngle = startAngle;
     }
+    public int getExecIdx() {
+        return execIdx;
+    }
 
+    public void setExecIdx(int execIdx) {
+        this.execIdx = execIdx;
+    }
+
+    public void nextExecIdx() {
+        execIdx++;
+    }
+
+    public void pushLoop(Repeat repeat) {
+        repeatStack.push(repeat);
+    }
+
+    public Repeat peekLoop() {
+        if (repeatStack.isEmpty()) {
+            throw new IllegalStateException("Aucune boucle active");
+        }
+        return repeatStack.peek();
+    }
+
+    public Repeat popLoop() {
+        if (repeatStack.isEmpty()) {
+            throw new IllegalStateException("Aucune boucle active");
+        }
+        return repeatStack.pop();
+    }
+
+    public boolean repeatStackEmpty() {
+        return repeatStack.isEmpty();
+    }
     public Personnage getPersonnage() {
         return personnage;
     }
@@ -48,6 +84,7 @@ public class Monde {
     public void reset() {
         segments.clear();
         variables.clear();
+        execIdx = 0;
         personnage.setPosition(new Point(startPos.getX(), startPos.getY()));
         personnage.setAngle(startAngle);
         personnage.penDown();
