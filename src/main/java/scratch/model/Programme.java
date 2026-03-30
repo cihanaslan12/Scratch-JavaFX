@@ -3,6 +3,8 @@ package scratch.model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.Stack;
+
 public class Programme {
 
     private final ObservableList<Action> program = FXCollections.observableArrayList();
@@ -13,6 +15,7 @@ public class Programme {
 
     public void addAction(Action action, int insertIndex) {
         if (insertIndex >= 0 && insertIndex < program.size()) {
+
             program.add(insertIndex + 1, action);
         } else {
             program.add(action);
@@ -74,7 +77,7 @@ public class Programme {
 
         for (Action action : getProgram()) {
 
-            if (action.isPenAction()) {
+            if (action.getType() == Type.PEN_DOWN || action.getType() == Type.PEN_UP) {
 
                 boolean wantDown = action.getPenState();
 
@@ -88,7 +91,52 @@ public class Programme {
 
         return true;
     }
+    public boolean isRepeatValid() {
+        Stack<String> compteursBoucle = new Stack<>();
 
+        for (Action action : getProgram()) {
+
+            if (action.getType() == Type.REPEAT) {
+                String param = action.getRawParameter();
+
+                if (param != null && !param.matches("-?\\d+")) {
+                    compteursBoucle.push(param);
+                } else {
+                    compteursBoucle.push(null);
+                }
+            }
+            else if (action.getType() == Type.END_REPEAT) {
+                if (!compteursBoucle.isEmpty()) {
+                    compteursBoucle.pop();
+                }
+            }
+            else if (!compteursBoucle.isEmpty()) {
+                String compteurCourant = compteursBoucle.peek();
+
+                if (compteurCourant == null) {
+                    continue;
+                }
+
+                if (action.getType() == Type.VAR_ASSIGNMENT
+                        || action.getType() == Type.VAR_INCREMENT) {
+
+                    String variableModifiee = getVariableModifiedBy(action);
+
+                    if (compteurCourant.equals(variableModifiee)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+    private String getVariableModifiedBy(Action action) {
+        if (action.getType() == Type.VAR_ASSIGNMENT || action.getType() == Type.VAR_DECLARATION) {
+            return action.getRawParameter();
+        }
+        return null;
+    }
     public void addActionForFile(Action action) {
         program.add(action);
     }
