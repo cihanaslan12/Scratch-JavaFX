@@ -14,6 +14,11 @@ public class Repeat extends Action {
         this.loop = loop;
     }
 
+    public Repeat(String value) {
+        this.loop = true;
+        this.value = value;
+    }
+
     public boolean isLoopStart() {
         return loop;
     }
@@ -70,7 +75,7 @@ public class Repeat extends Action {
 
     @Override
     public String stringForSave() {
-        return loop ? "REPEAT;" + value : "END_REPEAT";
+        return loop ? "REPEAT;" + value : "END_REPEAT;";
     }
 
     @Override

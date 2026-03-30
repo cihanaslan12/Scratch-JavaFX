@@ -58,7 +58,7 @@ public class VarAssignment extends Action {
 
     @Override
     public String stringForSave() {
-        return "";
+        return "VAR_ASSIGNMENT;" +nameVariable.get() + ";" + value.get() ;
     }
 
     @Override

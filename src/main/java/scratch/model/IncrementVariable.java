@@ -12,6 +12,12 @@ public class IncrementVariable extends Action {
 
     }
 
+    public IncrementVariable(String name, String value) {
+        this.name.set(name);
+        this.value.set(value);
+
+    }
+
     @Override
     public Type getType() {
         return Type.VAR_INCREMENT;
@@ -90,7 +96,7 @@ public class IncrementVariable extends Action {
 
     @Override
     public String stringForSave() {
-        return "INCREMENT-VARIABLE;" + name.get() + ";" + value.get();
+        return "INCREMENT_VARIABLE;" + name.get() + ";" + value.get();
     }
 
     @Override

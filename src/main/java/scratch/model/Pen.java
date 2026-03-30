@@ -81,6 +81,6 @@ public class Pen extends Action {
     }
     @Override
     public String stringForSave() {
-        return "PEN_" + (styloDown ? "DOWN" : "UP") + ";0";
+        return "PEN_" + (styloDown ? "DOWN" : "UP") + ";";
     }
 }

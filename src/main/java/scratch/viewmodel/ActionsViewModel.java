@@ -351,12 +351,16 @@ public class ActionsViewModel {
                 Action newAction = null;
 
                 switch (action) {
-                    case "MOVE_FORWARD" -> newAction = new Move(Integer.parseInt(parts[1]));
-                    case "TURN_RIGHT" -> newAction = new Turn(Integer.parseInt(parts[1]), false);
-                    case "TURN_LEFT" -> newAction = new Turn(Integer.parseInt(parts[1]), true);
+                    case "MOVE_FORWARD" -> newAction = new Move((parts[1]));
+                    case "TURN_RIGHT" -> newAction = new Turn((parts[1]), false);
+                    case "TURN_LEFT" -> newAction = new Turn((parts[1]), true);
                     case "PEN_UP" -> newAction = new Pen(false);
                     case "PEN_DOWN" -> newAction = new Pen(true);
                     case "VAR_DECLARATION" -> newAction = new VarDeclaration(parts[1]);
+                    case "VAR_ASSIGNMENT" -> newAction = new VarAssignment(parts[1], parts[2]);
+                    case "INCREMENT_VARIABLE" -> newAction = new IncrementVariable(parts[1], parts[2]);
+                    case "REPEAT" -> newAction = new Repeat(parts[1]);
+                    case "END_REPEAT" -> newAction = new Repeat(false);
                 }
                 newAction.setInProgram(true);
                 choosenActions.addActionForFile(newAction);
