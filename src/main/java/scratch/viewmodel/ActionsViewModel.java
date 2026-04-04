@@ -242,8 +242,10 @@ public class ActionsViewModel {
         return Bindings.createStringBinding(() -> {
             double x = monde.getPosPersonnageX().get() - 250;
             double y = 250 - monde.getPosPersonnageY().get();
-            return "Tortue: x = " + x + ", y = " + y;
-           }, monde.getPosPersonnageX(), monde.getPosPersonnageY()
+            double a = monde.getPersonnageAngle().get();
+            double angle = (a % 360 + 360) % 360;   // calcul de l'angle de 0 à 359
+            return String.format("Tortue: x = %.1f, y = %.1f, direction = %.1f °", x, y, angle);
+           }, monde.getPosPersonnageX(), monde.getPosPersonnageY(), monde.getPersonnageAngle()
         );
     }
 
@@ -353,7 +355,7 @@ public class ActionsViewModel {
         return monde.getPosPersonnageY();
     }
     public double getAngle() {
-        return monde.getPersonnageAngle();
+        return monde.getPersonnageAngle().get();
     }
     public BooleanProperty loadedProperty () {
             return loaded;

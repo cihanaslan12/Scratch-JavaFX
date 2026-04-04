@@ -9,17 +9,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Monde {
-
+    private final double DEFAULT_ANGLE = 0.0;
     private final ObservableList<Segment> segments = FXCollections.observableArrayList();
     private final Personnage personnage;
     private final Point startPos;
-    private final int startAngle;
+    private final DoubleProperty startAngle = new SimpleDoubleProperty();
     private final Map<String, Integer> variables = new HashMap<>();
 
-    public Monde(Personnage personnage, int startAngle) {
+    public Monde(Personnage personnage) {
         this.personnage = personnage;
         this.startPos = new Point();
-        this.startAngle = startAngle;
+        this.startAngle.set(DEFAULT_ANGLE);
     }
 
     public Personnage getPersonnage() {
@@ -43,8 +43,8 @@ public class Monde {
         return personnage.getY();
     }
 
-    public double getPersonnageAngle() {
-        return personnage.getAngle();
+    public DoubleProperty getPersonnageAngle() {
+        return personnage.angleProperty();
     }
 
     public void reset() {
@@ -52,7 +52,7 @@ public class Monde {
         variables.clear();
         personnage.getPosition().getX().set(250.0);
         personnage.getPosition().getY().set(250.0);
-        personnage.setAngle(startAngle);
+        personnage.setAngle(startAngle.get());
         personnage.penDown();
     }
 
