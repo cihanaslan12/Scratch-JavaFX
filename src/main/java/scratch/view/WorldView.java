@@ -1,8 +1,5 @@
 package scratch.view;
 
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -14,7 +11,6 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import scratch.model.VarDeclaration;
 import scratch.viewmodel.ActionsViewModel;
 
@@ -44,16 +40,16 @@ public class WorldView extends VBox {
     public WorldView(ActionsViewModel vm) {
         this.vm = vm;
 
-        scenePane.setPrefSize(500, 500);
+        scenePane.setPrefSize(vm.getWorldSize(), vm.getWorldSize());
         scenePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-        setPrefWidth(500);
+        setPrefWidth(vm.getWorldSize());
 
         configStateZone();
         configActions();
         configBindings();
 
         drawGrid();
-        drawTurtle(250, 250, 0);
+        drawTurtle(vm.getWorldOriginX(), vm.getWorldOriginY(), vm.getAngle());
     }
 
     private void configStateZone() {
@@ -126,14 +122,14 @@ public class WorldView extends VBox {
     private void drawGrid() {
         double step = 50;
 
-        for (double x = 0; x <= 500; x += step) {
-            Line line = new Line(x, 0, x, 500);
+        for (double x = 0; x <= vm.getWorldSize(); x += step) {
+            Line line = new Line(x, 0, x,  vm.getWorldSize());
             line.setStroke(Color.LIGHTBLUE);
             scenePane.getChildren().add(line);
         }
 
-        for (double y = 0; y <= 500; y += step) {
-            Line line = new Line(0, y, 500, y);
+        for (double y = 0; y <= vm.getWorldSize(); y += step) {
+            Line line = new Line(0, y,  vm.getWorldSize(), y);
             line.setStroke(Color.LIGHTBLUE);
             scenePane.getChildren().add(line);
         }

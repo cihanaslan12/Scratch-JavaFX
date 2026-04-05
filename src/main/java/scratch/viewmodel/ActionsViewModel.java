@@ -240,8 +240,8 @@ public class ActionsViewModel {
 
     public StringBinding turtlePosition() {
         return Bindings.createStringBinding(() -> {
-            double x = monde.getPosPersonnageX().get() - 250;
-            double y = 250 - monde.getPosPersonnageY().get();
+            double x = monde.getPosPersonnageX().get() - getWorldOriginX();
+            double y = getWorldOriginY() - monde.getPosPersonnageY().get();
             double a = monde.getPersonnageAngle().get();
             double angle = (a % 360 + 360) % 360;   // calcul de l'angle de 0 à 359
             return String.format("Tortue: x = %.1f, y = %.1f, direction = %.1f °", x, y, angle);
@@ -347,6 +347,15 @@ public class ActionsViewModel {
     }
     public ObservableList<Segment> getSegments() {
         return monde.getSegments();
+    }
+    public int getWorldSize() {
+        return monde.getWorldSize();
+    }
+    public int getWorldOriginX() {
+        return monde.getWorldOriginX();
+    }
+    public int getWorldOriginY() {
+        return monde.getWorldOriginY();
     }
     public DoubleProperty getPosX(){
         return monde.getPosPersonnageX();

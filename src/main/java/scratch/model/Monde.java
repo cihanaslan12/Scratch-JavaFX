@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Monde {
+    private static final int SIZE = 500;
+    private static final int CENTER = SIZE / 2;
     private final double DEFAULT_ANGLE = 0.0;
     private final ObservableList<Segment> segments = FXCollections.observableArrayList();
     private final Personnage personnage;
@@ -18,8 +20,22 @@ public class Monde {
 
     public Monde(Personnage personnage) {
         this.personnage = personnage;
-        this.startPos = new Point();
-        this.startAngle.set(DEFAULT_ANGLE);
+        this.getPosPersonnageX().set(CENTER);   // initialisation de pos x de la tortue
+        this.getPosPersonnageY().set(CENTER);   // initialisation de pos y de la tortue
+        this.startPos = new Point(CENTER, CENTER); // initialisation du point de départ du monde
+        this.startAngle.set(DEFAULT_ANGLE);     // angle de départ du monde
+    }
+
+    public int getWorldSize() {
+        return SIZE;
+    }
+
+    public int getWorldOriginX() {
+        return CENTER;
+    }
+
+    public int getWorldOriginY() {
+        return CENTER;
     }
 
     public Personnage getPersonnage() {
@@ -50,8 +66,8 @@ public class Monde {
     public void reset() {
         segments.clear();
         variables.clear();
-        personnage.getPosition().getX().set(250.0);
-        personnage.getPosition().getY().set(250.0);
+        personnage.getPosition().getX().set(CENTER);
+        personnage.getPosition().getY().set(CENTER);
         personnage.setAngle(startAngle.get());
         personnage.penDown();
     }
