@@ -16,7 +16,7 @@ public class Monde {
     private final Personnage personnage;
     private final Point startPos;
     private final DoubleProperty startAngle = new SimpleDoubleProperty();
-    private final Map<String, Integer> variables = new HashMap<>();
+    private final ObservableList<VarDeclaration> variables = FXCollections.observableArrayList();
 
     public Monde(Personnage personnage) {
         this.personnage = personnage;
@@ -24,6 +24,10 @@ public class Monde {
         this.getPosPersonnageY().set(CENTER);   // initialisation de pos y de la tortue
         this.startPos = new Point(CENTER, CENTER); // initialisation du point de départ du monde
         this.startAngle.set(DEFAULT_ANGLE);     // angle de départ du monde
+    }
+
+    public ObservableList<VarDeclaration> getVariables() {
+        return variables;
     }
 
     public int getWorldSize() {
@@ -73,28 +77,38 @@ public class Monde {
     }
 
     public void declareVariable(String name) {
-        if (variables.containsKey(name)) {
+        if (isVariableDeclared(name)) {
             throw new IllegalArgumentException("Variable déjà déclarée : " + name);
         }
-        variables.put(name, 0);
+        variables.add(new VarDeclaration(name));
     }
 
-    public boolean isVaraibleDeclared(String name) {
-        return variables.containsKey(name);
+    public boolean isVariableDeclared(String name) {
+        for (VarDeclaration variable : variables) {
+            if (variable.nameProperty().get().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getVariableValue(String name) {
-        if (!variables.containsKey(name)) {
-            throw new IllegalArgumentException("Variable non déclarée : " + name);
+        for (VarDeclaration variable : variables) {
+            if (variable.nameProperty().get().equals(name)) {
+                return variable.valueProperty().get();
+            }
         }
-        return variables.get(name);
+        throw new IllegalArgumentException("Variable non déclarée : " + name);
     }
 
     public void setVariableValue(String name, int value) {
-        if (!variables.containsKey(name)) {
-            throw new IllegalArgumentException("Variable non déclarée : " + name);
+        for (VarDeclaration variable : variables) {
+            if (variable.nameProperty().get().equals(name)) {
+                variable.setValue(value);
+                return;
+            }
         }
-        variables.put(name, value);
+        throw new IllegalArgumentException("Variable non déclarée : " + name);
     }
 
     public int resolveValue(String text) {
@@ -104,7 +118,7 @@ public class Monde {
         if (text.matches("-?\\d+")) {
             return Integer.parseInt(text);
         }
-        if(isVaraibleDeclared(text)) {
+        if(isVariableDeclared(text)) {
             return getVariableValue(text);
         }
         throw new IllegalArgumentException("Valeur invalide ou variable non déclarée : " + text);

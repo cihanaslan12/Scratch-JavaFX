@@ -22,6 +22,7 @@ public class WorldView extends VBox {
     private final Pane scenePane = new Pane();
 
     private final VBox stateVBox = new VBox();
+    private final VBox executeVBox = new VBox();
 
     private Text turtlePos = new Text();
 
@@ -56,17 +57,21 @@ public class WorldView extends VBox {
         setSpacing(10);
 
         turtlePos.textProperty().bind(vm.turtlePosition());
-        TableView<VarDeclaration> varTable= varTable();
+        Label tableLabel = new Label("Variables");
+        TableView<VarDeclaration> varTable = varTable();
         HBox radioHBox = radioContainer();
         HBox btnHBox = btnContainer();
 
-        stateVBox.getChildren().addAll(turtlePos, varTable, radioHBox, btnHBox);
+        stateVBox.getChildren().addAll(turtlePos, tableLabel, varTable);
         stateVBox.setPrefSize(150, 200);
         stateVBox.setStyle("-fx-border-color: black; -fx-border-width: 0.5;");
-        stateVBox.setPadding(new Insets(10));
-        stateVBox.setSpacing(10);
+        stateVBox.setPadding(new Insets(5));
+        stateVBox.setSpacing(5);
 
-        getChildren().addAll(scenePane, stateVBox);
+        executeVBox.getChildren().addAll(radioHBox, btnHBox);
+        executeVBox.setSpacing(10);
+
+        getChildren().addAll(scenePane, stateVBox, executeVBox);
 
         loadBtn.textProperty().bind(vm.loadButtonTextProperty());
         executeBtn.textProperty().bind(vm.runButtonTextProperty());
@@ -74,13 +79,14 @@ public class WorldView extends VBox {
     }
 
     private TableView<VarDeclaration> varTable() {
-        Label tableLabel = new Label("Variables");
         TableView<VarDeclaration> varTable = new TableView<>();
         TableColumn<VarDeclaration, String> nom = new TableColumn<>("Nom");
-        nom.setPrefWidth(75);
-        TableColumn<VarDeclaration, Integer> valeur = new TableColumn<>("Valeur");
-        valeur.setPrefWidth(75);
+        nom.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        TableColumn<VarDeclaration, Number> valeur = new TableColumn<>("Valeur");
+        valeur.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
         varTable.getColumns().addAll(nom, valeur);
+        varTable.setItems(vm.getVariables());
+        varTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
         return varTable;
     }
 

@@ -122,6 +122,10 @@ public class ActionsViewModel {
         });
     }
 
+    public ObservableList<VarDeclaration> getVariables() {
+        return monde.getVariables();
+    }
+
     public BooleanBinding canAdd () {
             return actionIndex.greaterThanOrEqualTo(0);
     }
