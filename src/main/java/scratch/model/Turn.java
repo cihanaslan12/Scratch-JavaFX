@@ -10,7 +10,6 @@ public class Turn extends Action{
     private StringProperty value = new SimpleStringProperty("");
     private static final String DEFAULT_ANGLE = "90";
     private final boolean left;
-    private  String detailActionLabel = "";
 
     public Turn( boolean left) {
             this.left = left;
@@ -25,10 +24,16 @@ public class Turn extends Action{
         this.value.set(value);
         this.left = left;
     }
+    private void checkAngle(int angle) {
+        if(angle < 1 || angle > 180) {
+            throw new RuntimeException("Valeur invalide pour " + (left ? "TURN_LEFT" : "TURN_RIGHT") + " : " + angle + " (doit être comprise entre 1 et 180)");
+        }
+    }
 
     @Override
     public void execute(Monde monde) {
         int angle = monde.resolveValue(value.get());
+        checkAngle(angle);
         if(left) {
             monde.getPersonnage().turnLeft(angle);
         } else {
@@ -48,8 +53,7 @@ public class Turn extends Action{
 
     @Override
     public String detailActionLabel() {
-        detailActionLabel = left ? "Angle vers la gauche " : "Angle vers la droite";
-        return detailActionLabel;
+        return left ? "Angle vers la gauche " : "Angle vers la droite";
     }
 
     @Override
