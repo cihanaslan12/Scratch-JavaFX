@@ -35,6 +35,8 @@ public class WorldView extends VBox {
     private final Button loadBtn = new Button("Charger");
     private final Button executeBtn = new Button("Executer");
 
+    private final Slider speedSlider = new Slider(0.01, 5, 0.5);
+
     private Polygon turtle;
     private Circle headTurtle;
 
@@ -61,6 +63,7 @@ public class WorldView extends VBox {
         TableView<VarDeclaration> varTable = varTable();
         HBox radioHBox = radioContainer();
         HBox btnHBox = btnContainer();
+        Slider slider = sliderContainer();
 
         stateVBox.getChildren().addAll(turtlePos, tableLabel, varTable);
         stateVBox.setPrefSize(150, 200);
@@ -68,7 +71,7 @@ public class WorldView extends VBox {
         stateVBox.setPadding(new Insets(5));
         stateVBox.setSpacing(5);
 
-        executeVBox.getChildren().addAll(radioHBox, btnHBox);
+        executeVBox.getChildren().addAll(radioHBox, btnHBox, slider);
         executeVBox.setSpacing(10);
 
         getChildren().addAll(scenePane, stateVBox, executeVBox);
@@ -106,6 +109,15 @@ public class WorldView extends VBox {
         btnHBox.setAlignment(Pos.CENTER);
 
         return btnHBox;
+    }
+
+    private Slider sliderContainer() {
+        speedSlider.visibleProperty().bind(radioAuto.selectedProperty());
+        speedSlider.setShowTickLabels(true);
+        speedSlider.setShowTickMarks(true);
+        speedSlider.setMajorTickUnit(1);
+        speedSlider.setMinorTickCount(3);
+        return speedSlider;
     }
 
     private void configActions() {
