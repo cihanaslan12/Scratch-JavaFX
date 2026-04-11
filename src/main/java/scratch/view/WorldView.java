@@ -34,6 +34,7 @@ public class WorldView extends VBox {
     private final HBox btnHBox = new HBox();
     private final Button loadBtn = new Button("Charger");
     private final Button executeBtn = new Button("Executer");
+    private final Button stopBtn = new Button("Arrêter");
 
     private final Slider speedSlider = new Slider(0.01, 5, 0.5);
 
@@ -53,6 +54,10 @@ public class WorldView extends VBox {
 
         drawGrid();
         drawTurtle(vm.getWorldOriginX(), vm.getWorldOriginY(), vm.getAngle());
+
+        vm.getPosX().addListener((obs, oldV, newV) -> refreshScene());
+        vm.getPosY().addListener((obs, oldV, newV) -> refreshScene());
+        vm.getAngleProperty().addListener((obs, oldV, newV) -> refreshScene());
     }
 
     private void configStateZone() {
@@ -75,10 +80,6 @@ public class WorldView extends VBox {
         executeVBox.setSpacing(10);
 
         getChildren().addAll(scenePane, stateVBox, executeVBox);
-
-        loadBtn.textProperty().bind(vm.loadButtonTextProperty());
-        executeBtn.textProperty().bind(vm.runButtonTextProperty());
-
     }
 
     private TableView<VarDeclaration> varTable() {
@@ -105,7 +106,11 @@ public class WorldView extends VBox {
     }
 
     private HBox btnContainer() {
-        btnHBox.getChildren().addAll(loadBtn, executeBtn);
+        loadBtn.textProperty().bind(vm.loadButtonTextProperty());
+        executeBtn.textProperty().bind(vm.runButtonTextProperty());
+        stopBtn.visibleProperty().bind(radioAuto.selectedProperty());
+
+        btnHBox.getChildren().addAll(loadBtn, executeBtn, stopBtn);
         btnHBox.setAlignment(Pos.CENTER);
 
         return btnHBox;
@@ -117,6 +122,7 @@ public class WorldView extends VBox {
         speedSlider.setShowTickMarks(true);
         speedSlider.setMajorTickUnit(1);
         speedSlider.setMinorTickCount(3);
+        speedSlider.valueProperty().bindBidirectional(vm.speedProperty());
         return speedSlider;
     }
 
@@ -127,7 +133,17 @@ public class WorldView extends VBox {
         });
 
         executeBtn.setOnAction(e -> {
-            vm.execOrNext();
+            if (radioAuto.isSelected()) {
+                vm.startAutoExec();
+                refreshScene();
+            } else {
+                vm.execOrNext();
+                refreshScene();
+            }
+        });
+
+        stopBtn.setOnAction(e -> {
+            vm.stopExec();
             refreshScene();
         });
     }
@@ -135,6 +151,7 @@ public class WorldView extends VBox {
     private void configBindings() {
         loadBtn.disableProperty().bind(vm.canLoad().not());
         executeBtn.disableProperty().bind(vm.canRun().not());
+        stopBtn.disableProperty().bind(vm.isRunningProperty().not());
     }
 
     private void drawGrid() {

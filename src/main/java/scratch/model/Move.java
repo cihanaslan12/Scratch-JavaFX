@@ -25,9 +25,15 @@ public class Move extends Action {
     @Override
     public void execute(Monde monde) {
         int distance = monde.resolveValue(value);
-        Segment s = monde.getPersonnage().moveForward(distance);
-        monde.addSegment(s);
+        Personnage p = monde.getPersonnage();
 
+        Point destination = p.calculDestination(distance);
+
+        if(p.isPenDown()) {     // pas de segment si stylo levé
+            Point start = new Point(p.getX().get(), p.getY().get());
+            monde.addSegment(new Segment(start, destination));
+        }
+        p.moveTo(destination);
     }
 
     @Override

@@ -57,7 +57,7 @@ public class Personnage {
         angle.set(getAngle() - degrees);
     }
 
-    public Segment moveForward(int distance) {
+    public Point calculDestination(int distance) {
         // angle étant exprimé en degré, on le transforme en radians et on ajoute 90° (Math.PI / 2)
         double radians = Math.toRadians(getAngle()) + Math.PI / 2;
         // Par rapport à la position actuelle de la tortue, on calcule alors les différences en X et en Y de la manière suivante :
@@ -67,15 +67,11 @@ public class Personnage {
         double newX = position.getX().get() + diffX;
         double newY = position.getY().get() - diffY;
 
-        Point start = new Point(position.getX().get(), position.getY().get());
-        position.getX().set(newX);
-        position.getY().set(newY);
-        Point end = new Point(newX,newY);
+        return new Point(newX,newY);
+    }
 
-        if(penDown) {
-            return new Segment(start, end);
-        }
-
-        return null; // pas de segment si stylo levé
+    public void moveTo(Point p) {
+        position.getX().set(p.getX().get());
+        position.getY().set(p.getY().get());
     }
 }

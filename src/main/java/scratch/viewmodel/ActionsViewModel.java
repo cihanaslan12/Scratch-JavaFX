@@ -1,5 +1,8 @@
 package scratch.viewmodel;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -7,6 +10,7 @@ import javafx.beans.property.*;
 import javafx.collections.ListChangeListener;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.ObservableList;
+import javafx.util.Duration;
 import scratch.model.*;
 import scratch.model.ActionList;
 import scratch.model.Programme;
@@ -40,6 +44,10 @@ public class ActionsViewModel {
     private BooleanProperty isValidInput = new SimpleBooleanProperty(true);
     private BooleanProperty isValidSecondInput = new SimpleBooleanProperty(true);
 
+    private final Timeline executeAuto = new Timeline();
+    private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
+
+    private final BooleanProperty isRunning = new SimpleBooleanProperty(false);
 
     public ActionsViewModel(Programme choosenActions, Monde monde) {
 
@@ -120,6 +128,17 @@ public class ActionsViewModel {
                 action.setSecondParameter(newVal);
             }
         });
+
+        keyFrame();
+
+        //mise à jour de la vitesse(du timeline) lorsque la vitesse du slider change
+        speed.addListener((obs, oldVal, newVal) -> {
+            executeAuto.setRate(newVal.doubleValue());
+        });
+    }
+
+    public BooleanProperty isRunningProperty() {
+        return isRunning;
     }
 
     public ObservableList<VarDeclaration> getVariables() {
@@ -226,7 +245,9 @@ public class ActionsViewModel {
             // premier clic sur Executer -> sélectionne la première ligne du prog
             if (!stepping.get()) {
                 stepping.set(true);
-                runButtonText.set("Suivant");
+                if (!isRunning.get()) {     // si exec auto -> pas de btn suivant
+                    runButtonText.set("Suivant");
+                }
                 highlightIdx.set(0);
             } else {
                 // mode Suivant
@@ -240,6 +261,32 @@ public class ActionsViewModel {
                 }
             }
         }
+    }
+    // méthode qui lie le temps d'execution et les méthodes d'execution à l'execution auto
+    private void keyFrame() {
+        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), e -> {
+            if (canRun().get()) {
+                execOrNext();
+            } else {
+                stopExec();
+            }
+        });
+        executeAuto.getKeyFrames().add(keyFrame);
+        executeAuto.setCycleCount(Animation.INDEFINITE);
+    }
+
+    public DoubleProperty speedProperty() {
+        return speed;
+    }
+
+    public void startAutoExec() {
+        executeAuto.play();
+        isRunning.set(true);
+    }
+
+    public void stopExec() {
+        executeAuto.stop();
+        isRunning.set(false);
     }
 
     public StringBinding turtlePosition() {
@@ -366,6 +413,9 @@ public class ActionsViewModel {
     }
     public DoubleProperty getPosY() {
         return monde.getPosPersonnageY();
+    }
+    public DoubleProperty getAngleProperty() {
+        return monde.getPersonnageAngle();
     }
     public double getAngle() {
         return monde.getPersonnageAngle().get();
