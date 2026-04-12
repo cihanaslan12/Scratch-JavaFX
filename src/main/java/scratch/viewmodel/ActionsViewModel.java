@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.*;
-import javafx.collections.ListChangeListener;
 import javafx.beans.binding.StringBinding;
 import javafx.collections.ObservableList;
 import scratch.model.*;
@@ -35,8 +34,8 @@ public class ActionsViewModel {
 
     private final StringProperty parameterProperty = new SimpleStringProperty("");
     private final StringProperty secondParameterProperty = new SimpleStringProperty("");
-    private BooleanProperty isValidInput = new SimpleBooleanProperty(true);
-    private BooleanProperty isValidSecondInput = new SimpleBooleanProperty(true);
+    private final BooleanProperty isValidInput = new SimpleBooleanProperty(true);
+    private final BooleanProperty isValidSecondInput = new SimpleBooleanProperty(true);
 
 
     public ActionsViewModel(Programme choosenActions, Monde monde) {
@@ -74,7 +73,7 @@ public class ActionsViewModel {
             parameterProperty.set(newVal.getRawParameter());
             secondParameterProperty.set(newVal.getSecondParameter());
             isValidInput.set(newVal.isValidParameter(parameterProperty.get()));
-            isValidSecondInput.set(newVal.isValidSecondParameter(secondParameterProperty.get()));
+
             if (newVal.hasTwoParameters()) {
                 isValidSecondInput.set(newVal.isValidSecondParameter(secondParameterProperty.get()));
             } else {
@@ -322,9 +321,7 @@ public class ActionsViewModel {
         return parameterProperty;
     }
 
-    public StringProperty parameterProperty() {
-        return parameterProperty;
-    }
+
     public ReadOnlyBooleanProperty isValidInputProperty() {
             return isValidInput;
     }
@@ -362,8 +359,10 @@ public class ActionsViewModel {
                     case "REPEAT" -> newAction = new Repeat(parts[1]);
                     case "END_REPEAT" -> newAction = new Repeat(false);
                 }
-                newAction.setInProgram(true);
-                choosenActions.addActionForFile(newAction);
+                if(newAction != null) {
+                    newAction.setInProgram(true);
+                    choosenActions.addActionForFile(newAction);
+                }
             }
             invalidateProgram();
         } catch (Exception e) {
