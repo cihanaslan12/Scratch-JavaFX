@@ -93,21 +93,25 @@ public class Repeat extends Action {
     @Override
     public void execute(Monde monde) {
         if (loop) {
+            // je stocke "x" fois que la boucles doit tourner dans count
             int count = monde.resolveValue(value.get());
             if (count <= 0) {
                 throw new IllegalStateException("Counter must be grater than 0");
             }
+            // si la boucle doit tourner au moins une fois
             monde.pushLoop(new Repeat(monde.getExecIdx(), count));
         } else {
             if (monde.repeatStackEmpty()) {
                 throw new IllegalStateException("End of repeat, without repeat");
             }
+            // je récupère la première boucle rencontrer et la stocker dans une instance de repeat
             Repeat currentLoop = monde.peekLoop();
+            // je decrémente le nombre de fois que la boucle doit tourner
             currentLoop.decrementRemain();
             if (currentLoop.getRemain() > 0) {
-                monde.setExecIdx(currentLoop.getRepeatIndex()); // revient au corps
+                monde.setExecIdx(currentLoop.getRepeatIndex()); // revient au corps et recommence l'exécution du bloc
             } else {
-                monde.popLoop();
+                monde.popLoop();// la fin de repeat donc je vide la pile
             }
         }
     }

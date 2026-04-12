@@ -3,6 +3,7 @@ package scratch.view;
 import javafx.beans.binding.Bindings;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -212,10 +213,23 @@ public class ProgramView extends VBox {
                     setGraphic(null);
                 } else {
                     Color c = actionColor(item);
+
+                    int indentLevel = vm.getIndentationLevel(getIndex());
+                    Region space = new Region();
+                    space.setPrefWidth(indentLevel * 20);
+
+                    Circle circle = new Circle(5,c);
+                    Label label = new Label(item.toString());
+                    label.setTextFill(c);
+
+                    HBox box = new HBox(8, space, circle, label);
+                    setText(null);
+                    setGraphic(box);
+                    /*
                     setText(item.toString());
                     setTextFill(c);
                     setGraphic(new Circle(5, c));
-                    setGraphicTextGap(8);
+                    setGraphicTextGap(8); */
                 }
             }
         });

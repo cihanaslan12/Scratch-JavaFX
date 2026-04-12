@@ -94,6 +94,7 @@ public class ActionsViewModel {
             if (valid) {
                 action.setRawParameter(newVal);
             }
+            choosenActions.refreshRepeatValid();
         });
         secondParameterProperty.addListener((obs, oldVal, newVal) -> {
             Action action = actionProperty.get();
@@ -108,6 +109,7 @@ public class ActionsViewModel {
             if (valid) {
                 action.setSecondParameter(newVal);
             }
+            choosenActions.refreshRepeatValid();
         });
     }
 
@@ -142,8 +144,10 @@ public class ActionsViewModel {
     }
     public BooleanBinding canLoad () {
             return Bindings.createBooleanBinding(() ->
-                            !choosenActions.getProgram().isEmpty() && choosenActions.isPenInstructionValid() && choosenActions.isRepeatValid(),
-                    choosenActions.getProgram()
+                            !choosenActions.getProgram().isEmpty()
+                                    && choosenActions.isPenInstructionValid()
+                                    && choosenActions.repeatValidProperty().get(),
+                    choosenActions.getProgram(), choosenActions.repeatValidProperty()
             );
     }
 
@@ -446,6 +450,29 @@ public class ActionsViewModel {
         loadButtonText.set("Charger");
         runButtonText.set("Executer");
    }
+
+    public int getIndentationLevel(int index) {
+        int indent = 0;
+
+        for (int i = 0; i < index; i++) {
+            Action action = choosenActions.getProgram().get(i);
+
+            if (action.getType() == Type.REPEAT) {
+                indent++;
+            } else if (action.getType() == Type.END_REPEAT) {
+                indent--;
+            }
+        }
+
+        Action current = choosenActions.getProgram().get(index);
+        if (current.getType() == Type.END_REPEAT) {
+            indent--;
+        }
+
+        // je dois prévoir le cas ou indent devient négatif
+        // ex : si je répète End repeat deux foix
+        return Math.max(indent, 0);
+    }
 
 }
 

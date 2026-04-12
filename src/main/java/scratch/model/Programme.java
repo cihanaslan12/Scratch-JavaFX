@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -8,6 +10,7 @@ import java.util.Stack;
 public class Programme {
 
     private final ObservableList<Action> program = FXCollections.observableArrayList();
+    private final BooleanProperty repeatValid = new SimpleBooleanProperty(true);
 
     public ObservableList<Action> getProgram() {
         return FXCollections.unmodifiableObservableList(program);
@@ -92,10 +95,18 @@ public class Programme {
         return true;
     }
     public boolean isRepeatValid() {
+        /*
+        La pile qui contiendra le nombre de fois que le programme doit être répter
+        on les stock dans une pile car on peut avoir des boucles impbriquées
+        */
         Stack<String> compteursBoucle = new Stack<>();
 
         for (Action action : getProgram()) {
-
+            /* si on est dans un bloc de repeat
+                 On récup le nb fois et on le stock dans une string
+                    si c'est pas null et que c'est pas un entier (donc une variable), on l'ajout a la pile
+                    sinon c'est un entier donc on ajoute null, car un entier n'a pas besoin de protection contre l'incrémentation dans la boucle
+            */
             if (action.getType() == Type.REPEAT) {
                 String param = action.getRawParameter();
 
@@ -105,25 +116,40 @@ public class Programme {
                     compteursBoucle.push(null);
                 }
             }
+            /*
+            si c'est la fin de la boucle
+                si y a encore "un nombre de fois a tourner" on enlève cette valeur pour sortir de la boucle actuelle
+            */
             else if (action.getType() == Type.END_REPEAT) {
                 if (!compteursBoucle.isEmpty()) {
                     compteursBoucle.pop();
                 }
             }
+            /*
+            si la pile de compteurs n'est pas vide, c'est a dire qu'on est dans une boucle imbriquée
+                on récup la valeur de la boucle suivante (le nb de fois que cette boucle doit tourner)
+                on vérifie si on essaye de modfier la valeur du compteur
+            */
             else if (!compteursBoucle.isEmpty()) {
-                String compteurCourant = compteursBoucle.peek();
-
-                if (compteurCourant == null) {
-                    continue;
-                }
-
                 if (action.getType() == Type.VAR_ASSIGNMENT
-                        || action.getType() == Type.VAR_INCREMENT) {
+                        || action.getType() == Type.VAR_INCREMENT
+                        || action.getType() == Type.VAR_DECLARATION) {
 
                     String variableModifiee = getVariableModifiedBy(action);
-
-                    if (compteurCourant.equals(variableModifiee)) {
-                        return false;
+                    /*
+                    parcours toutes les variables dans la pile
+                    car si on est dans une boucle imbriqué
+                    ex :
+                    REPEAT x fois
+                        REPEAT y fois
+                            ++x <== ca devrait pas être possible
+                        FIN REPEAT
+                    FIN REPEAT
+                    */
+                    for (String compteur : compteursBoucle) {
+                        if (compteur != null && compteur.equals(variableModifiee)) {
+                            return false;
+                        }
                     }
                 }
             }
@@ -132,12 +158,21 @@ public class Programme {
         return true;
     }
     private String getVariableModifiedBy(Action action) {
-        if (action.getType() == Type.VAR_ASSIGNMENT || action.getType() == Type.VAR_DECLARATION) {
+        if (action.getType() == Type.VAR_ASSIGNMENT
+                || action.getType() == Type.VAR_DECLARATION
+                || action.getType() == Type.VAR_INCREMENT) {
             return action.getRawParameter();
         }
         return null;
     }
     public void addActionForFile(Action action) {
         program.add(action);
+    }
+    public BooleanProperty repeatValidProperty() {
+        return repeatValid;
+    }
+
+    public void refreshRepeatValid() {
+        repeatValid.set(isRepeatValid());
     }
 }
