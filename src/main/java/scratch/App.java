@@ -14,8 +14,8 @@ public class App extends Application {
     public void start(Stage primaryStage) {
         Programme choosenActions = new Programme();
 
-        Personnage p = new Personnage(0,new Point(250,250));
-        Monde monde = new Monde(p,new Point(250,250),0);
+        Personnage p = new Personnage();
+        Monde monde = new Monde(p);
         ActionsViewModel actionsViewModel = new ActionsViewModel(choosenActions, monde);
 
         Scene scene = new Scene(new MainView(actionsViewModel));

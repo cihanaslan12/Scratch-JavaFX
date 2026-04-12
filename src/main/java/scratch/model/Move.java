@@ -1,35 +1,36 @@
 package scratch.model;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 
 public class Move extends Action {
 
-    private final StringProperty value = new SimpleStringProperty("");
-
-    private static final String DEFAULT_DISTANCE = "30";
+    private String value;
+    private final  String detailActionLabel = "Avancer de";
+    private static String DEFAULT_DISTANCE = "30";
 
     public Move(String value) {
-        this.value.set(value);
+        this.value = value;
     }
     public Move(int value) {
-        this.value.set(String.valueOf(value));
+        this.value = String.valueOf(value);
     }
     public Move() {
-        this.value.set(DEFAULT_DISTANCE);
+        this.value = DEFAULT_DISTANCE;
     }
-    private void checkDistance(int distance) {
-        if(distance < 1 || distance > 100) {
-            throw  new RuntimeException("Valeur invalide pour MOVE_FORWARD : " + distance + " (doit être comprise entre 1 et 100)");
-        }
+    public String getValue() {
+        return value;
     }
 
     @Override
     public void execute(Monde monde) {
-        int distance = monde.resolveValue(value.get());
-        checkDistance(distance);
-        Segment s = monde.getPersonnage().moveForward(distance);
-        monde.addSegment(s);
+        int distance = monde.resolveValue(value);
+        Personnage p = monde.getPersonnage();
 
+        Point destination = p.calculDestination(distance);
+
+        if(p.isPenDown()) {     // pas de segment si stylo levé
+            Point start = new Point(p.getX().get(), p.getY().get());
+            monde.addSegment(new Segment(start, destination));
+        }
+        p.moveTo(destination);
     }
 
     @Override
@@ -39,12 +40,12 @@ public class Move extends Action {
 
     @Override
     public String getRawParameter() {
-        return value.get();
+        return value;
     }
 
     @Override
     public void setRawParameter(String text) {
-        this.value.set(text);
+        this.value = text;
     }
 
     @Override
@@ -68,7 +69,7 @@ public class Move extends Action {
 
     @Override
     public String detailActionLabel() {
-        return "Avancer de";
+        return detailActionLabel;
     }
 
     @Override
@@ -78,20 +79,18 @@ public class Move extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        Move copy = new Move(this.value.get());
-        copy.setInProgram(true);
-        return copy;
+        return new Move(this.value);
     }
     @Override
     public String toString() {
         if(!this.actionForProgram()) {
             return "Avancer de ";
         }
-        return "Avancer de " + value.get();
+        return "Avancer de " + value;
     }
     @Override
     public String stringForSave() {
-        return "MOVE_FORWARD;" + value.get();
+        return "MOVE_FORWARD;" + value;
     }
 
 }
