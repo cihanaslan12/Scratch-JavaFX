@@ -324,7 +324,7 @@ public class ActionsViewModel {
     }
     // méthode qui lie le temps d'execution et les méthodes d'execution à l'execution auto
     private void keyFrame() {
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), e -> {
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(100), e -> {
             if (canRun().get()) {
                 execOrNext();
             } else {
