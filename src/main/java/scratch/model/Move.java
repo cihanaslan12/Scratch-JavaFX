@@ -18,10 +18,16 @@ public class Move extends Action {
     public String getValue() {
         return value;
     }
+    private void checkDistance(int distance) {
+        if(distance < 1 || distance > 100) {
+            throw  new RuntimeException("Valeur invalide pour MOVE_FORWARD : " + distance + " (doit être comprise entre 1 et 100)");
+        }
+    }
 
     @Override
     public void execute(Monde monde) {
         int distance = monde.resolveValue(value);
+        checkDistance(distance);
         Personnage p = monde.getPersonnage();
 
         Point destination = p.calculDestination(distance);

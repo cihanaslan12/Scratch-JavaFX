@@ -90,7 +90,7 @@ public class Repeat extends Action {
 
     @Override
     public String stringForSave() {
-        return loop ? "REPEAT;" + value : "END_REPEAT;";
+        return loop ? "REPEAT;" + value.get() : "END_REPEAT;";
     }
 
     @Override
