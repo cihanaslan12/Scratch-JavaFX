@@ -168,8 +168,11 @@ public class ActionsViewModel {
             return Bindings.createBooleanBinding(() ->
                             !choosenActions.getProgram().isEmpty()
                                     && choosenActions.isPenInstructionValid()
-                                    && choosenActions.repeatValidProperty().get(),
-                    choosenActions.getProgram(), choosenActions.repeatValidProperty()
+                                    && choosenActions.repeatValidProperty().get()
+                                    && choosenActions.duplicatedVarName(),
+
+                    choosenActions.getProgram(),
+                    choosenActions.repeatValidProperty()
             );
     }
 

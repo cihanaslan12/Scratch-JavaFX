@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.List;
 import java.util.Stack;
 
 public class Programme {
@@ -184,5 +185,36 @@ public class Programme {
 
     public void refreshRepeatValid() {
         repeatValid.set(isRepeatValid());
+    }
+
+    public boolean duplicatedVarName() {
+        int idx = 0;
+        List<String> params = null;
+        if (!program.isEmpty()) {
+            while (idx < program.size() - 1){
+                if (program.get(idx).getType() == Type.VAR_DECLARATION) {
+                    params.add(program.get(idx).getRawParameter());
+                }
+                ++idx;
+            }
+            int k = 0;
+            while (k < params.size()) {
+                boolean notValid = doubleParam(params.get(k),params);
+                if (notValid) {
+                    return false;
+                }
+                ++k;
+            }
+        }
+        return true;
+    }
+
+    public boolean doubleParam(String current, List<String> l) {
+        for (String s : l) {
+            if (s.equals(current)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
