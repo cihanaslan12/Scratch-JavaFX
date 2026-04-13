@@ -46,6 +46,8 @@ public class ActionsViewModel {
 
     private final BooleanProperty isRunning = new SimpleBooleanProperty(false);
 
+    private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
+
     public ActionsViewModel(Programme choosenActions, Monde monde) {
 
         this.choosenActions = choosenActions;
@@ -169,10 +171,10 @@ public class ActionsViewModel {
                             !choosenActions.getProgram().isEmpty()
                                     && choosenActions.isPenInstructionValid()
                                     && choosenActions.repeatValidProperty().get()
+                                    && choosenActions.areVarDeclarationsAtTop()
                                     && choosenActions.duplicatedVarName(),
 
-                    choosenActions.getProgram(),
-                    choosenActions.repeatValidProperty()
+                    choosenActions.getProgram(), choosenActions.repeatValidProperty()
             );
     }
 
@@ -296,6 +298,7 @@ public class ActionsViewModel {
 
                 loaded.set(true);
                 stepping.set(false);
+                runtimeError.set(false);
 
                 loadButtonText.set("Ré-initialiser");
                 runButtonText.set("Executer");
@@ -314,20 +317,31 @@ public class ActionsViewModel {
                 highlightIdx.set(0);
             } else {
                 // mode Suivant
-                execIdx.set(choosenActions.executeNext(execIdx.get(), monde));
-                if (execIdx.get() < size) {
-                    highlightIdx.set(execIdx.get());
-                } else {
+                // try catch -> quand il y a une erreur a l'éxecution, le bouton Suivant est désactivé
+                try {
+                    execIdx.set(choosenActions.executeNext(execIdx.get(), monde));
+                    if (execIdx.get() < size) {
+                        highlightIdx.set(execIdx.get());
+                    } else {
+                        stepping.set(false);
+                        runButtonText.set("Executer");
+                        highlightIdx.set(size - 1);
+                    }
+                } catch (RuntimeException e) {
+                    runtimeError.set(true);
                     stepping.set(false);
-                    runButtonText.set("Executer");
-                    highlightIdx.set(size - 1);
+                    runButtonText.set("Suivant");
+
+                    if (execIdx.get() >= 0 && execIdx.get() < size) {
+                        highlightIdx.set(execIdx.get());
+                    }
                 }
             }
         }
     }
     // méthode qui lie le temps d'execution et les méthodes d'execution à l'execution auto
     private void keyFrame() {
-        KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), e -> {
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(100), e -> {
             if (canRun().get()) {
                 execOrNext();
             } else {
@@ -522,12 +536,16 @@ public class ActionsViewModel {
     public ReadOnlyBooleanProperty isValidSecondInputProperty() {
         return isValidSecondInput;
     }
+    public BooleanProperty runtimeErrorProperty() {
+        return runtimeError;
+    }
 
    private void invalidateProgram () {
         loaded.set(false);
         stepping.set(false);
         execIdx.set(0);
         highlightIdx.set(-1);
+        runtimeError.set(false);
         loadButtonText.set("Charger");
         runButtonText.set("Executer");
    }
