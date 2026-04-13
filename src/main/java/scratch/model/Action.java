@@ -22,10 +22,12 @@ public abstract class Action implements Commande {
     public abstract Type getType();
     public abstract  Action copyActionForProgram();
 
-  //  public abstract IntegerProperty parameterProperty();
-  //  public abstract Boolean isValidparametre(int param);
 
+
+    // retourne le premier paramètre de l'action sous forme de texte (10, val)
     public abstract String getRawParameter();
+
+    // modifie le premier paramètre de l'action
     public abstract void setRawParameter(String text);
     public abstract boolean isValidParameter(String text);
 

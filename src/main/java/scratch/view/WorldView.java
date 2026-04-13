@@ -1,13 +1,17 @@
 package scratch.view;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.text.Text;
+import scratch.model.VarDeclaration;
 import scratch.viewmodel.ActionsViewModel;
 
 public class WorldView extends VBox {
@@ -16,8 +20,23 @@ public class WorldView extends VBox {
 
     private final Label sceneLabel = new Label("Scène");
     private final Pane scenePane = new Pane();
+
+    private final VBox stateVBox = new VBox();
+    private final VBox executeVBox = new VBox();
+
+    private Text turtlePos = new Text();
+
+    private final HBox radioHBox = new HBox();
+    private final RadioButton radioAuto = new RadioButton("Execution automatique");
+    private final RadioButton radioManu = new RadioButton("Execution manuelle");
+    private final ToggleGroup executeToggle = new ToggleGroup();
+
+    private final HBox btnHBox = new HBox();
     private final Button loadBtn = new Button("Charger");
     private final Button executeBtn = new Button("Executer");
+    private final Button stopBtn = new Button("Arrêter");
+
+    private final Slider speedSlider = new Slider(0.01, 5, 0.5);
 
     private Polygon turtle;
     private Circle headTurtle;
@@ -25,20 +44,86 @@ public class WorldView extends VBox {
     public WorldView(ActionsViewModel vm) {
         this.vm = vm;
 
-        scenePane.setPrefSize(500, 500);
+        scenePane.setPrefSize(vm.getWorldSize(), vm.getWorldSize());
         scenePane.setStyle("-fx-border-color: black; -fx-border-width: 2;");
-        setPrefWidth(500);
+        setPrefWidth(vm.getWorldSize());
 
-        getChildren().addAll(scenePane, loadBtn, executeBtn);
-
-        loadBtn.textProperty().bind(vm.loadButtonTextProperty());
-        executeBtn.textProperty().bind(vm.runButtonTextProperty());
-
+        configStateZone();
         configActions();
         configBindings();
 
         drawGrid();
-        drawTurtle(250, 250, 0);
+        drawTurtle(vm.getWorldOriginX(), vm.getWorldOriginY(), vm.getAngle());
+
+        vm.getPosX().addListener((obs, oldV, newV) -> refreshScene());
+        vm.getPosY().addListener((obs, oldV, newV) -> refreshScene());
+        vm.getAngleProperty().addListener((obs, oldV, newV) -> refreshScene());
+    }
+
+    private void configStateZone() {
+        setSpacing(10);
+
+        turtlePos.textProperty().bind(vm.turtlePosition());
+        Label tableLabel = new Label("Variables");
+        TableView<VarDeclaration> varTable = varTable();
+        HBox radioHBox = radioContainer();
+        HBox btnHBox = btnContainer();
+        Slider slider = sliderContainer();
+
+        stateVBox.getChildren().addAll(turtlePos, tableLabel, varTable);
+        stateVBox.setPrefSize(150, 200);
+        stateVBox.setStyle("-fx-border-color: black; -fx-border-width: 0.5;");
+        stateVBox.setPadding(new Insets(5));
+        stateVBox.setSpacing(5);
+
+        executeVBox.getChildren().addAll(radioHBox, btnHBox, slider);
+        executeVBox.setSpacing(10);
+
+        getChildren().addAll(scenePane, stateVBox, executeVBox);
+    }
+
+    private TableView<VarDeclaration> varTable() {
+        TableView<VarDeclaration> varTable = new TableView<>();
+        TableColumn<VarDeclaration, String> nom = new TableColumn<>("Nom");
+        nom.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
+        TableColumn<VarDeclaration, Number> valeur = new TableColumn<>("Valeur");
+        valeur.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
+        varTable.getColumns().addAll(nom, valeur);
+        varTable.setItems(vm.getVariables());
+        varTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        return varTable;
+    }
+
+    private HBox radioContainer() {
+        radioAuto.setToggleGroup(executeToggle);
+        radioManu.setToggleGroup(executeToggle);
+        radioManu.setSelected(true);
+        radioHBox.getChildren().addAll(radioAuto, radioManu);
+        radioHBox.setAlignment(Pos.CENTER);
+        radioHBox.setSpacing(10);
+
+        return radioHBox;
+    }
+
+    private HBox btnContainer() {
+        loadBtn.textProperty().bind(vm.loadButtonTextProperty());
+        executeBtn.textProperty().bind(vm.runButtonTextProperty());
+        stopBtn.visibleProperty().bind(radioAuto.selectedProperty());
+
+        btnHBox.getChildren().addAll(loadBtn, executeBtn, stopBtn);
+        btnHBox.setAlignment(Pos.CENTER);
+
+        return btnHBox;
+    }
+
+    private Slider sliderContainer() {
+        speedSlider.visibleProperty().bind(radioAuto.selectedProperty());
+        speedSlider.setShowTickLabels(true);
+        speedSlider.setShowTickMarks(true);
+        speedSlider.setMajorTickUnit(1);
+        speedSlider.setMinorTickCount(3);
+        speedSlider.valueProperty().bindBidirectional(vm.speedProperty());
+        return speedSlider;
     }
 
     private void configActions() {
@@ -48,7 +133,17 @@ public class WorldView extends VBox {
         });
 
         executeBtn.setOnAction(e -> {
-            vm.execOrNext();
+            if (radioAuto.isSelected()) {
+                vm.startAutoExec();
+                refreshScene();
+            } else {
+                vm.execOrNext();
+                refreshScene();
+            }
+        });
+
+        stopBtn.setOnAction(e -> {
+            vm.stopExec();
             refreshScene();
         });
     }
@@ -56,19 +151,20 @@ public class WorldView extends VBox {
     private void configBindings() {
         loadBtn.disableProperty().bind(vm.canLoad().not());
         executeBtn.disableProperty().bind(vm.canRun().not());
+        stopBtn.disableProperty().bind(vm.isRunningProperty().not());
     }
 
     private void drawGrid() {
         double step = 50;
 
-        for (double x = 0; x <= 500; x += step) {
-            Line line = new Line(x, 0, x, 500);
+        for (double x = 0; x <= vm.getWorldSize(); x += step) {
+            Line line = new Line(x, 0, x,  vm.getWorldSize());
             line.setStroke(Color.LIGHTBLUE);
             scenePane.getChildren().add(line);
         }
 
-        for (double y = 0; y <= 500; y += step) {
-            Line line = new Line(0, y, 500, y);
+        for (double y = 0; y <= vm.getWorldSize(); y += step) {
+            Line line = new Line(0, y,  vm.getWorldSize(), y);
             line.setStroke(Color.LIGHTBLUE);
             scenePane.getChildren().add(line);
         }
@@ -105,15 +201,15 @@ public class WorldView extends VBox {
 
         for (var s : vm.getSegments()) {
             Line line = new Line(
-                    s.getStart().getX(), s.getStart().getY(),
-                    s.getEnd().getX(), s.getEnd().getY()
+                    s.getStart().getX().get(), s.getStart().getY().get(),
+                    s.getEnd().getX().get(), s.getEnd().getY().get()
             );
             line.setStroke(Color.RED);
             line.setStrokeWidth(2);
             scenePane.getChildren().add(line);
         }
 
-        drawTurtle(vm.getPosX(), vm.getPosY(), vm.getAngle());
+        drawTurtle(vm.getPosX().get(), vm.getPosY().get(), vm.getAngle());
     }
 
     public Label getSceneLabel() {

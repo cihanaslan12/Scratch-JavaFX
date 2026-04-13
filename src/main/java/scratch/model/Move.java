@@ -1,12 +1,8 @@
 package scratch.model;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-
 public class Move extends Action {
 
     private String value;
-   // private final IntegerProperty distance = new SimpleIntegerProperty();
     private final  String detailActionLabel = "Avancer de";
     private static String DEFAULT_DISTANCE = "30";
 
@@ -22,12 +18,19 @@ public class Move extends Action {
     public String getValue() {
         return value;
     }
+
     @Override
     public void execute(Monde monde) {
         int distance = monde.resolveValue(value);
-        Segment s = monde.getPersonnage().moveForward(distance);
-        monde.addSegment(s);
+        Personnage p = monde.getPersonnage();
 
+        Point destination = p.calculDestination(distance);
+
+        if(p.isPenDown()) {     // pas de segment si stylo levé
+            Point start = new Point(p.getX().get(), p.getY().get());
+            monde.addSegment(new Segment(start, destination));
+        }
+        p.moveTo(destination);
     }
 
     @Override
@@ -76,7 +79,7 @@ public class Move extends Action {
 
     @Override
     public Action copyActionForProgram() {
-        Move copy = new Move(this.getValue());
+        Move copy = new Move(this.value);
         copy.setInProgram(true);
         return copy;
     }

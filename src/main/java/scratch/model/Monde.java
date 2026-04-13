@@ -1,5 +1,7 @@
 package scratch.model;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -8,20 +10,39 @@ import java.util.Map;
 import java.util.Stack;
 
 public class Monde {
-
+    private static final int SIZE = 500;
+    private static final int CENTER = SIZE / 2;
+    private final double DEFAULT_ANGLE = 0.0;
     private final ObservableList<Segment> segments = FXCollections.observableArrayList();
     private final Personnage personnage;
     private final Point startPos;
-    private final int startAngle;
-    private final Map<String, Integer> variables = new HashMap<>();
+    private final DoubleProperty startAngle = new SimpleDoubleProperty();
+    private final ObservableList<VarDeclaration> variables = FXCollections.observableArrayList();
 
     private final Stack<Repeat> repeatStack = new Stack<>();
     private int execIdx;
-
-    public Monde(Personnage personnage, Point startPos, int startAngle) {
+    public Monde(Personnage personnage) {
         this.personnage = personnage;
-        this.startPos = startPos;
-        this.startAngle = startAngle;
+        this.getPosPersonnageX().set(CENTER);   // initialisation de pos x de la tortue
+        this.getPosPersonnageY().set(CENTER);   // initialisation de pos y de la tortue
+        this.startPos = new Point(CENTER, CENTER); // initialisation du point de départ du monde
+        this.startAngle.set(DEFAULT_ANGLE);     // angle de départ du monde
+    }
+
+    public ObservableList<VarDeclaration> getVariables() {
+        return variables;
+    }
+
+    public int getWorldSize() {
+        return SIZE;
+    }
+
+    public int getWorldOriginX() {
+        return CENTER;
+    }
+
+    public int getWorldOriginY() {
+        return CENTER;
     }
     public int getExecIdx() {
         return execIdx;
@@ -69,50 +90,61 @@ public class Monde {
         return FXCollections.unmodifiableObservableList(segments);
     }
 
-    public double getPosPersonnageX() {
+    public DoubleProperty getPosPersonnageX() {
         return personnage.getX();
     }
 
-    public double getPosPersonnageY() {
+    public DoubleProperty getPosPersonnageY() {
         return personnage.getY();
     }
 
-    public double getPersonnageAngle() {
-        return personnage.getAngle();
+    public DoubleProperty getPersonnageAngle() {
+        return personnage.angleProperty();
     }
 
     public void reset() {
         segments.clear();
         variables.clear();
         execIdx = 0;
-        personnage.setPosition(new Point(startPos.getX(), startPos.getY()));
-        personnage.setAngle(startAngle);
+        personnage.getPosition().getX().set(CENTER);
+        personnage.getPosition().getY().set(CENTER);
+        personnage.setAngle(startAngle.get());
         personnage.penDown();
     }
 
     public void declareVariable(String name) {
-        if (variables.containsKey(name)) {
+        if (isVariableDeclared(name)) {
             throw new IllegalArgumentException("Variable déjà déclarée : " + name);
         }
-        variables.put(name, 0);
+        variables.add(new VarDeclaration(name));
     }
 
     public boolean isVariableDeclared(String name) {
-        return variables.containsKey(name);
+        for (VarDeclaration variable : variables) {
+            if (variable.nameProperty().get().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getVariableValue(String name) {
-        if (!variables.containsKey(name)) {
-            throw new IllegalArgumentException("Variable non déclarée : " + name);
+        for (VarDeclaration variable : variables) {
+            if (variable.nameProperty().get().equals(name)) {
+                return variable.valueProperty().get();
+            }
         }
-        return variables.get(name);
+        throw new IllegalArgumentException("Variable non déclarée : " + name);
     }
 
     public void setVariableValue(String name, int value) {
-        if (!variables.containsKey(name)) {
-            throw new IllegalArgumentException("Variable non déclarée : " + name);
+        for (VarDeclaration variable : variables) {
+            if (variable.nameProperty().get().equals(name)) {
+                variable.setValue(value);
+                return;
+            }
         }
-        variables.put(name, value);
+        throw new IllegalArgumentException("Variable non déclarée : " + name);
     }
 
     public int resolveValue(String text) {

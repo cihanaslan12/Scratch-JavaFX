@@ -253,10 +253,7 @@ public class ProgramView extends VBox {
         endLbl.textProperty().unbind();
         middleLbl.textProperty().unbind();
 
-        input.textProperty().unbind();
         input.textProperty().unbindBidirectional(vm.inputProperty());
-
-        input2.textProperty().unbind();
         input2.textProperty().unbindBidirectional(vm.secondInputProperty());
     }
 
@@ -267,7 +264,7 @@ public class ProgramView extends VBox {
         endLbl.setText("");
         middleLbl.setText("");
 
-        innerEditBox.getChildren().addAll(startLbl, input, endLbl, errLbl);
+        innerEditBox.getChildren().addAll(startLbl);
     }
 
     private void showTwoParameterDetail(Action action) {

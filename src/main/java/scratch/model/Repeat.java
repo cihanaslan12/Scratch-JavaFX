@@ -21,7 +21,10 @@ public class Repeat extends Action {
         this.start.set(start);
         this.remain.set(remain);
     }
-
+    public Repeat(String value) {
+        this.loop = true;
+        this.value.set(value);
+    }
     public int getRepeatIndex() {
         return start.get();
     }
@@ -87,7 +90,7 @@ public class Repeat extends Action {
 
     @Override
     public String stringForSave() {
-        return loop ? "REPEAT;" + value.get() : "END_REPEAT";
+        return loop ? "REPEAT;" + value : "END_REPEAT;";
     }
 
     @Override

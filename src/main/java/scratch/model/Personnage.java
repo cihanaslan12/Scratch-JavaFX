@@ -1,26 +1,33 @@
 package scratch.model;
 
-public class Personnage {
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 
-    private int angle;
+public class Personnage {
+    private final double DEFAULT_ANGLE = 0.0;
+    private final DoubleProperty angle = new SimpleDoubleProperty();
     private Point position;
     private boolean penDown;
 
-    public Personnage(int angle, Point position) {
-        this.angle = angle;
-        this.position = position;
-        this.penDown = true; // stylo abaissé par défaut
+    public Personnage() {
+        this.angle.set(DEFAULT_ANGLE);  // angle par défaut à 0°
+        this.position = new Point();    // position par défaut à x=0,y=0
+        this.penDown = true;            // stylo abaissé par défaut
     }
-    public int getAngle() {
+
+    public DoubleProperty angleProperty() {
         return angle;
+    }
+    public double getAngle() {
+        return angle.get();
     }
     public Point getPosition() {
         return position;
     }
-    public double getX() {
+    public DoubleProperty getX() {
         return position.getX();
     }
-    public double getY() {
+    public DoubleProperty getY() {
         return position.getY();
     }
 
@@ -31,8 +38,8 @@ public class Personnage {
         this.position = position;
     }
 
-    public void setAngle(int angle) {
-        this.angle = angle;
+    public void setAngle(double angle) {
+        this.angle.set(angle);
     }
 
     public void penUp() {
@@ -43,34 +50,28 @@ public class Personnage {
     }
 
     public void turnLeft(int degrees) {
-        angle += degrees;
-
+        angle.set(getAngle() + degrees);
     }
 
     public void turnRight(int degrees) {
-        angle -= degrees;
-
+        angle.set(getAngle() - degrees);
     }
 
-    public Segment moveForward(int distance) {
+    public Point calculDestination(int distance) {
         // angle étant exprimé en degré, on le transforme en radians et on ajoute 90° (Math.PI / 2)
-        double radians = Math.toRadians(angle) + Math.PI / 2;
+        double radians = Math.toRadians(getAngle()) + Math.PI / 2;
         // Par rapport à la position actuelle de la tortue, on calcule alors les différences en X et en Y de la manière suivante :
         double diffX = distance * Math.cos(radians);
         double diffY = distance * Math.sin(radians);
 
-        double newX = position.getX() + diffX;
-        double newY = position.getY() - diffY;
+        double newX = position.getX().get() + diffX;
+        double newY = position.getY().get() - diffY;
 
-        Point start = position;
-        Point newPos = new Point(newX,newY);
+        return new Point(newX,newY);
+    }
 
-        position = newPos;
-
-        if(penDown) {
-            return new Segment(start, newPos);
-        }
-
-        return null; // pas de segment si stylo levé
+    public void moveTo(Point p) {
+        position.getX().set(p.getX().get());
+        position.getY().set(p.getY().get());
     }
 }
