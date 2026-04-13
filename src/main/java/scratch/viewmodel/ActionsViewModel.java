@@ -46,6 +46,8 @@ public class ActionsViewModel {
 
     private final BooleanProperty isRunning = new SimpleBooleanProperty(false);
 
+    private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
+
     public ActionsViewModel(Programme choosenActions, Monde monde) {
 
         this.choosenActions = choosenActions;
@@ -294,6 +296,7 @@ public class ActionsViewModel {
 
                 loaded.set(true);
                 stepping.set(false);
+                runtimeError.set(false);
 
                 loadButtonText.set("Ré-initialiser");
                 runButtonText.set("Executer");
@@ -312,13 +315,24 @@ public class ActionsViewModel {
                 highlightIdx.set(0);
             } else {
                 // mode Suivant
-                execIdx.set(choosenActions.executeNext(execIdx.get(), monde));
-                if (execIdx.get() < size) {
-                    highlightIdx.set(execIdx.get());
-                } else {
+                // try catch -> quand il y a une erreur a l'éxecution, le bouton Suivant est désactivé
+                try {
+                    execIdx.set(choosenActions.executeNext(execIdx.get(), monde));
+                    if (execIdx.get() < size) {
+                        highlightIdx.set(execIdx.get());
+                    } else {
+                        stepping.set(false);
+                        runButtonText.set("Executer");
+                        highlightIdx.set(size - 1);
+                    }
+                } catch (RuntimeException e) {
+                    runtimeError.set(true);
                     stepping.set(false);
-                    runButtonText.set("Executer");
-                    highlightIdx.set(size - 1);
+                    runButtonText.set("Suivant");
+
+                    if (execIdx.get() >= 0 && execIdx.get() < size) {
+                        highlightIdx.set(execIdx.get());
+                    }
                 }
             }
         }
@@ -519,6 +533,9 @@ public class ActionsViewModel {
 
     public ReadOnlyBooleanProperty isValidSecondInputProperty() {
         return isValidSecondInput;
+    }
+    public BooleanProperty runtimeErrorProperty() {
+        return runtimeError;
     }
 
    private void invalidateProgram () {
