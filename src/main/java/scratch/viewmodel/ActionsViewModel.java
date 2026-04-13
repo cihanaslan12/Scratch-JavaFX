@@ -431,6 +431,7 @@ public class ActionsViewModel {
                 }
             }
             invalidateProgram();
+            choosenActions.refreshRepeatValid();
         } catch (Exception e) {
             e.printStackTrace();
         }
