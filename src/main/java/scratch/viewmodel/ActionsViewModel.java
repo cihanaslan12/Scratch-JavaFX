@@ -543,6 +543,7 @@ public class ActionsViewModel {
         stepping.set(false);
         execIdx.set(0);
         highlightIdx.set(-1);
+        runtimeError.set(false);
         loadButtonText.set("Charger");
         runButtonText.set("Executer");
    }
