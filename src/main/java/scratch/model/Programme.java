@@ -20,7 +20,7 @@ public class Programme {
         if(action.getType() == Type.VAR_DECLARATION) {
             for (Action value : program) {
                 if (value.getType() != Type.VAR_DECLARATION) {
-                    if (insertIndex >= 1) {
+                    if (insertIndex >= 0) {
                         return;
                     }
                 }
@@ -28,7 +28,7 @@ public class Programme {
         }
 
         if (insertIndex >= 0 && insertIndex < program.size()) {
-
+            // ajout action apres l'action choisi dans le programme
             program.add(insertIndex + 1, action);
         } else {
             program.add(action);
@@ -185,4 +185,20 @@ public class Programme {
     public void refreshRepeatValid() {
         repeatValid.set(isRepeatValid());
     }
+    public boolean areVarDeclarationsAtTop() {
+        boolean notVarDeclaration = false;
+
+        for (Action action : getProgram()) {
+            if (action.getType() == Type.VAR_DECLARATION) {
+                if (notVarDeclaration) {
+                    return false;
+                }
+            } else {
+                notVarDeclaration = true;
+            }
+        }
+
+        return true;
+    }
+
 }
