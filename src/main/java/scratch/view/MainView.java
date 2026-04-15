@@ -86,7 +86,7 @@ public class MainView extends VBox {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle(title);
         fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Scratch files", "*.src"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Scratch files", "*.scr"));
         return fileChooser;
     }
 
