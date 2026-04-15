@@ -150,9 +150,8 @@ public class WorldView extends VBox {
 
     private void configBindings() {
         loadBtn.disableProperty().bind(vm.canLoad().not());
-        executeBtn.disableProperty().bind(vm.canRun().not());
+        executeBtn.disableProperty().bind(vm.canRun().not().or(vm.runtimeErrorProperty()));
         stopBtn.disableProperty().bind(vm.isRunningProperty().not());
-        executeBtn.disableProperty().bind(vm.runtimeErrorProperty());
     }
 
     private void drawGrid() {
