@@ -5,13 +5,16 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 
 public class Programme {
 
     private final ObservableList<Action> program = FXCollections.observableArrayList();
     private final BooleanProperty repeatValid = new SimpleBooleanProperty(true);
+    private final BooleanProperty varsDeclarationValid = new SimpleBooleanProperty(true);
 
     public ObservableList<Action> getProgram() {
         return FXCollections.unmodifiableObservableList(program);
@@ -204,33 +207,19 @@ public class Programme {
 
 
     public boolean duplicatedVarName() {
-        int idx = 0;
-        List<String> params = null;
-        if (!program.isEmpty()) {
-            while (idx < program.size() - 1){
-                if (program.get(idx).getType() == Type.VAR_DECLARATION) {
-                    params.add(program.get(idx).getRawParameter());
-                }
-                ++idx;
-            }
-            int k = 0;
-            while (k < params.size()) {
-                boolean notValid = doubleParam(params.get(k),params);
-                if (notValid) {
-                    return false;
-                }
-                ++k;
+
+        Set<String> vars =  new HashSet<>();
+        for (Action a : program) {
+            if (a.getType() == Type.VAR_DECLARATION && !vars.add(a.getRawParameter())) {
+                return false;
             }
         }
         return true;
     }
-
-    public boolean doubleParam(String current, List<String> l) {
-        for (String s : l) {
-            if (s.equals(current)) {
-                return true;
-            }
-        }
-        return false;
+    public BooleanProperty varsDeclarationValidProperty() {
+        return varsDeclarationValid;
+    }
+    public void refreshVarsDeclarationValid() {
+        varsDeclarationValid.set(duplicatedVarName());
     }
 }

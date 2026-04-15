@@ -104,6 +104,7 @@ public class ActionsViewModel {
                 action.setRawParameter(newVal);
             }
             choosenActions.refreshRepeatValid();
+            choosenActions.refreshVarsDeclarationValid();
         });
         secondParameterProperty.addListener((obs, oldVal, newVal) -> {
             Action action = actionProperty.get();
@@ -119,6 +120,7 @@ public class ActionsViewModel {
                 action.setSecondParameter(newVal);
             }
             choosenActions.refreshRepeatValid();
+            choosenActions.refreshVarsDeclarationValid();
         });
 
         keyFrame();
@@ -172,9 +174,9 @@ public class ActionsViewModel {
                                     && choosenActions.isPenInstructionValid()
                                     && choosenActions.repeatValidProperty().get()
                                     && choosenActions.areVarDeclarationsAtTop()
-                                    && choosenActions.duplicatedVarName(),
+                                    && choosenActions.varsDeclarationValidProperty().get(),
 
-                    choosenActions.getProgram(), choosenActions.repeatValidProperty()
+                    choosenActions.getProgram(), choosenActions.repeatValidProperty(),choosenActions.varsDeclarationValidProperty()
             );
     }
 
