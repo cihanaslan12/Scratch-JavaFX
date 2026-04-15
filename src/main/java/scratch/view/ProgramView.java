@@ -40,7 +40,7 @@ public class ProgramView extends VBox {
     private final Label startLbl = new Label();
     private final Label middleLbl = new Label();
     private final Label endLbl = new Label();
-    private final Label errLbl = new Label("Erreur valeur");
+    private final Label errLbl = new Label();
 
 
     public ProgramView(ActionsViewModel vm) {
@@ -107,7 +107,8 @@ public class ProgramView extends VBox {
         input.disableProperty().bind(vm.canEdit().not());
         input2.disableProperty().bind(vm.canEdit().not());
 
-        errLbl.visibleProperty().bind(vm.showError());
+        errLbl.visibleProperty().bind(vm.showError().or(vm.runtimeErrorProperty()));
+        errLbl.textProperty().bind(vm.errorLabelTextProperty());
 
         btnPlus.visibleProperty().bind(vm.showIncrementButtonsProperty());
         btnPlus.managedProperty().bind(btnPlus.visibleProperty());

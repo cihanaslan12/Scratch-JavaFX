@@ -218,6 +218,15 @@ public class ActionsViewModel {
                 isValidSecondInput
         );
     }
+    public StringBinding errorLabelTextProperty() {
+        return Bindings.createStringBinding(() -> {
+                    if (runtimeError.get() || showError().get()) {
+                        return "Erreur valeur";
+                    }
+                    return "";
+                }, runtimeError, actionProperty, parameterProperty,
+                secondParameterProperty, isValidInput, isValidSecondInput);
+    }
 
     public BooleanBinding showIncrementButtonsProperty() {
         return Bindings.createBooleanBinding(
@@ -332,7 +341,9 @@ public class ActionsViewModel {
                 } catch (RuntimeException e) {
                     runtimeError.set(true);
                     stepping.set(false);
-                    runButtonText.set("Suivant");
+                    runButtonText.set("Executer");
+
+                    e.printStackTrace();
 
                     if (execIdx.get() >= 0 && execIdx.get() < size) {
                         highlightIdx.set(execIdx.get());
@@ -419,6 +430,7 @@ public class ActionsViewModel {
     public void newProgram() {
         choosenActions.clear();
         monde.reset();
+        runtimeError.set(false);
     }
 
     public void openFile(File file) {
