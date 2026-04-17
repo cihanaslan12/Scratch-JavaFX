@@ -222,4 +222,26 @@ public class Programme {
     public void refreshVarsDeclarationValid() {
         varsDeclarationValid.set(duplicatedVarName());
     }
+
+    public boolean isPenStateOkInLoops() {
+        boolean currentPenState = Pen.DEFAULT_STATE;
+        Stack<Boolean> penInRepeatStack = new Stack<>();
+        for (Action a : program) {
+            if (a.getType() == Type.PEN_UP || a.getType() == Type.PEN_DOWN) {
+                currentPenState = a.getPenState();
+            }
+            if (a.getType() == Type.REPEAT) {
+                penInRepeatStack.push(currentPenState);
+            }
+            else if (a.getType() == Type.END_REPEAT) {
+                if (!penInRepeatStack.isEmpty()) {
+                    boolean penStateBeforeRepeat = penInRepeatStack.pop();
+                    if (currentPenState != penStateBeforeRepeat) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }

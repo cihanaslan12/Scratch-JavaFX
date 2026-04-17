@@ -174,7 +174,8 @@ public class ActionsViewModel {
                                     && choosenActions.isPenInstructionValid()
                                     && choosenActions.repeatValidProperty().get()
                                     && choosenActions.areVarDeclarationsAtTop()
-                                    && choosenActions.varsDeclarationValidProperty().get(),
+                                    && choosenActions.varsDeclarationValidProperty().get()
+                                    && choosenActions.isPenStateOkInLoops(),
 
                     choosenActions.getProgram(), choosenActions.repeatValidProperty(),choosenActions.varsDeclarationValidProperty()
             );

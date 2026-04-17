@@ -3,12 +3,16 @@ package scratch.model;
 import javafx.beans.property.IntegerProperty;
 
 public class Pen extends Action {
-
+    public static final boolean DEFAULT_STATE = true;
     private final boolean styloDown; // true = abaisser, false = lever
     private String detailActionLabel = "";
 
     public Pen(boolean styloDown) {
         this.styloDown = styloDown;
+    }
+
+    public Pen() {
+        this.styloDown = DEFAULT_STATE;
     }
 
     public boolean isStyloDown() {
