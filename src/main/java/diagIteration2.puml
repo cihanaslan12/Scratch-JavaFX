@@ -1,0 +1,146 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+left to right direction
+
+package "view" {
+
+  class ActionsView {
+    - actions : ListView<Action>
+  }
+
+  class ProgramView {
+    - program : ListView<Action>
+    - input : TextField
+  }
+
+  class WorldView {
+    - scenePane : Pane
+  }
+}
+
+package "viewmodel" {
+  class ActionsViewModel {
+    - choosenActions : Programme
+    - monde : Monde
+    - execIdx : IntegerProperty
+    - loaded : BooleanProperty
+    - stepping : BooleanProperty
+    - highlightIdx : IntegerProperty
+    + addAction()
+    + up()
+    + down()
+    + duplicate()
+    + delete()
+    + clear()
+    + loadOrReset()
+    + execOrNext()
+  }
+}
+
+package "model" {
+
+  interface Commande {
+    + execute(monde : Monde)
+  }
+
+  abstract class Action {
+    - inProgram : boolean
+  }
+
+  class Move {
+    - value : String
+    + execute(monde : Monde)
+  }
+
+  class Turn {
+    - value : String
+    - left : boolean
+    + execute(monde : Monde)
+  }
+
+  class Pen {
+    - penDown : boolean
+    + execute(monde : Monde)
+  }
+
+  class Repeat {
+    - value : String
+    - loop : boolean
+    + execute(monde : Monde)
+  }
+
+  class VarDeclaration {
+    - name : String
+    + execute(monde : Monde)
+  }
+
+  class VarAssignment {
+    - name : String
+    - value : String
+    + execute(monde : Monde)
+  }
+
+  class IncrementVariable {
+    - name : String
+    - value : String
+    + execute(monde : Monde)
+  }
+
+  class ActionList {
+    + getActionList()
+  }
+
+  class Programme {
+    - program : ObservableList<Action>
+    + addAction()
+    + executeNext()
+  }
+
+  class Monde {
+    - segments : ObservableList<Segment>
+    - personnage : Personnage
+    - variables : ObservableList<VarDeclaration>
+    + reset()
+    + resolveValue()
+  }
+
+  class Personnage {
+    - angle : double
+    - position : Point
+    - penDown : boolean
+    + moveTo()
+    + turnLeft()
+    + turnRight()
+  }
+
+  class Segment
+  class Point
+}
+
+' relations
+ActionsView --> ActionsViewModel
+ProgramView --> ActionsViewModel
+WorldView --> ActionsViewModel
+
+ActionsViewModel --> Programme
+ActionsViewModel --> Monde
+
+Commande <|.. Action
+Action <|-- Move
+Action <|-- Turn
+Action <|-- Pen
+Action <|-- Repeat
+Action <|-- VarDeclaration
+Action <|-- VarAssignment
+Action <|-- IncrementVariable
+
+ActionList ..> Action
+Programme *-- "0..*" Action
+Monde *-- "0..*" Segment
+Monde *-- "0..*" VarDeclaration
+Monde *-- Personnage
+Personnage *-- Point
+Segment *-- Point
+
+@enduml
