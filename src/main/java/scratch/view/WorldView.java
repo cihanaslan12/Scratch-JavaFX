@@ -19,6 +19,8 @@ public class WorldView extends VBox {
     private final ActionsViewModel vm;
 
     private final Label sceneLabel = new Label("Scène");
+
+    // zone graphique où on dessine la grille, les segments et la tortue
     private final Pane scenePane = new Pane();
 
     private final VBox stateVBox = new VBox();
@@ -55,6 +57,7 @@ public class WorldView extends VBox {
         drawGrid();
         drawTurtle(vm.getWorldOriginX(), vm.getWorldOriginY(), vm.getAngle());
 
+        // refresh la scène si la position ou l'angle changent
         vm.getPosX().addListener((obs, oldV, newV) -> refreshScene());
         vm.getPosY().addListener((obs, oldV, newV) -> refreshScene());
         vm.getAngleProperty().addListener((obs, oldV, newV) -> refreshScene());
@@ -82,6 +85,7 @@ public class WorldView extends VBox {
         getChildren().addAll(scenePane, stateVBox, executeVBox);
     }
 
+    // endroit qui affiche les variables et leurs valeurs
     private TableView<VarDeclaration> varTable() {
         TableView<VarDeclaration> varTable = new TableView<>();
         TableColumn<VarDeclaration, String> nom = new TableColumn<>("Nom");
@@ -94,6 +98,7 @@ public class WorldView extends VBox {
         return varTable;
     }
 
+    // choix mode d'exécution
     private HBox radioContainer() {
         radioAuto.setToggleGroup(executeToggle);
         radioManu.setToggleGroup(executeToggle);
@@ -116,6 +121,7 @@ public class WorldView extends VBox {
         return btnHBox;
     }
 
+    // curseur de vitesse
     private Slider sliderContainer() {
         speedSlider.visibleProperty().bind(radioAuto.selectedProperty());
         speedSlider.setShowTickLabels(true);
@@ -195,10 +201,14 @@ public class WorldView extends VBox {
         scenePane.getChildren().addAll(turtle, headTurtle);
     }
 
+    // redessine entièrement la scène du Monde
     public void refreshScene() {
         scenePane.getChildren().clear();
+
+        // redessine la grille
         drawGrid();
 
+        // redessine tous les segments tracés
         for (var s : vm.getSegments()) {
             Line line = new Line(
                     s.getStart().getX().get(), s.getStart().getY().get(),
@@ -209,6 +219,7 @@ public class WorldView extends VBox {
             scenePane.getChildren().add(line);
         }
 
+        // redessine la tortue à sa position actuelle
         drawTurtle(vm.getPosX().get(), vm.getPosY().get(), vm.getAngle());
     }
 

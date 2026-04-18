@@ -34,10 +34,13 @@ public class ActionsViewModel {
     private final StringProperty loadButtonText = new SimpleStringProperty("Charger");
     private final StringProperty runButtonText = new SimpleStringProperty("Executer");
 
+    // action actuellement sélectionnée dans le programme
     private final ObjectProperty<Action> actionProperty = new SimpleObjectProperty<>();
 
+    // paramètre dans détail action
     private final StringProperty parameterProperty = new SimpleStringProperty("");
     private final StringProperty secondParameterProperty = new SimpleStringProperty("");
+
     private final BooleanProperty isValidInput = new SimpleBooleanProperty(true);
     private final BooleanProperty isValidSecondInput = new SimpleBooleanProperty(true);
 
@@ -46,6 +49,7 @@ public class ActionsViewModel {
 
     private final BooleanProperty isRunning = new SimpleBooleanProperty(false);
 
+    // indique si une erreur s'est produite à l'exécution
     private final BooleanProperty runtimeError = new SimpleBooleanProperty(false);
 
     public ActionsViewModel(Programme choosenActions, Monde monde) {
@@ -53,6 +57,7 @@ public class ActionsViewModel {
         this.choosenActions = choosenActions;
         this.monde = monde;
 
+        // lie l'action sélectionnée à l'index sélectionné dans le programme
         actionProperty.bind(
                 Bindings.createObjectBinding(() -> {
                     int idx = programIndex.get();
@@ -63,6 +68,7 @@ public class ActionsViewModel {
                 }, programIndex, choosenActions.getProgram())
         );
 
+        // met à jour les champs de saisie quand l'action sélectionnée change
         actionProperty.addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
                 parameterProperty.set("");
@@ -90,6 +96,8 @@ public class ActionsViewModel {
                 isValidSecondInput.set(true);
             }
         });
+
+        // met à jour le premier paramètre de l'action quand le champ texte change
         parameterProperty.addListener((obs, oldVal, newVal) -> {
             Action action = actionProperty.get();
 
@@ -106,6 +114,8 @@ public class ActionsViewModel {
             choosenActions.refreshRepeatValid();
             choosenActions.refreshVarsDeclarationValid();
         });
+
+        // Met à jour le deuxième paramètre de l'action quand le champ texte change
         secondParameterProperty.addListener((obs, oldVal, newVal) -> {
             Action action = actionProperty.get();
 
@@ -119,10 +129,12 @@ public class ActionsViewModel {
             if (valid) {
                 action.setSecondParameter(newVal);
             }
+            // met à jour les validations du programme
             choosenActions.refreshRepeatValid();
             choosenActions.refreshVarsDeclarationValid();
         });
 
+        // initialise l'exécution automatique
         keyFrame();
 
         //mise à jour de la vitesse(du timeline) lorsque la vitesse du slider change
@@ -130,6 +142,7 @@ public class ActionsViewModel {
             executeAuto.setRate(newVal.doubleValue());
         });
     }
+
 
     public BooleanProperty isRunningProperty() {
         return isRunning;
@@ -181,6 +194,7 @@ public class ActionsViewModel {
             );
     }
 
+    // indique si un message d'erreur de saisie doit être affiché
     public BooleanBinding showError() {
         return Bindings.createBooleanBinding(
                 () -> {
@@ -219,6 +233,7 @@ public class ActionsViewModel {
                 isValidSecondInput
         );
     }
+    // retourne le texte du label d'erreur
     public StringBinding errorLabelTextProperty() {
         return Bindings.createStringBinding(() -> {
                     if (runtimeError.get() || showError().get()) {
@@ -229,6 +244,7 @@ public class ActionsViewModel {
                 secondParameterProperty, isValidInput, isValidSecondInput);
     }
 
+    //  indique si les boutons + et - doivent être affichés
     public BooleanBinding showIncrementButtonsProperty() {
         return Bindings.createBooleanBinding(
                 () -> {
@@ -380,6 +396,7 @@ public class ActionsViewModel {
         isRunning.set(false);
     }
 
+    // retourne un texte décrivant la position et l'angle de la tortue
     public StringBinding turtlePosition() {
         return Bindings.createStringBinding(() -> {
             double x = monde.getPosPersonnageX().get() - getWorldOriginX();
@@ -398,9 +415,12 @@ public class ActionsViewModel {
             return programIndex;
     }
 
-    public ObjectProperty<Action> ActionProperty() {
+    // retourne l'action sélectionnée
+    public ObjectProperty<Action> actionProperty() {
             return actionProperty;
     }
+
+    // retourne le texte de début pour la zone détail
     public StringBinding startLblProperty () {
             return Bindings.createStringBinding(
                    () -> {
@@ -408,12 +428,16 @@ public class ActionsViewModel {
                         return action == null ? "" : action.detailActionLabel();
                    }, actionProperty);
     }
-        public StringBinding endLblProperty () {
-            return Bindings.createStringBinding(() -> {
-                Action action = actionProperty.get();
-                return action == null ? "" : actionProperty.get().unite();
-            }, actionProperty);
-        }
+
+    // retourne le texte de fin pour la zone détail
+    public StringBinding endLblProperty () {
+        return Bindings.createStringBinding(() -> {
+            Action action = actionProperty.get();
+            return action == null ? "" : actionProperty.get().unite();
+        }, actionProperty);
+    }
+
+    // retourne le premier paramètre édité
     public StringProperty inputProperty() {
         return parameterProperty;
     }
@@ -483,6 +507,8 @@ public class ActionsViewModel {
     public void exitProgram() {
         Platform.exit();
     }
+
+    // modifie le deuxième paramètre d'une action (pour l'incrémentation + 1 ou - 1)
     public void changeSecondParameter(int increment) {
         Action action = actionProperty.get();
 
@@ -555,6 +581,7 @@ public class ActionsViewModel {
         return runtimeError;
     }
 
+    // invalide l'état d'exécution du programme après une modification
    private void invalidateProgram () {
         loaded.set(false);
         stepping.set(false);
@@ -565,6 +592,7 @@ public class ActionsViewModel {
         runButtonText.set("Executer");
    }
 
+    // calcule le niveau d'indentation visuelle d'une action dans la liste
     public int getIndentationLevel(int index) {
         int indent = 0;
 

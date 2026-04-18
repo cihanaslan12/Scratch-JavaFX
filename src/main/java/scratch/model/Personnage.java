@@ -57,6 +57,7 @@ public class Personnage {
         angle.set(getAngle() - degrees);
     }
 
+    // calcule la nouvelle position du personnage après un déplacement
     public Point calculDestination(int distance) {
         // angle étant exprimé en degré, on le transforme en radians et on ajoute 90° (Math.PI / 2)
         double radians = Math.toRadians(getAngle()) + Math.PI / 2;
@@ -64,9 +65,11 @@ public class Personnage {
         double diffX = distance * Math.cos(radians);
         double diffY = distance * Math.sin(radians);
 
+        // nouvelle position en fonction de la position actuelle
         double newX = position.getX().get() + diffX;
         double newY = position.getY().get() - diffY;
 
+        // retourne le point de destination
         return new Point(newX,newY);
     }
 

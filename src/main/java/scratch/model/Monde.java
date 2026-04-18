@@ -4,9 +4,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Stack;
 
 public class Monde {
@@ -105,6 +102,7 @@ public class Monde {
     public void reset() {
         segments.clear();
         variables.clear();
+        repeatStack.clear();
         execIdx = 0;
         personnage.getPosition().getX().set(CENTER);
         personnage.getPosition().getY().set(CENTER);
@@ -151,9 +149,11 @@ public class Monde {
         if(text == null || text.isBlank()) {
             throw  new IllegalArgumentException("Valeur vide");
         }
+        // si la valeur est un entier, on la convertit
         if (text.matches("-?\\d+")) {
             return Integer.parseInt(text);
         }
+        // si c'est une variable déclarée, on retourne sa valeur
         if(isVariableDeclared(text)) {
             return getVariableValue(text);
         }

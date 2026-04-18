@@ -21,6 +21,7 @@ public class ActionsView extends VBox {
     public ActionsView(ActionsViewModel vm) {
         this.vm = vm;
 
+        // lie la liste graphique aux action du ViewModel
         actions.setItems(vm.getActions());
 
         getChildren().addAll(actions, btnAddToProgram);
@@ -49,6 +50,7 @@ public class ActionsView extends VBox {
     }
 
     private void configSelection() {
+        // met à jour l'index sélectionné dans le ViewModel
         actions.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             vm.actionIndexProperty().setValue(newVal.intValue());
         });

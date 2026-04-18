@@ -28,8 +28,8 @@ public class Move extends Action {
     public void execute(Monde monde) {
         int distance = monde.resolveValue(value);
         checkDistance(distance);
-        Personnage p = monde.getPersonnage();
 
+        Personnage p = monde.getPersonnage();
         Point destination = p.calculDestination(distance);
 
         if(p.isPenDown()) {     // pas de segment si stylo levé

@@ -46,6 +46,7 @@ public class ProgramView extends VBox {
     public ProgramView(ActionsViewModel vm) {
         this.vm = vm;
 
+        // lie la liste aux actions du programme
         program.setItems(vm.getProgramActions());
 
         prgmBtnsHbox.getChildren().addAll(btnUp, btnDown, btnDuplicate, btnDelete, btnClear);
@@ -119,26 +120,20 @@ public class ProgramView extends VBox {
     }
 
     private void configSelection() {
+        // met à jour l'index sélectionné dans le ViewModel
         program.getSelectionModel().selectedIndexProperty().addListener((obs, oldVal, newVal) -> {
             vm.programIndexProperty().setValue(newVal.intValue());
         });
 
-       /* startLbl.textProperty().bind(
-                Bindings.when(vm.ActionProperty().isNull())
-                        .then("(aucune action sélectionnée)")
-                        .otherwise(vm.startLblProperty())
-        );*/
-
-       /* endLbl.textProperty().bind(vm.endLblProperty());
-        input.textProperty().bindBidirectional(vm.inputProperty());
-        input2.textProperty().bindBidirectional(vm.secondInputProperty());*/
-
+        // refresh la liste quand les paramètres changent pour mettre à jour
+        // l'affichage du toString() dans le programme
         vm.inputProperty().addListener((obs, oldVal, newVal) -> program.refresh());
         vm.secondInputProperty().addListener((obs, oldVal, newVal) -> program.refresh());
 
+        // quand on quitte le premier champ, on vérifie si la valeur est valide
         input.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
-                Action action = vm.ActionProperty().get();
+                Action action = vm.actionProperty().get();
 
                 if (action == null) {
                     return;
@@ -146,15 +141,17 @@ public class ProgramView extends VBox {
 
                 String text = input.getText();
 
+                // si valeur invalide -> on remet l'ancienne valeur
                 if (!action.isValidParameter(text)) {
                     input.setText(action.getRawParameter());
                 }
             }
         });
 
+        // quand on quitte le deuxième champ, on vérifie aussi la validité
         input2.focusedProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal) {
-                Action action = vm.ActionProperty().get();
+                Action action = vm.actionProperty().get();
 
                 if (action == null || !action.hasTwoParameters()) {
                     return;
@@ -162,16 +159,19 @@ public class ProgramView extends VBox {
 
                 String text = input2.getText();
 
+                // si valeur invalide -> on remet l'ancienne valeur
                 if (!action.isValidSecondParameter(text)) {
                     input2.setText(action.getSecondParameter());
                 }
             }
         });
 
+        // si le ViewModel change l'index, on met à jour la sélection visuelle
         vm.programIndexProperty().addListener((obs, oldVal, newVal) -> {
             program.getSelectionModel().select(newVal.intValue());
         });
 
+        // " surligne " l'action en cours d'éexuction
         vm.highlightIdxProperty().addListener((obs, oldV, newV) -> {
             int idx = newV.intValue();
             if (idx >= 0 && idx < program.getItems().size()) {
@@ -180,11 +180,13 @@ public class ProgramView extends VBox {
             }
         });
 
-        vm.ActionProperty().addListener((obs, oldAction, newAction) -> {
+        // met à jour la zone de détail quand l'action sélectionnée change
+        vm.actionProperty().addListener((obs, oldAction, newAction) -> {
             updateDetailArea(newAction);
         });
 
-        updateDetailArea(vm.ActionProperty().get());
+        // initialisation de la zone de détail
+        updateDetailArea(vm.actionProperty().get());
     }
 
     private Color actionColor(Action action) {
@@ -236,6 +238,7 @@ public class ProgramView extends VBox {
         });
     }
 
+    //  met à jour toute la zone de détail selon l'action sélectionnée
     private void updateDetailArea(Action action) {
         clearDetailArea();
 
@@ -247,6 +250,8 @@ public class ProgramView extends VBox {
             showSingleParameterDetail(action);
         }
     }
+
+    // nettoie la zone de détail avant de la reconstruire
     private void clearDetailArea() {
         innerEditBox.getChildren().clear();
 
@@ -258,6 +263,7 @@ public class ProgramView extends VBox {
         input2.textProperty().unbindBidirectional(vm.secondInputProperty());
     }
 
+    // affiche la zone de détail quand aucune action n'est sélectionnée
     private void showEmptyDetailArea() {
         startLbl.setText("(aucune action sélectionnée)");
         input.setText("");
@@ -268,6 +274,7 @@ public class ProgramView extends VBox {
         innerEditBox.getChildren().addAll(startLbl);
     }
 
+    // affiche la zone de détail pour une action à deux paramètres
     private void showTwoParameterDetail(Action action) {
         startLbl.setText(action.detailActionLabel());
         input.setText(action.getRawParameter());
@@ -275,19 +282,21 @@ public class ProgramView extends VBox {
         middleLbl.setText(action.detailSecondActionLabel());
         input2.setText(action.getSecondParameter());
 
+        // lie les textField  au ViewModel
         input.textProperty().bindBidirectional(vm.inputProperty());
         input2.textProperty().bindBidirectional(vm.secondInputProperty());
 
+        // pour incrémentation, on affiche les boutons + et -
         if (action.getType() == Type.VAR_INCREMENT) {
             innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, btnPlus, btnMinus, errLbl);
         } else {
             innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
         }
     }
-
+    // affiche la zone de détail pour une action à un seul paramètre
     private void showSingleParameterDetail(Action action) {
         startLbl.textProperty().bind(
-                Bindings.when(vm.ActionProperty().isNull())
+                Bindings.when(vm.actionProperty().isNull())
                         .then("(aucune action sélectionnée)")
                         .otherwise(vm.startLblProperty())
         );
