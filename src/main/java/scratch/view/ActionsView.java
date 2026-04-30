@@ -22,7 +22,7 @@ public class ActionsView extends VBox {
         this.vm = vm;
 
         // lie la liste graphique aux action du ViewModel
-        actions.setItems(vm.getActions());
+        actions.setItems(vm.getActionList());
 
         getChildren().addAll(actions, btnAddToProgram);
 
