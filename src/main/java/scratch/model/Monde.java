@@ -18,8 +18,8 @@ public class Monde {
 
     private final Stack<Repeat> repeatStack = new Stack<>();
     private int execIdx;
-    public Monde(Personnage personnage) {
-        this.personnage = personnage;
+    public Monde() {
+        this.personnage = new Personnage();
         this.getPosPersonnageX().set(CENTER);   // initialisation de pos x de la tortue
         this.getPosPersonnageY().set(CENTER);   // initialisation de pos y de la tortue
         this.startPos = new Point(CENTER, CENTER); // initialisation du point de départ du monde

@@ -12,13 +12,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        Programme choosenActions = new Programme();
-
-        Personnage p = new Personnage();
-        Monde monde = new Monde(p);
-        ActionsViewModel actionsViewModel = new ActionsViewModel(choosenActions, monde);
-
-        Scene scene = new Scene(new MainView(actionsViewModel));
+        Scene scene = new Scene(new MainView());
         primaryStage.setTitle("Scratch");
         primaryStage.setScene(scene);
         primaryStage.show();
