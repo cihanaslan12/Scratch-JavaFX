@@ -41,6 +41,10 @@ public class WorldViewModel {
         });
     }
 
+    public BooleanProperty loadedProperty() {
+        return loaded;
+    }
+
     public IntegerProperty execIdxProperty() {
         return execIdx;
     }
