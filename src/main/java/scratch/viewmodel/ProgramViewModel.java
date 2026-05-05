@@ -12,7 +12,6 @@ import scratch.model.Type;
 public class ProgramViewModel {
     private final Programme choosenActions;
     private final IntegerProperty programIndex = new SimpleIntegerProperty(-1);
-    private final IntegerProperty execIdx = new SimpleIntegerProperty(0);
     private final IntegerProperty highlightIdx = new SimpleIntegerProperty(-1); // ligne surligné du prog
     // action actuellement sélectionnée dans le programme
     private final ObjectProperty<Action> actionProperty = new SimpleObjectProperty<>();
@@ -31,11 +30,11 @@ public class ProgramViewModel {
         actionProperty.bind(
                 Bindings.createObjectBinding(() -> {
                     int idx = programIndex.get();
-                    if (idx >= 0 && idx < choosenActions.getProgram().size()) {
-                        return choosenActions.getProgram().get(idx);
+                    if (idx >= 0 && idx < getProgramActions().size()) {
+                        return getProgramActions().get(idx);
                     }
                     return null;
-                }, programIndex, choosenActions.getProgram())
+                }, programIndex, getProgramActions())
         );
 
         // met à jour les champs de saisie quand l'action sélectionnée change
@@ -105,6 +104,10 @@ public class ProgramViewModel {
         });
     }
 
+    public Programme getModelProgram() {
+        return choosenActions;
+    }
+
     public ObjectProperty<Action> actionProperty() {
         return actionProperty;
     }
@@ -117,9 +120,6 @@ public class ProgramViewModel {
         return programIndex;
     }
 
-    public IntegerProperty executeIndexProperty() {
-        return execIdx;
-    }
     public IntegerProperty highlightIdxProperty () {
         return highlightIdx;
     }
@@ -131,8 +131,8 @@ public class ProgramViewModel {
     public BooleanBinding canDown () {
         return Bindings.createBooleanBinding(() -> {
             int idx = programIndex.get();
-            return idx >= 0 && idx < choosenActions.getProgram().size() - 1;
-        }, programIndex, choosenActions.getProgram());
+            return idx >= 0 && idx < getProgramActions().size() - 1;
+        }, programIndex, getProgramActions());
     }
 
     public BooleanBinding canDuplicate () {
@@ -144,25 +144,25 @@ public class ProgramViewModel {
     }
 
     public BooleanBinding canClear () {
-        return Bindings.size(choosenActions.getProgram()).greaterThan(0);
+        return Bindings.size(getProgramActions()).greaterThan(0);
     }
 
     public BooleanBinding canLoad () {
         return Bindings.createBooleanBinding(() ->
-                        !choosenActions.getProgram().isEmpty()
+                        !getProgramActions().isEmpty()
                                 && choosenActions.isPenInstructionValid()
                                 && choosenActions.repeatValidProperty().get()
                                 && choosenActions.areVarDeclarationsAtTop()
                                 && choosenActions.varsDeclarationValidProperty().get()
                                 && choosenActions.isPenStateOkInLoops(),
 
-                choosenActions.getProgram(), choosenActions.repeatValidProperty(),choosenActions.varsDeclarationValidProperty()
+                getProgramActions(), choosenActions.repeatValidProperty(),choosenActions.varsDeclarationValidProperty()
         );
     }
 
     public void up () {
         int idx = programIndex.get();
-        if (idx > 0 && idx < choosenActions.getProgram().size()) {
+        if (idx > 0 && idx < getProgramActions().size()) {
             choosenActions.up(idx);
             programIndex.set(idx - 1);
             invalidateProgram();
@@ -171,7 +171,7 @@ public class ProgramViewModel {
 
     public void down () {
         int idx = programIndex.get();
-        if (idx < choosenActions.getProgram().size()) {
+        if (idx < getProgramActions().size()) {
             choosenActions.down(idx);
             programIndex.set(idx + 1);
             invalidateProgram();
@@ -186,7 +186,7 @@ public class ProgramViewModel {
 
     public void delete () {
         int idx = programIndex.get();
-        if (idx >= 0 && idx < choosenActions.getProgram().size()) {
+        if (idx >= 0 && idx < getProgramActions().size()) {
             choosenActions.remove(idx);
             invalidateProgram();
         }
@@ -328,7 +328,6 @@ public class ProgramViewModel {
 
     // invalide l'état d'exécution du programme après une modification
     public void invalidateProgram () {
-        execIdx.set(0);
         highlightIdx.set(-1);
         runtimeError.set(false);
     }
@@ -338,7 +337,7 @@ public class ProgramViewModel {
         int indent = 0;
 
         for (int i = 0; i < index; i++) {
-            Action action = choosenActions.getProgram().get(i);
+            Action action = getProgramActions().get(i);
 
             if (action.getType() == Type.REPEAT) {
                 indent++;
@@ -347,7 +346,7 @@ public class ProgramViewModel {
             }
         }
 
-        Action current = choosenActions.getProgram().get(index);
+        Action current = getProgramActions().get(index);
         if (current.getType() == Type.END_REPEAT) {
             indent--;
         }
