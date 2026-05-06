@@ -5,13 +5,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import scratch.viewmodel.ActionsViewModel;
+import scratch.viewmodel.MainViewModel;
 
 import java.io.File;
 
 public class MainView extends VBox {
-
-    private final ActionsViewModel vm;
+    private final MainViewModel vm;
 
     private final VBox menuBarBox = new VBox();
     private final HBox mainBox = new HBox(30);
@@ -27,12 +26,12 @@ public class MainView extends VBox {
     private final MenuItem menuSaveAs = new MenuItem("Save As...");
     private final MenuItem menuExit = new MenuItem("Exit");
 
-    public MainView(ActionsViewModel vm) {
-        this.vm = vm;
+    public MainView() {
+        this.vm = new MainViewModel();
 
-        actionsView = new ActionsView(vm);
-        programView = new ProgramView(vm);
-        worldView = new WorldView(vm);
+        actionsView = new ActionsView(vm.getAVm());
+        programView = new ProgramView(vm.getPVm());
+        worldView = new WorldView(vm.getWVm());
 
         configLayout();
         style();

@@ -9,12 +9,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import scratch.model.Action;
 import scratch.model.Type;
-import scratch.viewmodel.ActionsViewModel;
+import scratch.viewmodel.ProgramViewModel;
 
 
 public class ProgramView extends VBox {
-
-    private final ActionsViewModel vm;
+    private final ProgramViewModel vm;
 
     private final Label programLabel = new Label("Programme");
     private final ListView<Action> program = new ListView<>();
@@ -43,7 +42,7 @@ public class ProgramView extends VBox {
     private final Label errLbl = new Label();
 
 
-    public ProgramView(ActionsViewModel vm) {
+    public ProgramView(ProgramViewModel vm) {
         this.vm = vm;
 
         // lie la liste aux actions du programme

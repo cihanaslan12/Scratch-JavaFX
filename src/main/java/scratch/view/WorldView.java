@@ -12,11 +12,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
 import scratch.model.VarDeclaration;
-import scratch.viewmodel.ActionsViewModel;
+import scratch.viewmodel.WorldViewModel;
 
 public class WorldView extends VBox {
-
-    private final ActionsViewModel vm;
+    private final WorldViewModel vm;
 
     private final Label sceneLabel = new Label("Scène");
 
@@ -43,7 +42,7 @@ public class WorldView extends VBox {
     private Polygon turtle;
     private Circle headTurtle;
 
-    public WorldView(ActionsViewModel vm) {
+     public WorldView(WorldViewModel vm) {
         this.vm = vm;
 
         scenePane.setPrefSize(vm.getWorldSize(), vm.getWorldSize());
@@ -155,8 +154,8 @@ public class WorldView extends VBox {
     }
 
     private void configBindings() {
-        loadBtn.disableProperty().bind(vm.canLoad().not());
-        executeBtn.disableProperty().bind(vm.canRun().not().or(vm.runtimeErrorProperty()));
+        loadBtn.disableProperty().bind(vm.loadedProperty().not());
+        executeBtn.disableProperty().bind(vm.canRun().not().or(vm.hasErrorProperty()));
         stopBtn.disableProperty().bind(vm.isRunningProperty().not());
     }
 
