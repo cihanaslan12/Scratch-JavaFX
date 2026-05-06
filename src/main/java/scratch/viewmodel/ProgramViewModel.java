@@ -15,6 +15,7 @@ public class ProgramViewModel {
     private final IntegerProperty highlightIdx = new SimpleIntegerProperty(-1); // ligne surligné du prog
     // action actuellement sélectionnée dans le programme
     private final ObjectProperty<Action> actionProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Action> actionToAdd = new SimpleObjectProperty<>();
     // paramètre dans détail action
     private final StringProperty parameterProperty = new SimpleStringProperty("");
     private final StringProperty secondParameterProperty = new SimpleStringProperty("");
@@ -25,6 +26,14 @@ public class ProgramViewModel {
 
     public ProgramViewModel() {
         this.choosenActions = new Programme();
+
+        // ajoute l'action dans la liste de program dès l'ajout
+        actionToAdd.addListener((obs, oldAct, newAct) -> {
+            if (newAct != null) {
+                addAction();
+                actionToAdd.set(null);
+            }
+        });
 
         // lie l'action sélectionnée à l'index sélectionné dans le programme
         actionProperty.bind(
@@ -112,6 +121,10 @@ public class ProgramViewModel {
         return actionProperty;
     }
 
+    public ObjectProperty<Action> actionToAddProperty() {
+        return actionToAdd;
+    }
+
     public ObservableList<Action> getProgramActions () {
         return choosenActions.getProgram();
     }
@@ -158,6 +171,19 @@ public class ProgramViewModel {
 
                 getProgramActions(), choosenActions.repeatValidProperty(),choosenActions.varsDeclarationValidProperty()
         );
+    }
+
+    public void addAction() {
+        int idxProgram = programIndex.get();
+        Action newAction = actionToAdd.get().copyActionForProgram();
+        choosenActions.addAction(newAction, idxProgram);
+
+        if (idxProgram >= 0 && idxProgram < choosenActions.getProgram().size() - 1) {
+            programIndex.set(idxProgram + 1);
+        } else {
+            programIndex.set(choosenActions.getProgram().size() - 1);
+        }
+        invalidateProgram();
     }
 
     public void up () {

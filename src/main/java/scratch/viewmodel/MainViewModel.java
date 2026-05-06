@@ -39,6 +39,11 @@ public class MainViewModel {
         pVm.runtimeErrorProperty().addListener(observable -> {
             wVm.hasErrorProperty().set(true);
         });
+
+        aVm.actionForProgramProperty().addListener((obs, oldAct, newAct) -> {
+            if (newAct != null)
+                pVm.actionToAddProperty().set(newAct);
+        });
     }
 
     public ActionsViewModel getAVm() {
