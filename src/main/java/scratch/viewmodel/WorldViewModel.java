@@ -19,7 +19,7 @@ public class WorldViewModel {
     private final BooleanProperty stepping = new SimpleBooleanProperty(false); // bouton executer en mode suivant
     private final StringProperty loadButtonText = new SimpleStringProperty("Charger");
     private final StringProperty runButtonText = new SimpleStringProperty("Executer");
-
+    private final BooleanProperty canLoad = new SimpleBooleanProperty(false);
     // index de l'action en cours d'execution dans le program du monde
     private final IntegerProperty execIdx = new SimpleIntegerProperty(0);
     private final BooleanProperty hasError = new SimpleBooleanProperty(false);
@@ -27,9 +27,9 @@ public class WorldViewModel {
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
     private final BooleanProperty isRunning = new SimpleBooleanProperty(false);
 
-    public WorldViewModel() {
+    public WorldViewModel(Programme program) {
         this.monde = new Monde();
-        this.programModel = new Programme();
+        this.programModel = program;
         this.program = programModel.getProgram();
 
         // initialise l'exécution automatique
@@ -61,6 +61,10 @@ public class WorldViewModel {
         return monde.getVariables();
     }
 
+    public BooleanProperty canLoadProperty() {
+        return canLoad;
+    }
+
     public BooleanBinding canRun () {
         return Bindings.createBooleanBinding(() -> {
             int size = program.size();
@@ -75,6 +79,7 @@ public class WorldViewModel {
 
             loaded.set(true);
             stepping.set(false);
+            hasError.set(false);
 
             loadButtonText.set("Ré-initialiser");
             runButtonText.set("Executer");
@@ -195,6 +200,7 @@ public class WorldViewModel {
         execIdx.set(0);
         loaded.set(false);
         stepping.set(false);
+        hasError.set(false);
         loadButtonText.set("Charger");
         runButtonText.set("Executer");
     }

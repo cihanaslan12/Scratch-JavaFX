@@ -154,7 +154,7 @@ public class WorldView extends VBox {
     }
 
     private void configBindings() {
-        loadBtn.disableProperty().bind(vm.loadedProperty().not());
+        loadBtn.disableProperty().bind(vm.canLoadProperty().not());
         executeBtn.disableProperty().bind(vm.canRun().not().or(vm.hasErrorProperty()));
         stopBtn.disableProperty().bind(vm.isRunningProperty().not());
     }

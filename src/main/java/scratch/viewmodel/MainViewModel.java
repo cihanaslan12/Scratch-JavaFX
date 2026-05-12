@@ -16,33 +16,30 @@ public class MainViewModel {
     public MainViewModel() {
         this.aVm = new ActionsViewModel();
         this.pVm = new ProgramViewModel();
-        this.wVm = new WorldViewModel();
+        this.wVm = new WorldViewModel(pVm.getModelProgram());
 
         wVm.execIdxProperty().addListener((obs, oldIdx, newIdx) -> {
             pVm.highlightIdxProperty().set(newIdx.intValue());
         });
 
-        wVm.hasErrorProperty().addListener((obs, oldVal, hasError) -> {
-            if (hasError) {
-                pVm.runtimeErrorProperty().set(true);
-            }
-        });
+        pVm.runtimeErrorProperty().bindBidirectional(wVm.hasErrorProperty());
+
             // on réinitialise tout en cas de changement de program
         pVm.getProgramActions().addListener((ListChangeListener<Action>) c -> {
             mainInvalidate();
         });
 
-        pVm.canLoad().addListener(observable -> {
-            wVm.loadedProperty().set(true);
+        pVm.canLoad().addListener((obs, oldBool, newBool) -> {
+            if (newBool)
+                wVm.loadedProperty().set(false);
         });
 
-        pVm.runtimeErrorProperty().addListener(observable -> {
-            wVm.hasErrorProperty().set(true);
-        });
+        wVm.canLoadProperty().bind(pVm.canLoad());
 
         aVm.actionForProgramProperty().addListener((obs, oldAct, newAct) -> {
-            if (newAct != null)
+            if (newAct != null) {
                 pVm.actionToAddProperty().set(newAct);
+            }
         });
     }
 
