@@ -22,6 +22,7 @@ public class WorldViewModel {
     private final BooleanProperty canLoad = new SimpleBooleanProperty(false);
     // index de l'action en cours d'execution dans le program du monde
     private final IntegerProperty execIdx = new SimpleIntegerProperty(0);
+    private final IntegerProperty highlightIdx = new SimpleIntegerProperty(-1);
     private final BooleanProperty hasError = new SimpleBooleanProperty(false);
     private final Timeline executeAuto = new Timeline();
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
@@ -47,6 +48,10 @@ public class WorldViewModel {
 
     public IntegerProperty execIdxProperty() {
         return execIdx;
+    }
+
+    public IntegerProperty highlightIdxProperty() {
+        return highlightIdx;
     }
 
     public BooleanProperty hasErrorProperty() {
@@ -76,6 +81,7 @@ public class WorldViewModel {
         if (!program.isEmpty()) {
             monde.reset();
             execIdx.set(0);
+            highlightIdx.set(-1);
 
             loaded.set(true);
             stepping.set(false);
@@ -95,18 +101,18 @@ public class WorldViewModel {
                 if (!isRunning.get()) {     // si exec auto -> pas de btn suivant
                     runButtonText.set("Suivant");
                 }
-                execIdx.set(0);
+                highlightIdx.set(execIdx.get());
             } else {
                 // mode Suivant
                 // try catch -> quand il y a une erreur a l'éxecution, le bouton Suivant est désactivé
                 try {
                     execIdx.set(programModel.executeNext(execIdx.get(), monde));
                     if (execIdx.get() < size) {
-                        execIdx.set(execIdx.get());
+                        highlightIdx.set(execIdx.get());
                     } else {
                         stepping.set(false);
                         runButtonText.set("Executer");
-                        execIdx.set(size - 1);
+                        highlightIdx.set(size - 1);
                     }
                 } catch (RuntimeException e) {
                     hasError.set(true);
@@ -116,7 +122,7 @@ public class WorldViewModel {
                     e.printStackTrace();
 
                     if (execIdx.get() >= 0 && execIdx.get() < size) {
-                        execIdx.set(execIdx.get());
+                        highlightIdx.set(execIdx.get());
                     }
                 }
             }

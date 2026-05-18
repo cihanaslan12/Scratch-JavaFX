@@ -18,7 +18,7 @@ public class MainViewModel {
         this.pVm = new ProgramViewModel();
         this.wVm = new WorldViewModel(pVm.getModelProgram());
 
-        wVm.execIdxProperty().addListener((obs, oldIdx, newIdx) -> {
+        wVm.highlightIdxProperty().addListener((obs, oldIdx, newIdx) -> {
             pVm.highlightIdxProperty().set(newIdx.intValue());
         });
 
