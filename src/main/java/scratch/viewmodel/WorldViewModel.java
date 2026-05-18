@@ -82,13 +82,17 @@ public class WorldViewModel {
             monde.reset();
             execIdx.set(0);
             highlightIdx.set(-1);
-
-            loaded.set(true);
             stepping.set(false);
             hasError.set(false);
-
-            loadButtonText.set("Ré-initialiser");
             runButtonText.set("Executer");
+
+            if ((loaded.get())) {
+                loaded.set(false);
+                loadButtonText.set("Charger");
+            } else {
+                loaded.set(true);
+                loadButtonText.set("Ré-initialiser");
+            }
         }
     }
 

@@ -29,11 +29,6 @@ public class MainViewModel {
             mainInvalidate();
         });
 
-        pVm.canLoad().addListener((obs, oldBool, newBool) -> {
-            if (newBool)
-                wVm.loadedProperty().set(false);
-        });
-
         wVm.canLoadProperty().bind(pVm.canLoad());
 
         aVm.actionForProgramProperty().addListener((obs, oldAct, newAct) -> {
@@ -58,6 +53,7 @@ public class MainViewModel {
     public void newProgram() {
         pVm.clear();
         wVm.getMonde().reset();
+        wVm.invalidateWorld();
         pVm.runtimeErrorProperty().set(false);
     }
 
