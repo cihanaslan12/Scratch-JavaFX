@@ -73,8 +73,8 @@ public class WorldViewModel {
     public BooleanBinding canRun () {
         return Bindings.createBooleanBinding(() -> {
             int size = program.size();
-            return loaded.get() && size > 0 && execIdx.get() < size;
-        }, loaded, execIdx, program);
+            return loaded.get() && size > 0 && execIdx.get() < size && !hasError.get();
+        }, loaded, execIdx, program, hasError);
     }
 
     public void loadOrReset () {
