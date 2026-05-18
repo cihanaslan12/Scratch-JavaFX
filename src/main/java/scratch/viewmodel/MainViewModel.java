@@ -56,7 +56,7 @@ public class MainViewModel {
     }
 
     public void newProgram() {
-        pVm.getProgramActions().clear();    // choosenActions.clear();
+        pVm.clear();
         wVm.getMonde().reset();
         pVm.runtimeErrorProperty().set(false);
     }
