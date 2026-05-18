@@ -101,7 +101,7 @@ public class WorldViewModel {
                 if (!isRunning.get()) {     // si exec auto -> pas de btn suivant
                     runButtonText.set("Suivant");
                 }
-                highlightIdx.set(execIdx.get());
+                highlightIdx.set(0);
             } else {
                 // mode Suivant
                 // try catch -> quand il y a une erreur a l'éxecution, le bouton Suivant est désactivé
