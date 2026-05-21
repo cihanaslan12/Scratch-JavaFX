@@ -163,6 +163,7 @@ public class ProgramViewModel {
     public BooleanBinding canLoad () {
         return Bindings.createBooleanBinding(() ->
                         !getProgramActions().isEmpty()
+                                && !choosenActions.max3DrawPolygon()
                                 && choosenActions.isPenInstructionValid()
                                 && choosenActions.repeatValidProperty().get()
                                 && choosenActions.areVarDeclarationsAtTop()
@@ -279,6 +280,54 @@ public class ProgramViewModel {
                 actionProperty,
                 secondParameterProperty
         );
+    }
+
+    public BooleanBinding showFirstInputDPIncrBtnProperty() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    Action action = actionProperty.get();
+                    String text = parameterProperty.get();
+
+                    return action != null
+                            && action.getType() == Type.DRAW_POLYGON
+                            && text != null
+                            && text.matches("-?\\d+");
+                },
+                actionProperty,
+                parameterProperty
+        );
+    }
+
+    public BooleanBinding showSecondInputDPIncrBtnProperty() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    Action action = actionProperty.get();
+                    String text = secondParameterProperty.get();
+
+                    return action != null
+                            && action.getType() == Type.DRAW_POLYGON
+                            && text != null
+                            && text.matches("-?\\d+");
+                },
+                actionProperty,
+                secondParameterProperty
+        );
+    }
+
+    // modifie le deuxième paramètre d'une action (pour l'incrémentation + 1 ou - 1)
+    public void changeFirstParameter(int increment) {
+        Action action = actionProperty.get();
+
+        if (action == null) {
+            return;
+        }
+
+        String text = parameterProperty.get();
+
+        if (text != null && text.matches("-?\\d+")) {
+            int value = Integer.parseInt(text);
+            parameterProperty.set(String.valueOf(value + increment));
+        }
     }
 
     // modifie le deuxième paramètre d'une action (pour l'incrémentation + 1 ou - 1)

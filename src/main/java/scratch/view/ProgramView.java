@@ -25,6 +25,10 @@ public class ProgramView extends VBox {
     private final Button btnClear = new Button("Vider tout");
     private final Button btnPlus = new Button("+");
     private final Button btnMinus = new Button("-");
+    private final Button btnPolyPlus1 = new Button("+");
+    private final Button btnPolyMinus1 = new Button("-");
+    private final Button btnPolyPlus2 = new Button("+");
+    private final Button btnPolyMinus2 = new Button("-");
 
     private final VBox prgmInnerVbox = new VBox();
     private final HBox prgmBtnsHbox = new HBox();
@@ -58,7 +62,7 @@ public class ProgramView extends VBox {
         setSpacing(15);
         prgmInnerVbox.setSpacing(15);
         prgmBtnsHbox.setSpacing(15);
-        innerEditBox.setSpacing(10);
+        innerEditBox.setSpacing(5);
 
         errLbl.setTextFill(Color.RED);
         errLbl.setVisible(false);
@@ -76,16 +80,20 @@ public class ProgramView extends VBox {
         this.setMaxWidth(400);
 
         // largeur zone détail
-        actionDetails.setPrefWidth(360);
-        innerEditBox.setPrefWidth(340);
+        actionDetails.setPrefWidth(400);
+        innerEditBox.setPrefWidth(400);
       //  innerEditBox.setAlignment(Pos.CENTER_LEFT);
 
         // largeur colonnes
         middleLbl.setPrefWidth(50);
-        input.setPrefWidth(50);
+        input.setPrefWidth(60);
         input2.setPrefWidth(50);
         btnPlus.setPrefWidth(45);
-        btnMinus.setPrefWidth(45);
+        btnPlus.setPrefWidth(45);
+        btnPolyPlus1.setPrefWidth(25);
+        btnPolyMinus1.setPrefWidth(25);
+        btnPolyPlus2.setPrefWidth(25);
+        btnPolyMinus2.setPrefWidth(25);
     }
 
     private void configActions() {
@@ -96,6 +104,10 @@ public class ProgramView extends VBox {
         btnClear.setOnAction(e -> vm.clear());
         btnPlus.setOnAction(e-> vm.changeSecondParameter(1) );
         btnMinus.setOnAction(e-> vm.changeSecondParameter(-1));
+        btnPolyPlus1.setOnAction(e -> vm.changeFirstParameter(1));
+        btnPolyMinus1.setOnAction(e -> vm.changeFirstParameter(-1));
+        btnPolyPlus2.setOnAction(e-> vm.changeSecondParameter(1) );
+        btnPolyMinus2.setOnAction(e-> vm.changeSecondParameter(-1));
     }
 
     private void configBindings() {
@@ -116,6 +128,17 @@ public class ProgramView extends VBox {
         btnMinus.visibleProperty().bind(vm.showIncrementButtonsProperty());
         btnMinus.managedProperty().bind(btnMinus.visibleProperty());
 
+        btnPolyPlus1.visibleProperty().bind(vm.showFirstInputDPIncrBtnProperty());
+        btnPolyPlus1.managedProperty().bind(btnPolyPlus1.visibleProperty());
+
+        btnPolyMinus1.visibleProperty().bind(vm.showFirstInputDPIncrBtnProperty());
+        btnPolyMinus1.managedProperty().bind(btnPolyMinus1.visibleProperty());
+
+        btnPolyPlus2.visibleProperty().bind(vm.showSecondInputDPIncrBtnProperty());
+        btnPolyPlus2.managedProperty().bind(btnPolyPlus2.visibleProperty());
+
+        btnPolyMinus2.visibleProperty().bind(vm.showSecondInputDPIncrBtnProperty());
+        btnPolyMinus2.managedProperty().bind(btnPolyMinus2.visibleProperty());
     }
 
     private void configSelection() {
@@ -140,10 +163,10 @@ public class ProgramView extends VBox {
 
                 String text = input.getText();
 
-                // si valeur invalide -> on remet l'ancienne valeur
-                if (!action.isValidParameter(text)) {
-                    input.setText(action.getRawParameter());
-                }
+//                // si valeur invalide -> on remet l'ancienne valeur
+//                if (!action.isValidParameter(text)) {
+//                    input.setText(action.getRawParameter());
+//                }
             }
         });
 
@@ -158,10 +181,10 @@ public class ProgramView extends VBox {
 
                 String text = input2.getText();
 
-                // si valeur invalide -> on remet l'ancienne valeur
-                if (!action.isValidSecondParameter(text)) {
-                    input2.setText(action.getSecondParameter());
-                }
+//                // si valeur invalide -> on remet l'ancienne valeur
+//                if (!action.isValidSecondParameter(text)) {
+//                    input2.setText(action.getSecondParameter());
+//                }
             }
         });
 
@@ -191,15 +214,10 @@ public class ProgramView extends VBox {
     private Color actionColor(Action action) {
         switch (action.getType()) {
             case MOVE: return Color.DARKBLUE;
-            case TURN_LEFT: return Color.RED;
-            case TURN_RIGHT: return Color.RED;
-            case PEN_DOWN:  return Color.GREEN;
-            case PEN_UP:  return Color.GREEN;
-            case VAR_DECLARATION: return Color.DARKORCHID;
-            case VAR_ASSIGNMENT: return Color.DARKORCHID;
-            case VAR_INCREMENT: return Color.DARKORCHID;
-            case REPEAT: return Color.DARKORCHID;
-            case END_REPEAT: return Color.DARKORCHID;
+            case TURN_LEFT, TURN_RIGHT: return Color.RED;
+            case PEN_DOWN, PEN_UP:  return Color.GREEN;
+            case VAR_DECLARATION, VAR_ASSIGNMENT, VAR_INCREMENT, REPEAT, END_REPEAT: return Color.DARKORCHID;
+            case DRAW_POLYGON: return Color.ORANGE;
             default:   return Color.BLACK;
         }
     }
@@ -288,6 +306,8 @@ public class ProgramView extends VBox {
         // pour incrémentation, on affiche les boutons + et -
         if (action.getType() == Type.VAR_INCREMENT) {
             innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, btnPlus, btnMinus, errLbl);
+        } else if (action.getType() == Type.DRAW_POLYGON) {
+            innerEditBox.getChildren().addAll(startLbl, input, btnPolyPlus1, btnPolyMinus1, middleLbl, input2, btnPolyPlus2, btnPolyMinus2, errLbl);
         } else {
             innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
         }

@@ -1,5 +1,8 @@
 package scratch.view;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -24,6 +27,7 @@ public class MainView extends VBox {
     private final MenuItem menuNew = new MenuItem("New...");
     private final MenuItem menuOpen = new MenuItem("Open...");
     private final MenuItem menuSaveAs = new MenuItem("Save As...");
+    private final MenuItem menuBasicAdvanced = new MenuItem();
     private final MenuItem menuExit = new MenuItem("Exit");
 
     public MainView() {
@@ -36,10 +40,14 @@ public class MainView extends VBox {
         configLayout();
         style();
         menuEvent();
+
+        menuBasicAdvanced.textProperty().bind(Bindings.when(vm.basicOrAdvancedProperty())
+                .then("Basic Mode")
+                .otherwise("Advanced Mode"));
     }
 
     private void configLayout() {
-        menu.getItems().addAll(menuNew, menuOpen, menuSaveAs, menuExit);
+        menu.getItems().addAll(menuNew, menuOpen, menuSaveAs, menuBasicAdvanced, menuExit);
         menuBar.getMenus().add(menu);
         menuBarBox.getChildren().add(menuBar);
 
@@ -78,6 +86,7 @@ public class MainView extends VBox {
 
         menuOpen.setOnAction(e -> openFile());
         menuSaveAs.setOnAction(e -> saveAs());
+        menuBasicAdvanced.setOnAction(e -> vm.toggleBasicOrAdvanced());
         menuExit.setOnAction(e -> vm.exitProgram());
     }
 

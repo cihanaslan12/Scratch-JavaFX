@@ -1,6 +1,8 @@
 package scratch.viewmodel;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import scratch.model.*;
 
@@ -12,6 +14,7 @@ public class MainViewModel {
     private final ActionsViewModel aVm;
     private final ProgramViewModel pVm;
     private final WorldViewModel wVm;
+    private final BooleanProperty basicOrAdvanced = new SimpleBooleanProperty(false); // false basic, true advanced
 
     public MainViewModel() {
         this.aVm = new ActionsViewModel();
@@ -36,6 +39,10 @@ public class MainViewModel {
                 pVm.actionToAddProperty().set(newAct);
             }
         });
+
+        basicOrAdvanced.addListener((obs, oldVal, newVal) -> {
+            aVm.updateActionList(newVal);
+        });
     }
 
     public ActionsViewModel getAVm() {
@@ -48,6 +55,14 @@ public class MainViewModel {
 
     public WorldViewModel getWVm() {
         return wVm;
+    }
+
+    public BooleanProperty basicOrAdvancedProperty() {
+        return basicOrAdvanced;
+    }
+
+    public void toggleBasicOrAdvanced() {
+        basicOrAdvanced.set(!basicOrAdvanced.get());
     }
 
     public void newProgram() {
@@ -79,6 +94,7 @@ public class MainViewModel {
                     case "INCREMENT_VARIABLE" -> newAction = new IncrementVariable(parts[1], parts[2]);
                     case "REPEAT" -> newAction = new Repeat(parts[1]);
                     case "END_REPEAT" -> newAction = new Repeat(false);
+                    case "DRAW_POLYGON" -> newAction = new DrawPolygon(parts[1], parts[2]);
                 }
                 if(newAction != null) {
                     newAction.setInProgram(true);

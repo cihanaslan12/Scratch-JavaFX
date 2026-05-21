@@ -27,7 +27,7 @@ public class ActionsView extends VBox {
         getChildren().addAll(actions, btnAddToProgram);
 
         setSpacing(15);
-        setPrefSize(250, 550);
+        setPrefSize(150, 550);
 
         setupColoredCells();
         configActions();
@@ -59,15 +59,10 @@ public class ActionsView extends VBox {
     private Color actionColor(Action action) {
         switch (action.getType()) {
             case MOVE: return Color.DARKBLUE;
-            case TURN_LEFT: return Color.RED;
-            case TURN_RIGHT: return Color.RED;
-            case PEN_DOWN:  return Color.GREEN;
-            case PEN_UP:  return Color.GREEN;
-            case VAR_DECLARATION: return Color.DARKORCHID;
-            case VAR_ASSIGNMENT: return Color.DARKORCHID;
-            case VAR_INCREMENT: return Color.DARKORCHID;
-            case REPEAT: return Color.DARKORCHID;
-            case END_REPEAT: return Color.DARKORCHID;
+            case TURN_LEFT, TURN_RIGHT: return Color.RED;
+            case PEN_DOWN, PEN_UP:  return Color.GREEN;
+            case VAR_DECLARATION, VAR_ASSIGNMENT, VAR_INCREMENT, REPEAT, END_REPEAT: return Color.DARKORCHID;
+            case DRAW_POLYGON: return Color.ORANGE;
             default:   return Color.BLACK;
         }
     }

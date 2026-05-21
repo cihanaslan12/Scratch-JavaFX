@@ -244,4 +244,13 @@ public class Programme {
         }
         return true;
     }
+
+    public boolean max3DrawPolygon() {
+        int count = 0;
+        for (Action action : program) {
+            if(action.getType() == Type.DRAW_POLYGON)
+                count++;
+        }
+        return count >= 3;
+    }
 }
