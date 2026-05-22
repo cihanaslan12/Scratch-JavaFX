@@ -44,7 +44,7 @@ public class ActionsView extends VBox {
 
          advancedMode.selectedProperty().set(false);
 
-         advancedMode.setOnAction(e -> vm.addRectToActionList(advancedMode.selectedProperty().get()));
+         advancedMode.setOnAction(e -> vm.addRectToActionList(advancedMode.isSelected()));
     }
 
     private void configBindings() {
@@ -65,6 +65,7 @@ public class ActionsView extends VBox {
             case PEN_DOWN, PEN_UP:  return Color.GREEN;
             case VAR_DECLARATION, VAR_ASSIGNMENT, VAR_INCREMENT, REPEAT, END_REPEAT: return Color.DARKORCHID;
             case DRAW_POLYGON, DRAW_RECTANGLE: return Color.ORANGE;
+            case TELEPORTATION: return Color.DEEPSKYBLUE;
             default:   return Color.BLACK;
         }
     }

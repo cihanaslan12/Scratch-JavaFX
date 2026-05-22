@@ -254,7 +254,23 @@ public class Programme {
         return count > 3;
     }
 
-    public boolean drawRectangleisNotLast() {
+    public boolean drawRectangleIsNotLast() {
         return program.getLast().getType() != Type.DRAW_RECTANGLE;
+    }
+
+    public boolean teleportationInRepeat() {
+        boolean inRepeat = false;
+        for (Action a : program) {
+            if (a.getType() == Type.REPEAT) {
+                inRepeat = true;
+            } else if (a.getType() == Type.TELEPORTATION) {
+                if (inRepeat) {
+                    return true;
+                }
+            } else if (a.getType() == Type.END_REPEAT) {
+                inRepeat = false;
+            }
+        }
+        return false;
     }
 }

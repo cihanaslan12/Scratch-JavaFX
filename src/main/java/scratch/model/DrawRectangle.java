@@ -136,7 +136,7 @@ public class DrawRectangle extends Action {
         double x_start = p.getX().get();
         double y_start = p.getY().get();
         double x_end = x_start + rect_width;
-        double y_end = y_start + rect_height;
+        double y_end = y_start - rect_height;
 
         Segment s_1 = new Segment(new Point(x_start, y_start), new Point(x_start, y_end));
         Segment s_2 = new Segment(new Point(x_start, y_end), new Point(x_end, y_end));

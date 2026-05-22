@@ -96,6 +96,7 @@ public class MainViewModel {
                     case "END_REPEAT" -> newAction = new Repeat(false);
                     case "DRAW_POLYGON" -> newAction = new DrawPolygon(parts[1], parts[2]);
                     case "DRAW_RECTANGLE" -> newAction = new DrawRectangle(parts[1], parts[2]);
+                    case "TELEPORTATION" -> newAction = new Teleportation(parts[1], parts[2]);
                 }
                 if(newAction != null) {
                     newAction.setInProgram(true);

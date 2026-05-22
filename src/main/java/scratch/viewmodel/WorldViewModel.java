@@ -27,6 +27,7 @@ public class WorldViewModel {
     private final Timeline executeAuto = new Timeline();
     private final DoubleProperty speed = new SimpleDoubleProperty(1.0);
     private final BooleanProperty isRunning = new SimpleBooleanProperty(false);
+    private final BooleanProperty showTeleportationLines = new SimpleBooleanProperty(false);
 
     public WorldViewModel(Programme program) {
         this.monde = new Monde();
@@ -205,6 +206,9 @@ public class WorldViewModel {
     }
     public StringProperty runButtonTextProperty () {
         return runButtonText;
+    }
+    public BooleanProperty showTeleportationLinesProperty() {
+        return showTeleportationLines;
     }
     public void invalidateWorld() {
         execIdx.set(0);

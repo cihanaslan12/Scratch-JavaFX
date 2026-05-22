@@ -12,5 +12,6 @@ public enum Type {
     REPEAT,
     END_REPEAT,
     DRAW_POLYGON,
-    DRAW_RECTANGLE
+    DRAW_RECTANGLE,
+    TELEPORTATION
 }

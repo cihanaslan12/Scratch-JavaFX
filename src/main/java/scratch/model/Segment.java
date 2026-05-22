@@ -16,4 +16,8 @@ public class Segment {
     public Point getEnd() {
         return end;
     }
+
+    public boolean isDashed() {
+        return false;
+    }
 }

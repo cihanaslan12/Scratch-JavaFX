@@ -164,7 +164,8 @@ public class ProgramViewModel {
         return Bindings.createBooleanBinding(() ->
                         !getProgramActions().isEmpty()
                                 && !choosenActions.max3DrawPolygon()
-                                && choosenActions.drawRectangleisNotLast()
+                                && choosenActions.drawRectangleIsNotLast()
+                                && !choosenActions.teleportationInRepeat()
                                 && choosenActions.isPenInstructionValid()
                                 && choosenActions.repeatValidProperty().get()
                                 && choosenActions.areVarDeclarationsAtTop()
@@ -347,7 +348,39 @@ public class ProgramViewModel {
         );
     }
 
-    // modifie le deuxième paramètre d'une action (pour l'incrémentation + 1 ou - 1)
+    public BooleanBinding showFirstInputTeleIncrBtnProperty() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    Action action = actionProperty.get();
+                    String text = parameterProperty.get();
+
+                    return action != null
+                            && action.getType() == Type.TELEPORTATION
+                            && text != null
+                            && text.matches("-?\\d+");
+                },
+                actionProperty,
+                parameterProperty
+        );
+    }
+
+    public BooleanBinding showSecondInputTeleIncrBtnProperty() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    Action action = actionProperty.get();
+                    String text = secondParameterProperty.get();
+
+                    return action != null
+                            && action.getType() == Type.TELEPORTATION
+                            && text != null
+                            && text.matches("-?\\d+");
+                },
+                actionProperty,
+                secondParameterProperty
+        );
+    }
+
+    // modifie le premier paramètre d'une action (pour l'incrémentation + 1 ou - 1)
     public void changeFirstParameter(int increment) {
         Action action = actionProperty.get();
 

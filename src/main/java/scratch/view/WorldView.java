@@ -11,6 +11,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.text.Text;
+import scratch.model.SegmentTeleportation;
 import scratch.model.VarDeclaration;
 import scratch.viewmodel.WorldViewModel;
 
@@ -26,7 +27,7 @@ public class WorldView extends VBox {
     private final VBox executeVBox = new VBox();
 
     private Text turtlePos = new Text();
-
+    private final CheckBox showTeleportation = new CheckBox("afficher la téléportation");
     private final HBox radioHBox = new HBox();
     private final RadioButton radioAuto = new RadioButton("Execution automatique");
     private final RadioButton radioManu = new RadioButton("Execution manuelle");
@@ -60,6 +61,9 @@ public class WorldView extends VBox {
         vm.getPosX().addListener((obs, oldV, newV) -> refreshScene());
         vm.getPosY().addListener((obs, oldV, newV) -> refreshScene());
         vm.getAngleProperty().addListener((obs, oldV, newV) -> refreshScene());
+
+        showTeleportation.selectedProperty().addListener((obs, oldVal, newVal) -> refreshScene());
+
     }
 
     private void configStateZone() {
@@ -81,7 +85,7 @@ public class WorldView extends VBox {
         executeVBox.getChildren().addAll(radioHBox, btnHBox, slider);
         executeVBox.setSpacing(10);
 
-        getChildren().addAll(scenePane, stateVBox, executeVBox);
+        getChildren().addAll(scenePane, stateVBox, showTeleportation, executeVBox);
     }
 
     // endroit qui affiche les variables et leurs valeurs
@@ -157,6 +161,8 @@ public class WorldView extends VBox {
         loadBtn.disableProperty().bind(vm.canLoadProperty().not());
         executeBtn.disableProperty().bind(vm.canRun().not().or(vm.hasErrorProperty()));
         stopBtn.disableProperty().bind(vm.isRunningProperty().not());
+
+        showTeleportation.selectedProperty().bindBidirectional(vm.showTeleportationLinesProperty());
     }
 
     private void drawGrid() {
@@ -209,15 +215,28 @@ public class WorldView extends VBox {
 
         // redessine tous les segments tracés
         for (var s : vm.getSegments()) {
-            Line line = new Line(
-                    s.getStart().getX().get(), s.getStart().getY().get(),
-                    s.getEnd().getX().get(), s.getEnd().getY().get()
-            );
-            line.setStroke(Color.RED);
-            line.setStrokeWidth(2);
-            scenePane.getChildren().add(line);
+            if (s.isDashed()) {
+                if (showTeleportation.isSelected()) {
+                    Line line = new Line(
+                            s.getStart().getX().get(), s.getStart().getY().get(),
+                            s.getEnd().getX().get(), s.getEnd().getY().get()
+                    );
+                    line.getStrokeDashArray().addAll(10.0, 10.0);
+                    line.setStroke(Color.RED);
+                    line.setStrokeWidth(2);
+                    scenePane.getChildren().add(line);
+                }
+            } else {
+                Line line = new Line(
+                        s.getStart().getX().get(), s.getStart().getY().get(),
+                        s.getEnd().getX().get(), s.getEnd().getY().get()
+                );
+                line.getStrokeDashArray().clear();
+                line.setStroke(Color.RED);
+                line.setStrokeWidth(2);
+                scenePane.getChildren().add(line);
+            }
         }
-
         // redessine la tortue à sa position actuelle
         drawTurtle(vm.getPosX().get(), vm.getPosY().get(), vm.getAngle());
     }

@@ -15,7 +15,8 @@ public class ActionList {
       new Repeat(true),
       new Repeat(false),
       new Pen(false),   // Lever stylo
-      new Pen(true)     // Abaisser le stylo
+      new Pen(true),    // Abaisser le stylo
+      new Teleportation()
     );
 
     public static ObservableList<Action> getActionList() {

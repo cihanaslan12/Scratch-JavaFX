@@ -33,6 +33,10 @@ public class ProgramView extends VBox {
     private final Button btnRectMinus1 = new Button("-");
     private final Button btnRectPlus2 = new Button("+");
     private final Button btnRectMinus2 = new Button("-");
+    private final Button btnTelePlus1 = new Button("+");
+    private final Button btnTeleMinus1 = new Button("-");
+    private final Button btnTelePlus2 = new Button("+");
+    private final Button btnTeleMinus2 = new Button("-");
 
     private final VBox prgmInnerVbox = new VBox();
     private final HBox prgmBtnsHbox = new HBox();
@@ -102,6 +106,10 @@ public class ProgramView extends VBox {
         btnRectMinus1.setPrefWidth(25);
         btnRectPlus2.setPrefWidth(25);
         btnRectMinus2.setPrefWidth(25);
+        btnTelePlus1.setPrefWidth(25);
+        btnTeleMinus1.setPrefWidth(25);
+        btnTelePlus2.setPrefWidth(25);
+        btnTeleMinus2.setPrefWidth(25);
     }
 
     private void configActions() {
@@ -120,6 +128,10 @@ public class ProgramView extends VBox {
         btnRectMinus1.setOnAction(e -> vm.changeFirstParameter(-1));
         btnRectPlus2.setOnAction(e-> vm.changeSecondParameter(1) );
         btnRectMinus2.setOnAction(e-> vm.changeSecondParameter(-1));
+        btnTelePlus1.setOnAction(e -> vm.changeFirstParameter(1));
+        btnTeleMinus1.setOnAction(e -> vm.changeFirstParameter(-1));
+        btnTelePlus2.setOnAction(e-> vm.changeSecondParameter(1) );
+        btnTeleMinus2.setOnAction(e-> vm.changeSecondParameter(-1));
     }
 
     private void configBindings() {
@@ -163,6 +175,18 @@ public class ProgramView extends VBox {
 
         btnRectMinus2.visibleProperty().bind(vm.showSecondInputDRIncrBtnProperty());
         btnRectMinus2.managedProperty().bind(btnRectMinus2.visibleProperty());
+
+        btnTelePlus1.visibleProperty().bind(vm.showFirstInputTeleIncrBtnProperty());
+        btnTelePlus1.managedProperty().bind(btnTelePlus1.visibleProperty());
+
+        btnTeleMinus1.visibleProperty().bind(vm.showFirstInputTeleIncrBtnProperty());
+        btnTeleMinus1.managedProperty().bind(btnTeleMinus1.visibleProperty());
+
+        btnTelePlus2.visibleProperty().bind(vm.showSecondInputTeleIncrBtnProperty());
+        btnTelePlus2.managedProperty().bind(btnTelePlus2.visibleProperty());
+
+        btnTeleMinus2.visibleProperty().bind(vm.showSecondInputTeleIncrBtnProperty());
+        btnTeleMinus2.managedProperty().bind(btnTeleMinus2.visibleProperty());
     }
 
     private void configSelection() {
@@ -242,6 +266,7 @@ public class ProgramView extends VBox {
             case PEN_DOWN, PEN_UP:  return Color.GREEN;
             case VAR_DECLARATION, VAR_ASSIGNMENT, VAR_INCREMENT, REPEAT, END_REPEAT: return Color.DARKORCHID;
             case DRAW_POLYGON, DRAW_RECTANGLE: return Color.ORANGE;
+            case TELEPORTATION: return Color.DEEPSKYBLUE;
             default:   return Color.BLACK;
         }
     }
@@ -334,6 +359,8 @@ public class ProgramView extends VBox {
             innerEditBox.getChildren().addAll(startLbl, input, btnPolyPlus1, btnPolyMinus1, middleLbl, input2, btnPolyPlus2, btnPolyMinus2, errLbl);
         } else if (action.getType() == Type.DRAW_RECTANGLE) {
             innerEditBox.getChildren().addAll(startLbl, input, btnRectPlus1, btnRectMinus1, middleLbl, input2, btnRectPlus2, btnRectMinus2, errLbl);
+        } else if (action.getType() == Type.TELEPORTATION) {
+            innerEditBox.getChildren().addAll(startLbl, input, btnTelePlus1, btnTeleMinus1, middleLbl, input2, btnTelePlus2, btnTeleMinus2, errLbl);
         } else {
             innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
         }
