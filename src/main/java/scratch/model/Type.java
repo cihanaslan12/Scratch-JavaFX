@@ -11,5 +11,6 @@ public enum Type {
     VAR_INCREMENT,
     REPEAT,
     END_REPEAT,
-    DRAW_POLYGON
+    DRAW_POLYGON,
+    DRAW_RECTANGLE
 }

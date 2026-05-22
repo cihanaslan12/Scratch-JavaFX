@@ -164,6 +164,7 @@ public class ProgramViewModel {
         return Bindings.createBooleanBinding(() ->
                         !getProgramActions().isEmpty()
                                 && !choosenActions.max3DrawPolygon()
+                                && choosenActions.drawRectangleisNotLast()
                                 && choosenActions.isPenInstructionValid()
                                 && choosenActions.repeatValidProperty().get()
                                 && choosenActions.areVarDeclarationsAtTop()
@@ -306,6 +307,38 @@ public class ProgramViewModel {
 
                     return action != null
                             && action.getType() == Type.DRAW_POLYGON
+                            && text != null
+                            && text.matches("-?\\d+");
+                },
+                actionProperty,
+                secondParameterProperty
+        );
+    }
+
+    public BooleanBinding showFirstInputDRIncrBtnProperty() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    Action action = actionProperty.get();
+                    String text = parameterProperty.get();
+
+                    return action != null
+                            && action.getType() == Type.DRAW_RECTANGLE
+                            && text != null
+                            && text.matches("-?\\d+");
+                },
+                actionProperty,
+                parameterProperty
+        );
+    }
+
+    public BooleanBinding showSecondInputDRIncrBtnProperty() {
+        return Bindings.createBooleanBinding(
+                () -> {
+                    Action action = actionProperty.get();
+                    String text = secondParameterProperty.get();
+
+                    return action != null
+                            && action.getType() == Type.DRAW_RECTANGLE
                             && text != null
                             && text.matches("-?\\d+");
                 },
