@@ -12,6 +12,7 @@ public class ActionsViewModel {
     private final IntegerProperty actionIndex = new SimpleIntegerProperty(-1);
     private final ObjectProperty<Action> actionForProgram = new SimpleObjectProperty<>(null);
     private final Action advancedModeAction = new DrawPolygon();
+    private final Action drawRectangleAction = new DrawRectangle();
 
     public ActionsViewModel() {
         this.actionList = FXCollections.observableArrayList(ActionList.getActionList());
@@ -61,6 +62,16 @@ public class ActionsViewModel {
             }
         } else {
             actionList.remove(advancedModeAction);
+        }
+    }
+
+    public void addRectToActionList(boolean bool) {
+        if (bool) {
+            if (!actionList.contains(drawRectangleAction)) {
+                actionList.add(drawRectangleAction);
+            }
+        } else {
+            actionList.remove(drawRectangleAction);
         }
     }
 }

@@ -29,6 +29,10 @@ public class ProgramView extends VBox {
     private final Button btnPolyMinus1 = new Button("-");
     private final Button btnPolyPlus2 = new Button("+");
     private final Button btnPolyMinus2 = new Button("-");
+    private final Button btnRectPlus1 = new Button("+");
+    private final Button btnRectMinus1 = new Button("-");
+    private final Button btnRectPlus2 = new Button("+");
+    private final Button btnRectMinus2 = new Button("-");
 
     private final VBox prgmInnerVbox = new VBox();
     private final HBox prgmBtnsHbox = new HBox();
@@ -94,6 +98,10 @@ public class ProgramView extends VBox {
         btnPolyMinus1.setPrefWidth(25);
         btnPolyPlus2.setPrefWidth(25);
         btnPolyMinus2.setPrefWidth(25);
+        btnRectPlus1.setPrefWidth(25);
+        btnRectMinus1.setPrefWidth(25);
+        btnRectPlus2.setPrefWidth(25);
+        btnRectMinus2.setPrefWidth(25);
     }
 
     private void configActions() {
@@ -108,6 +116,10 @@ public class ProgramView extends VBox {
         btnPolyMinus1.setOnAction(e -> vm.changeFirstParameter(-1));
         btnPolyPlus2.setOnAction(e-> vm.changeSecondParameter(1) );
         btnPolyMinus2.setOnAction(e-> vm.changeSecondParameter(-1));
+        btnRectPlus1.setOnAction(e -> vm.changeFirstParameter(1));
+        btnRectMinus1.setOnAction(e -> vm.changeFirstParameter(-1));
+        btnRectPlus2.setOnAction(e-> vm.changeSecondParameter(1) );
+        btnRectMinus2.setOnAction(e-> vm.changeSecondParameter(-1));
     }
 
     private void configBindings() {
@@ -139,6 +151,18 @@ public class ProgramView extends VBox {
 
         btnPolyMinus2.visibleProperty().bind(vm.showSecondInputDPIncrBtnProperty());
         btnPolyMinus2.managedProperty().bind(btnPolyMinus2.visibleProperty());
+
+        btnRectPlus1.visibleProperty().bind(vm.showFirstInputDRIncrBtnProperty());
+        btnRectPlus1.managedProperty().bind(btnRectPlus1.visibleProperty());
+
+        btnRectMinus1.visibleProperty().bind(vm.showFirstInputDRIncrBtnProperty());
+        btnRectMinus1.managedProperty().bind(btnRectMinus1.visibleProperty());
+
+        btnRectPlus2.visibleProperty().bind(vm.showSecondInputDRIncrBtnProperty());
+        btnRectPlus2.managedProperty().bind(btnRectPlus2.visibleProperty());
+
+        btnRectMinus2.visibleProperty().bind(vm.showSecondInputDRIncrBtnProperty());
+        btnRectMinus2.managedProperty().bind(btnRectMinus2.visibleProperty());
     }
 
     private void configSelection() {
@@ -217,7 +241,7 @@ public class ProgramView extends VBox {
             case TURN_LEFT, TURN_RIGHT: return Color.RED;
             case PEN_DOWN, PEN_UP:  return Color.GREEN;
             case VAR_DECLARATION, VAR_ASSIGNMENT, VAR_INCREMENT, REPEAT, END_REPEAT: return Color.DARKORCHID;
-            case DRAW_POLYGON: return Color.ORANGE;
+            case DRAW_POLYGON, DRAW_RECTANGLE: return Color.ORANGE;
             default:   return Color.BLACK;
         }
     }
@@ -308,6 +332,8 @@ public class ProgramView extends VBox {
             innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, btnPlus, btnMinus, errLbl);
         } else if (action.getType() == Type.DRAW_POLYGON) {
             innerEditBox.getChildren().addAll(startLbl, input, btnPolyPlus1, btnPolyMinus1, middleLbl, input2, btnPolyPlus2, btnPolyMinus2, errLbl);
+        } else if (action.getType() == Type.DRAW_RECTANGLE) {
+            innerEditBox.getChildren().addAll(startLbl, input, btnRectPlus1, btnRectMinus1, middleLbl, input2, btnRectPlus2, btnRectMinus2, errLbl);
         } else {
             innerEditBox.getChildren().addAll(startLbl, input, middleLbl, input2, errLbl);
         }

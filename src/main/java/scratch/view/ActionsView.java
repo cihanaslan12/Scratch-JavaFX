@@ -1,9 +1,6 @@
 package scratch.view;
 
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -17,6 +14,7 @@ public class ActionsView extends VBox {
     private final Label actionsLabel = new Label("Palette d'actions");
     private final ListView<Action> actions = new ListView<>();
     private final Button btnAddToProgram = new Button("Ajouter au programme");
+    private final CheckBox advancedMode = new CheckBox("Mode avancé");
 
     public ActionsView(ActionsViewModel vm) {
         this.vm = vm;
@@ -24,7 +22,7 @@ public class ActionsView extends VBox {
         // lie la liste graphique aux action du ViewModel
         actions.setItems(vm.getActionList());
 
-        getChildren().addAll(actions, btnAddToProgram);
+        getChildren().addAll(actions, btnAddToProgram, advancedMode);
 
         setSpacing(15);
         setPrefSize(150, 550);
@@ -43,6 +41,10 @@ public class ActionsView extends VBox {
                 vm.addAction();
             }
         });
+
+         advancedMode.selectedProperty().set(false);
+
+         advancedMode.setOnAction(e -> vm.addRectToActionList(advancedMode.selectedProperty().get()));
     }
 
     private void configBindings() {
@@ -62,7 +64,7 @@ public class ActionsView extends VBox {
             case TURN_LEFT, TURN_RIGHT: return Color.RED;
             case PEN_DOWN, PEN_UP:  return Color.GREEN;
             case VAR_DECLARATION, VAR_ASSIGNMENT, VAR_INCREMENT, REPEAT, END_REPEAT: return Color.DARKORCHID;
-            case DRAW_POLYGON: return Color.ORANGE;
+            case DRAW_POLYGON, DRAW_RECTANGLE: return Color.ORANGE;
             default:   return Color.BLACK;
         }
     }

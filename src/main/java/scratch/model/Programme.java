@@ -251,6 +251,10 @@ public class Programme {
             if(action.getType() == Type.DRAW_POLYGON)
                 count++;
         }
-        return count >= 3;
+        return count > 3;
+    }
+
+    public boolean drawRectangleisNotLast() {
+        return program.getLast().getType() != Type.DRAW_RECTANGLE;
     }
 }
